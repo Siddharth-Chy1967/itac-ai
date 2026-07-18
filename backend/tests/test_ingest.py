@@ -11,9 +11,11 @@ from pathlib import Path
 
 from docx import Document
 
+from docx import Document as _Doc
+
 from app.rag.chunker import chunk_document
-from app.rag.extract import ExtractedDoc, Section, extract_docx
-from app.rag.ingest import ReportFile, _derive_metadata, _ingest_one, iter_report_files
+from app.rag.extract import FACILITY_PROFILE, ExtractedDoc, Section, extract_docx
+from app.rag.ingest import ReportFile, _derive_metadata, _ingest_one, extract_sic, iter_report_files
 
 
 # --- path-derived metadata (spec §6.4) ------------------------------------
@@ -162,6 +164,94 @@ def test_extract_detects_bold_numbered_and_ar_headings(tmp_path):
     assert ca.level == 2
 
 
+# --- Feature 2 extraction: AR-N headings, SIC, facility profile --------------
+
+def test_extract_detects_hyphen_ar_heading(tmp_path):
+    # Newer reports write "AR-1" (hyphen); the broadened marker must tag it.
+    path = tmp_path / "AS0615.docx"
+    d = _Doc()
+    h = d.add_paragraph()
+    h.add_run("AR-1 Replace Smash My Trash Service with a Compactor (ARC 3.6193)").bold = True
+    d.add_paragraph("Anticipated savings: $5,000/yr.")
+    d.save(str(path))
+
+    doc = extract_docx(path)
+    ar = next((s for s in doc.sections if s.ar_number), None)
+    assert ar is not None and ar.ar_number == "1"
+    assert "Compactor" in ar.heading
+
+
+def test_arc_prefix_not_mistaken_for_ar_heading(tmp_path):
+    # "ARC 2.4236" must NOT be read as an AR heading (no digit right after "AR").
+    path = tmp_path / "AS0400.docx"
+    d = _Doc()
+    p = d.add_paragraph()
+    p.add_run("See ARC 2.4236 for the leak-repair code.").bold = True
+    d.save(str(path))
+    doc = extract_docx(path)
+    assert all(s.ar_number is None for s in doc.sections)
+
+
+def test_extract_tags_profile_heading(tmp_path):
+    path = tmp_path / "AS0300.docx"
+    d = _Doc()
+    h = d.add_paragraph()
+    h.add_run("Process Description").bold = True  # unnumbered, newer-report style
+    d.add_paragraph("The facility manufactures wood cabinets from particleboard.")
+    d.save(str(path))
+
+    doc = extract_docx(path)
+    prof = [s for s in doc.sections if s.section_type == FACILITY_PROFILE]
+    assert any(s.heading == "Process Description" for s in prof)
+    assert any("particleboard" in s.text for s in prof)
+
+
+def test_principal_products_fallback_creates_profile_section(tmp_path):
+    # No description heading, only a "Principal Products" field -> synthetic profile.
+    path = tmp_path / "AS0515.docx"
+    d = _Doc()
+    d.add_paragraph("Principal Products: Residential Framing")
+    h = d.add_paragraph()
+    h.add_run("AR #1 Fix compressed air leaks").bold = True
+    d.add_paragraph("body text")
+    d.save(str(path))
+
+    doc = extract_docx(path)
+    prof = [s for s in doc.sections if s.section_type == FACILITY_PROFILE]
+    assert len(prof) == 1
+    assert prof[0].heading == "Principal Products"
+    assert prof[0].text == "Residential Framing"
+
+
+def test_iter_textbox_paragraphs_captures_and_dedups():
+    # A text box wrapped in AlternateContent stores its text twice; capture once.
+    from docx import Document
+    from docx.oxml import parse_xml
+
+    from app.rag.extract import _iter_textbox_paragraphs
+
+    w = "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+    xml = (
+        f'<w:p xmlns:w="{w}">'
+        f"<w:r><w:t>anchor</w:t></w:r>"
+        f"<w:txbxContent><w:p><w:r><w:t>Assembly Area</w:t></w:r></w:p></w:txbxContent>"
+        f"<w:txbxContent><w:p><w:r><w:t>Assembly Area</w:t></w:r></w:p></w:txbxContent>"
+        f"</w:p>"
+    )
+    paras = list(_iter_textbox_paragraphs(parse_xml(xml), Document()))
+    assert [p.text for p in paras] == ["Assembly Area"]  # deduped 2 -> 1
+
+
+def test_extract_sic_handles_all_era_formats():
+    def d(text):
+        return ExtractedDoc(title="", sections=[Section(heading="h", paragraphs=[text])])
+
+    assert extract_sic(d("SIC: 2452")) == "2452"
+    assert extract_sic(d("SIC/NAICS:3559/334418")) == "3559"  # SIC first, NAICS is 6-digit
+    assert extract_sic(d("principal products:Aluminum Windowss.i.c. code(s):3231")) == "3231"
+    assert extract_sic(d("no classification here, just $2,500 saved")) == ""
+
+
 def test_extract_serializes_tables_into_section_text(tmp_path):
     path = tmp_path / "AS0601.docx"
     doc = Document()
@@ -215,3 +305,55 @@ def test_chunk_document_splits_long_section_with_overlap():
     first_paras = [p.strip() for p in chunks[0].text.split("\n")]
     second_paras = [p.strip() for p in chunks[1].text.split("\n")]
     assert first_paras[-1] in second_paras
+
+
+def test_chunk_stamps_section_type_and_passes_through_sic():
+    doc = ExtractedDoc(
+        title="AS0515",
+        sections=[
+            Section(heading="Principal Products", paragraphs=["Residential Framing"],
+                    section_type=FACILITY_PROFILE),
+            Section(heading="AR #1", paragraphs=["Fix leaks."], ar_number="1"),
+        ],
+    )
+    base = {"report_id": "AS0515", "sic4": "2452", "sic3": "245", "sic2": "24"}
+    chunks = chunk_document(doc, base, size_tokens=700, overlap_tokens=100)
+
+    prof, ar = chunks
+    assert prof.metadata["section_type"] == "facility_profile"
+    assert ar.metadata["section_type"] == ""  # AR section is not a profile
+    # SIC prefixes from base_metadata reach every chunk.
+    assert all(c.metadata["sic4"] == "2452" and c.metadata["sic2"] == "24" for c in chunks)
+
+
+def test_ingest_one_stamps_sic_on_every_chunk(tmp_path):
+    path = tmp_path / "AS0515.docx"
+    d = _Doc()
+    d.add_paragraph("SIC: 2452")
+    h = d.add_paragraph()
+    h.add_run("AR #1 Fix leaks").bold = True
+    d.add_paragraph("Anticipated savings: $5,000/yr.")
+    d.save(str(path))
+    report = ReportFile(path=path, report_id="AS0515", era="2022-2026", fiscal_year="FY2025")
+
+    captured: dict = {}
+
+    class FakeStore:
+        def delete_report(self, report_id):
+            pass
+
+        def add_chunks(self, chunks, embeddings):
+            captured["chunks"] = chunks
+
+    class FakeEmbedder:
+        def encode_documents(self, texts):
+            return [[0.0] for _ in texts]
+
+    class FakeSettings:
+        chunk_size_tokens = 700
+        chunk_overlap_tokens = 100
+
+    n = _ingest_one(report, FakeEmbedder(), FakeStore(), FakeSettings())
+    assert n > 0
+    assert all(c.metadata["sic4"] == "2452" for c in captured["chunks"])
+    assert all(c.metadata["sic3"] == "245" and c.metadata["sic2"] == "24" for c in captured["chunks"])

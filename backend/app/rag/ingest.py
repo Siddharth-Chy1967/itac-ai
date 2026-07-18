@@ -34,6 +34,29 @@ from ..config import get_settings, repo_path
 _REPORT_ID = re.compile(r"(AS\d+)", re.IGNORECASE)
 # Fiscal year inside the parent folder name: "FY2025 (AS0599-AS0611)" -> FY2025.
 _FISCAL_YEAR = re.compile(r"(FY\s?\d{4})", re.IGNORECASE)
+# The facility's 4-digit SIC code, near a "SIC" label in any era's form:
+# "SIC: 2452", "SIC/NAICS:3559/334418", and the old dotted "s.i.c. code(s):3231".
+# The [^0-9]{0,25} keeps the match anchored to the label so a stray 4-digit number
+# elsewhere is not picked up; the first \d{4} after the label is the SIC (NAICS,
+# when present, is 6 digits and comes second).
+_SIC = re.compile(r"S\.?\s*I\.?\s*C\.?[^0-9]{0,25}?(\d{4})", re.IGNORECASE)
+
+
+def extract_sic(doc) -> str:
+    """Return the report's 4-digit SIC from its front matter, or "" if not found.
+
+    Scans the extracted text in document order and takes the first SIC-labeled
+    4-digit code (the SIC block lives in the header/first sections). Never guesses:
+    a report with no discoverable SIC yields "".
+    """
+    m = _SIC.search(doc.title or "")
+    if m:
+        return m.group(1)
+    for section in doc.sections:
+        m = _SIC.search(f"{section.heading}\n{section.text}")
+        if m:
+            return m.group(1)
+    return ""
 
 
 @dataclass
@@ -92,12 +115,19 @@ def _ingest_one(report: ReportFile, embedder, store, settings) -> int:
     from .extract import extract_docx
 
     doc = extract_docx(report.path)
+    sic4 = extract_sic(doc)
     base_metadata = {
         "report_id": report.report_id,
         # ChromaDB metadata cannot be None; older reports without an FY store "".
         "fiscal_year": report.fiscal_year or "",
         "era": report.era,
         "report_title": doc.title,
+        # SIC for the industry-match pass (spec Feature 2). Empty when the report
+        # has no discoverable SIC; sic3/sic2 are the prefixes the waterfall widens
+        # to. Stamped on every chunk so any retrieved chunk carries its report's SIC.
+        "sic4": sic4,
+        "sic3": sic4[:3],
+        "sic2": sic4[:2],
     }
     chunks = chunk_document(
         doc,

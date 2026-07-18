@@ -19,7 +19,8 @@ dependencies = [
     "sentence-transformers>=2.6",
     "einops>=0.7",  # required by nomic-embed-text-v1.5's remote model code
     "chromadb>=0.5",
-    # Later sessions add: pypdf
+    # Session E: ARC reference lookup (parses the official ARC list PDF)
+    "pypdf>=4",
 ]
 
 [project.optional-dependencies]

@@ -60,6 +60,27 @@ class Settings(BaseSettings):
     # present a weak result as an established precedent. Tune once the real corpus
     # is ingested (nomic+cosine: a strong match scores ~0.85+, a weak one ~0.5).
     rag_min_relevance: float = 0.6
+    # ARC code lookup: query the arc_reference collection top-5, return top-3.
+    rag_arc_k: int = 5
+    # Verb-alignment tie-break for ARC lookup: when the user's leading action verb
+    # (replace/install/reduce/...) matches a candidate's leading verb, add this to
+    # its ranking score. Small on purpose: it only breaks near-ties where a literal
+    # token match (e.g. "baler") would otherwise outrank the better-intent code.
+    rag_arc_verb_boost: float = 0.03
+    # Weakness floor for "no confident ARC match". Calibrated 2026-07-17 on the
+    # 579-code arc_reference collection: the four intended lookups scored
+    # 0.662-0.819 on their best hit, while nonsense queries ("color of the sky",
+    # "schedule a meeting") topped out at 0.632. 0.65 sits in that gap, so real
+    # lookups clear it and nonsense falls below and is flagged as a guess.
+    rag_arc_min_relevance: float = 0.65
+    # Enumerate mode ("which reports mention X"): cast a wider net than answer
+    # mode, then dedup by report and filter with its own similarity floor.
+    rag_enumerate_k: int = 20
+    # Calibrated 2026-07-17 on the ingested corpus (26k chunks) with the query
+    # "solar panel cleaning": genuine Clean Solar Panels chunks scored
+    # 0.738-0.765 across 6 reports (incl. ground truth AS0494/AS0552); the first
+    # off-topic hit (a solar *install* AR) scored 0.683. 0.72 sits in that gap.
+    rag_enumerate_min_relevance: float = 0.72
 
     @field_validator(
         "llm_provider",

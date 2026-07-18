@@ -11,7 +11,9 @@ Token counts are the config's `chunk_size_tokens` / `chunk_overlap_tokens`;
 pulling in a tokenizer here.
 
 Every chunk carries the metadata a retrieval answer needs to cite its source:
-report_id, fiscal_year, era, section heading, ar_number, and chunk_index.
+report_id, fiscal_year, era, section heading, ar_number, section_type
+("facility_profile" for plant/process-description sections, else ""), and
+chunk_index. SIC fields (sic4/sic3/sic2) come in via `base_metadata`.
 """
 from __future__ import annotations
 
@@ -86,6 +88,7 @@ def chunk_document(
                 **base_metadata,
                 "section": heading,
                 "ar_number": section.ar_number or "",
+                "section_type": section.section_type or "",
                 "chunk_index": index,
             }
             chunks.append(Chunk(text=text, metadata=metadata))

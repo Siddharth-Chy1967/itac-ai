@@ -43,12 +43,17 @@ class Retrieval:
 
     @property
     def has_match(self) -> bool:
-        """True when the closest hit clears the relevance threshold."""
-        return self.top_score <= self.min_relevance
+        """True when the closest hit clears the relevance threshold.
+
+        Scores are cosine similarities (`ReportStore.query` returns
+        1 - cosine_distance), so higher means more relevant and a hit matches
+        when its score is at or above the floor.
+        """
+        return self.top_score >= self.min_relevance
 
     def matches(self) -> list[Hit]:
         """Hits at or above the threshold, best first (empty when no confident match)."""
-        return [h for h in self.hits if h[2] <= self.min_relevance]
+        return [h for h in self.hits if h[2] >= self.min_relevance]
 
     def sources(self) -> list[dict]:
         """Payload for the `sources` SSE event: one entry per confident match."""
@@ -60,6 +65,47 @@ class Retrieval:
                 "score": round(score, 3),
             }
             for _text, meta, score in self.matches()
+        ]
+
+    def enumerated(self) -> list[dict]:
+        """Matches deduplicated by report, best report first.
+
+        Enumerate mode ("which reports mention X") wants each report listed once,
+        not once per matching chunk. One entry per report_id keeps the report's
+        best score and every distinct matching section (best-scoring first).
+        """
+        by_report: dict[str, dict] = {}
+        for _text, meta, score in self.matches():
+            rid = meta.get("report_id")
+            if not rid:
+                continue
+            entry = by_report.get(rid)
+            if entry is None:
+                entry = by_report[rid] = {
+                    "report_id": rid,
+                    "fiscal_year": meta.get("fiscal_year"),
+                    "score": score,
+                    "sections": [],
+                }
+            section = meta.get("section")
+            if section and section not in entry["sections"]:
+                entry["sections"].append(section)
+        return sorted(by_report.values(), key=lambda e: e["score"], reverse=True)
+
+    def enumerated_sources(self) -> list[dict]:
+        """Payload for the `sources` SSE event in enumerate mode: one entry per report.
+
+        The score stays in this payload so the UI source cards can show it; the
+        enumerate chat text itself never states scores.
+        """
+        return [
+            {
+                "report_id": e["report_id"],
+                "fiscal_year": e["fiscal_year"],
+                "section": "; ".join(e["sections"]),
+                "score": round(e["score"], 3),
+            }
+            for e in self.enumerated()
         ]
 
 

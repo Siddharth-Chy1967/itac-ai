@@ -94,6 +94,40 @@ Rules:
   Do not invent numbers that are not supported by the request or reference material."""
 
 
+# Enumerate-mode output instruction. The user asked which reports exist, not for
+# a writeup, so the reply is nothing but the list. Scores stay in the sources
+# payload for the UI cards; they never appear in the chat text.
+ENUMERATE_MODE_INSTRUCTION = """\
+OUTPUT MODE: ENUMERATE.
+The user wants to know which reports exist, not a writeup. The reference
+material lists the complete set of matching reports. Your entire reply is:
+- One line per matching report, exactly: report_id (fiscal_year) - section
+  (multiple matching sections separated by "; ").
+- Every report in the reference material appears exactly once, in the order
+  given. Do not add, omit, or reorder reports.
+- No introduction, no closing paragraph, no commentary of any kind.
+- Never state relevance scores, distances, or confidence, and never use ranking
+  language such as "closest match" or "most relevant".
+- If the reference material lists no matching reports, reply with the single
+  line: No matching reports found in the knowledge base."""
+
+
+# ARC-lookup output instruction. Same terse spirit as enumerate mode: the user
+# wants the code(s), not an essay. Scores stay in the sources payload for the UI;
+# they never appear in the chat text.
+ARC_LOOKUP_INSTRUCTION = """\
+OUTPUT MODE: ARC LOOKUP.
+The reference material lists candidate ARC codes for the recommendation the user
+described. Your entire reply is those codes, nothing else:
+- One line per candidate, exactly: <code> <DESCRIPTION>, best match first, in the
+  order given. Reproduce each code and description verbatim.
+- If the reference material says the match is NOT confident, begin with this exact
+  line first: No confident ARC match. Closest candidates (verify manually):
+  then the code lines.
+- No introduction, no closing paragraph, no scores, and no relevance or ranking
+  commentary such as "closest" or "most relevant" beyond the fixed line above."""
+
+
 def _render_skills(skills: list["Skill"]) -> str:
     """Wrap each selected skill's markdown body in a labeled block (spec §5b)."""
     blocks = [_SKILLS_PREAMBLE]
@@ -107,12 +141,16 @@ def assemble_system_prompt(
     *,
     reference_material: str | None = None,
     wants_table: bool = False,
+    enumerate_mode: bool = False,
+    arc_mode: bool = False,
 ) -> str:
     """Compose the full system prompt in spec §5 order.
 
     `reference_material` (RAG chunks) is stubbed for now: RAG lands in step 4.
     Table-mode output instructions (spec §5.3d) are appended when the router set
-    `wants_table`; prose is the default.
+    `wants_table`; prose is the default. The special output modes are mutually
+    exclusive contracts; precedence is arc > enumerate > table when more than one
+    is somehow set.
     """
     parts = [BASE_SYSTEM_PROMPT]
 
@@ -125,7 +163,11 @@ def assemble_system_prompt(
 
     # (d) Output-mode instructions. Prose is the default; table mode switches the
     # model to emitting a ```tablespec JSON block the xlsx engine renders.
-    if wants_table:
+    if arc_mode:
+        parts.append(ARC_LOOKUP_INSTRUCTION)
+    elif enumerate_mode:
+        parts.append(ENUMERATE_MODE_INSTRUCTION)
+    elif wants_table:
         parts.append(TABLE_MODE_INSTRUCTION)
 
     return "\n\n".join(parts)
@@ -179,3 +221,63 @@ def format_reference_material(retrieval: "Retrieval") -> str:
             f"cite it as support for a specific claim."
         )
     return f"<reference_material>\n{body}\n</reference_material>"
+
+
+def format_enumerate_material(retrieval: "Retrieval") -> str:
+    """Render the deduplicated report list for enumerate mode.
+
+    Unlike `format_reference_material` this injects no chunk text and no scores:
+    the model only needs report identifiers and matched sections to list them,
+    and keeping scores out of the prompt keeps them out of the chat text.
+    """
+    entries = retrieval.enumerated()
+    if not entries:
+        return (
+            "<reference_material>\n"
+            "No report in the knowledge base matched this request. Say so in one "
+            "plain line; do not invent report IDs.\n"
+            "</reference_material>"
+        )
+
+    lines = [
+        "<reference_material>",
+        "These are all the reports in the knowledge base that match the request, "
+        "already deduplicated and ordered. List them exactly as instructed.",
+        "",
+    ]
+    for e in entries:
+        sections = "; ".join(e["sections"]) or "?"
+        lines.append(f"- {e['report_id']} ({e['fiscal_year']}) - {sections}")
+    lines.append("</reference_material>")
+    return "\n".join(lines)
+
+
+def format_arc_material(retrieval: "Retrieval", *, top_n: int = 3) -> str:
+    """Render ARC-lookup candidates into the reference-material block.
+
+    Lists the best `top_n` candidate codes (code + official description) with no
+    scores. Whether the top hit clears the weakness floor (`retrieval.has_match`)
+    is stated so the model knows to prepend the "not confident" line and mark the
+    codes as guesses.
+    """
+    candidates = retrieval.hits[:top_n]
+    if not candidates:
+        return (
+            "<reference_material>\n"
+            "No ARC codes were retrieved for this recommendation. Say there is no "
+            "matching ARC code; do not invent one.\n"
+            "</reference_material>"
+        )
+
+    if retrieval.has_match:
+        directive = "Confident ARC match. Emit these candidate codes, best first:"
+    else:
+        directive = (
+            "No confident ARC match. Emit the fixed not-confident line, then these "
+            "candidates as guesses, best first:"
+        )
+    lines = ["<reference_material>", directive, ""]
+    for _text, meta, _score in candidates:
+        lines.append(f"- {meta.get('code', '?')} {meta.get('description', '')}".rstrip())
+    lines.append("</reference_material>")
+    return "\n".join(lines)
