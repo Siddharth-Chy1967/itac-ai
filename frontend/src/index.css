@@ -1,0 +1,66 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    @apply bg-slate-50 text-slate-900 antialiased;
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+}
+
+/* Lightweight markdown styling for assistant messages (no typography plugin). */
+.markdown {
+  @apply text-[15px] leading-relaxed;
+}
+.markdown > *:first-child {
+  @apply mt-0;
+}
+.markdown > *:last-child {
+  @apply mb-0;
+}
+.markdown p {
+  @apply my-2;
+}
+.markdown ul {
+  @apply my-2 list-disc pl-5;
+}
+.markdown ol {
+  @apply my-2 list-decimal pl-5;
+}
+.markdown li {
+  @apply my-0.5;
+}
+.markdown h1,
+.markdown h2,
+.markdown h3 {
+  @apply mb-1 mt-3 font-semibold;
+}
+.markdown code {
+  @apply rounded bg-slate-100 px-1 py-0.5 font-mono text-[13px];
+}
+.markdown pre {
+  @apply my-2 overflow-x-auto rounded-lg bg-slate-900 p-3 text-[13px] text-slate-100;
+}
+.markdown pre code {
+  @apply bg-transparent p-0 text-inherit;
+}
+.markdown table {
+  @apply my-2 block w-full max-w-full overflow-x-auto border-collapse text-sm;
+}
+.markdown th,
+.markdown td {
+  @apply border border-slate-300 px-2 py-1 text-left;
+}
+.markdown a {
+  @apply text-itac-blue underline;
+}
+.markdown blockquote {
+  @apply my-2 border-l-4 border-slate-200 pl-3 text-slate-600;
+}

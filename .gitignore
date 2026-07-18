@@ -1,0 +1,11 @@
+﻿.venv/
+venv/
+node_modules/
+data/reports/
+data/chroma/
+*.log
+.env
+__pycache__/
+*.pyc
+*.egg-info/
+frontend/dist/
