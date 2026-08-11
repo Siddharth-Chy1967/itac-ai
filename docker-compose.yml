@@ -1,0 +1,50 @@
+# ITAC AI — one-command launch.
+#
+#   docker compose up --build          # start (rebuild if code changed)
+#   docker compose up -d --build       # start detached
+#   docker compose down                # stop
+#
+# Then open http://localhost:8080
+#
+# The private corpus (data/, ~800MB chroma DB) and secrets (.env) stay on the host and
+# are bind-mounted / injected at runtime — they are never baked into an image.
+
+services:
+  backend:
+    build:
+      context: .                     # repo root: the image needs backend/ AND skills/
+      dockerfile: backend/Dockerfile
+    env_file:
+      - .env                         # provider selection + API keys, as on the host
+    environment:
+      # Inside a container, localhost is the container, not your PC. If you run Ollama
+      # on the host (the default provider here), reach it via the host gateway. Harmless
+      # when the provider is Gemini/Anthropic (nothing connects to it).
+      OLLAMA_BASE_URL: http://host.docker.internal:11434
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./data:/srv/data             # chroma DB, reports, uploads, exports persist here
+      - hf-cache:/srv/hf-cache       # embedding model download, cached across rebuilds
+    expose:
+      - "8000"                       # internal only; the frontend proxies to it
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8000/api/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "8080:80"                    # the app: http://localhost:8080
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  hf-cache:

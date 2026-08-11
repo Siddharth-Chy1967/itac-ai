@@ -58,7 +58,7 @@ See the [architecture spec §2](docs/itac-ai-architecture.md) for the full file-
 
 ## Getting started
 
-> Scaffolding stage — application code is not yet implemented. These are the intended steps.
+> Fastest path is **Docker** (below). The manual backend/frontend steps are for local development.
 
 ### 1. Configure
 
@@ -84,10 +84,31 @@ npm install
 npm run dev
 ```
 
-### Or with Docker
+### Or with Docker (recommended — one command)
+
+Requires **Docker Desktop** (with WSL2 backend on Windows). From the repo root:
 
 ```bash
+cp .env.example .env     # then edit .env: set LLM_PROVIDER + the matching API key
 docker compose up --build
+```
+
+Open **http://localhost:8080**.
+
+What it does:
+
+- **frontend** — builds the Vite SPA and serves it with nginx on `:8080`, proxying `/api` to the backend (same-origin, so no CORS; chat SSE streams through unbuffered).
+- **backend** — FastAPI + RAG on CPU. Your corpus (`./data`, incl. the ~800MB Chroma DB) and `.env` stay on the host and are mounted/injected at runtime — never baked into an image.
+- The embedding model (~500MB) downloads on the **first RAG query** and is cached in a named volume, so only that first query is slow.
+
+**If `LLM_PROVIDER=ollama`:** run Ollama on the host as usual (`ollama serve`, model pulled). The backend container reaches it automatically via `host.docker.internal` — this keeps chat on your host GPU. Gemini/Anthropic providers need no extra setup.
+
+Common commands:
+
+```bash
+docker compose up -d --build   # start in the background
+docker compose logs -f backend # tail backend logs
+docker compose down            # stop
 ```
 
 ---

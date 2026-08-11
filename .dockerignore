@@ -1,0 +1,19 @@
+# Build context for the backend image is the repo root. Keep it lean and never ship
+# the private corpus or secrets into the image (data/ is ~800MB and gitignored).
+.git
+.gitignore
+data/
+.env
+.env.example
+docs/
+assets/
+frontend/
+README.md
+
+# Python cruft
+**/__pycache__/
+**/*.pyc
+**/*.egg-info/
+backend/.venv/
+backend/venv/
+backend/*.log
