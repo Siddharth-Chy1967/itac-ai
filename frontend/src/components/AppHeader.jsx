@@ -4,8 +4,6 @@ import { NavLink } from "react-router-dom";
 const NAV = [
   { to: "/chat", label: "Chat" },
   { to: "/knowledge", label: "Knowledge Base" },
-  { to: "/skills", label: "Skills" },
-  { to: "/notes", label: "Notes Guide" },
 ];
 
 export default function AppHeader() {

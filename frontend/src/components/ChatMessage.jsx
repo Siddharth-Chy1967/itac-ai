@@ -1,6 +1,5 @@
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import SkillBadge from "./SkillBadge.jsx";
 import SourceCard from "./SourceCard.jsx";
 
 // A download chip for a generated .xlsx. `file.url` comes straight from the SSE
@@ -31,14 +30,6 @@ export default function ChatMessage({ message }) {
   return (
     <div className="flex justify-start">
       <div className="max-w-[85%] rounded-2xl rounded-bl-sm bg-white px-4 py-3 shadow-sm ring-1 ring-slate-200">
-        {message.skills?.length > 0 && (
-          <div className="mb-2 flex flex-wrap gap-1.5">
-            {message.skills.map((s) => (
-              <SkillBadge key={s} name={s} />
-            ))}
-          </div>
-        )}
-
         {message.content ? (
           <div className="markdown">
             <ReactMarkdown remarkPlugins={[remarkGfm]}>{message.content}</ReactMarkdown>

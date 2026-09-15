@@ -31,7 +31,6 @@ export default function Chat() {
     const assistantMsg = {
       role: "assistant",
       content: "",
-      skills: [],
       sources: [],
       files: [],
       streaming: true,
@@ -49,8 +48,7 @@ export default function Chat() {
         mode: "chat",
         signal: controller.signal,
         onEvent: ({ event, data }) => {
-          if (event === "skills") patchLast({ skills: data.skills || [] });
-          else if (event === "sources") patchLast({ sources: Array.isArray(data) ? data : [] });
+          if (event === "sources") patchLast({ sources: Array.isArray(data) ? data : [] });
           else if (event === "token") patchLast((m) => ({ ...m, content: m.content + (data.t || "") }));
           else if (event === "file") patchLast((m) => ({ ...m, files: [...m.files, data] }));
           else if (event === "error") patchLast({ error: data.message || "Something went wrong." });
