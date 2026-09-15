@@ -14,9 +14,12 @@ For each .docx: derive report_id / fiscal_year / era from the path, extract text
 into sections (extract.py), chunk section-aware (chunker.py), embed
 (embeddings.py), and store with metadata on every chunk (store.py).
 
-Idempotent: reports already in the store are skipped, so re-running only picks up
-new files. Use --force to re-ingest everything. Progress prints per file since the
-full corpus (~1 GB) takes a while.
+Resumable: reports already written at the current `INGEST_VERSION` are skipped, so
+Ctrl+C then rerun continues from where it stopped instead of report 1 (each report
+is committed as it finishes, so the store itself is the checkpoint). Bumping
+`INGEST_VERSION` after an extraction/embedding change makes a normal run reprocess
+the now-stale reports. Use --force to rebuild everything regardless of version.
+Progress prints per file.
 """
 from __future__ import annotations
 
@@ -29,6 +32,11 @@ from pathlib import Path
 from typing import Iterator
 
 from ..config import get_settings, repo_path
+
+# Extraction/embedding schema version, stamped on every chunk. Bump this whenever
+# the extraction or embedding changes so a resumable run reprocesses stale reports.
+# v2: SIC (sic4/3/2) + section_type + text-box paragraphs + fp16 embeddings.
+INGEST_VERSION = "2"
 
 # AS-number anywhere in the filename stem: "AS0599", "AS0599_final" -> AS0599.
 _REPORT_ID = re.compile(r"(AS\d+)", re.IGNORECASE)
@@ -128,6 +136,9 @@ def _ingest_one(report: ReportFile, embedder, store, settings) -> int:
         "sic4": sic4,
         "sic3": sic4[:3],
         "sic2": sic4[:2],
+        # Checkpoint tag: a report whose chunks carry the current INGEST_VERSION is
+        # considered fully done, so a resumed run skips it (see main()).
+        "ingest_version": INGEST_VERSION,
     }
     chunks = chunk_document(
         doc,
@@ -147,8 +158,18 @@ def _ingest_one(report: ReportFile, embedder, store, settings) -> int:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Ingest the ITAC report corpus into ChromaDB.")
     parser.add_argument("--reports", help="Override the reports root (default: config reports_path).")
-    parser.add_argument("--force", action="store_true", help="Re-ingest reports already in the store.")
-    parser.add_argument("--limit", type=int, default=0, help="Only process the first N new reports (0 = all).")
+    parser.add_argument(
+        "--force",
+        action="store_true",
+        help="Rebuild everything: ignore the version check and reprocess every report.",
+    )
+    parser.add_argument(
+        "--resume",
+        action="store_true",
+        help="(Default behavior) skip reports already at the current INGEST_VERSION; "
+        "process only missing or out-of-date ones. Safe to Ctrl+C and rerun.",
+    )
+    parser.add_argument("--limit", type=int, default=0, help="Only process the first N pending reports (0 = all).")
     args = parser.parse_args(argv)
 
     settings = get_settings()
@@ -173,9 +194,18 @@ def main(argv: list[str] | None = None) -> int:
 
     store = ReportStore()
     embedder = Embedder()
-    already = set() if args.force else store.ingested_report_ids()
+    # Resume by default: skip reports already fully written at the current schema
+    # version (their chunks carry ingest_version == INGEST_VERSION). --force ignores
+    # the checkpoint and rebuilds everything. Because each report's chunks are
+    # committed in one transactional write, a report is either fully at the current
+    # version (skip) or absent/stale (reprocess) -- so Ctrl+C then rerun picks up
+    # where it stopped instead of at report 1.
+    already = set() if args.force else store.report_ids_at_version(INGEST_VERSION)
     if already:
-        print(f"{len(already)} report(s) already ingested; they will be skipped.")
+        print(
+            f"{len(already)} report(s) already at version {INGEST_VERSION}; they will be "
+            f"skipped (resume). Use --force to rebuild all."
+        )
 
     started = time.time()
     processed = skipped = total_chunks = 0

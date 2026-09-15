@@ -16,7 +16,10 @@ to pipe-joined rows so their content survives into the retrievable text.
 """
 from __future__ import annotations
 
+import io
+import posixpath
 import re
+import zipfile
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Iterator, Optional
@@ -182,9 +185,56 @@ def _table_rows(table: Table) -> Iterator[str]:
             yield line
 
 
+_RELATIONSHIP = re.compile(r"<Relationship [^>]*/>")
+
+
+def _sanitize_docx(path: str | Path) -> io.BytesIO:
+    """Return an in-memory copy of the docx with broken relationships removed.
+
+    Some reports (e.g. AS0536) carry a relationship pointing at a missing part
+    (`Target="NULL"`, a deleted image whose relationship was left behind), which
+    makes python-docx raise `KeyError: 'word/NULL'` on open and drops the whole
+    report. We rewrite each `.rels` part, discarding internal relationships whose
+    resolved target does not exist in the archive, so the document opens and its
+    text is recovered. Only genuinely-dangling internal targets are dropped;
+    External relationships and valid targets are untouched.
+    """
+    with zipfile.ZipFile(path) as zin:
+        names = set(zin.namelist())
+        buf = io.BytesIO()
+        with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as zout:
+            for item in zin.infolist():
+                data = zin.read(item.filename)
+                if item.filename.endswith(".rels"):
+                    base = posixpath.dirname(posixpath.dirname(item.filename))
+
+                    def _keep(m: "re.Match[str]") -> str:
+                        rel = m.group(0)
+                        tgt = re.search(r'Target="([^"]*)"', rel)
+                        mode = re.search(r'TargetMode="([^"]*)"', rel)
+                        if not tgt or (mode and mode.group(1) == "External"):
+                            return rel
+                        t = tgt.group(1)
+                        part = t[1:] if t.startswith("/") else posixpath.normpath(posixpath.join(base, t))
+                        return "" if (t == "NULL" or part not in names) else rel
+
+                    data = _RELATIONSHIP.sub(_keep, data.decode("utf-8", "ignore")).encode("utf-8")
+                zout.writestr(item, data)
+    buf.seek(0)
+    return buf
+
+
+def _load_document(path: str | Path) -> _Document:
+    """Open a .docx, repairing broken relationships if a plain open fails."""
+    try:
+        return docx.Document(str(path))
+    except Exception:  # noqa: BLE001 - retry once via sanitized copy before giving up
+        return docx.Document(_sanitize_docx(path))
+
+
 def extract_docx(path: str | Path) -> ExtractedDoc:
     """Extract a .docx into a title and an ordered list of sections."""
-    document = docx.Document(str(path))
+    document = _load_document(path)
 
     sections: list[Section] = []
     current = Section(heading=_PREAMBLE, level=0)

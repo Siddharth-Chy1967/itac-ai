@@ -50,6 +50,15 @@ class Embedder:
             self.model_name, device=self.device, trust_remote_code=True
         )
 
+        # Run in half precision on CUDA. On this hardware (RTX 4070, WDDM, GPU shared
+        # with the ollama chat model) the GPU stays pinned at its idle clock, where
+        # fp32 embedding is memory-bandwidth-bound and painfully slow (~5 texts/sec).
+        # fp16 uses the tensor cores and is ~20x faster even at the idle clock, with
+        # negligible effect on normalized-cosine ranking. CPU keeps fp32 (fp16 ops
+        # are not well supported there).
+        if self.device.startswith("cuda"):
+            self.model = self.model.half()
+
         uses_nomic_prefixes = "nomic" in self.model_name.lower()
         self._doc_prefix = _NOMIC_DOC_PREFIX if uses_nomic_prefixes else ""
         self._query_prefix = _NOMIC_QUERY_PREFIX if uses_nomic_prefixes else ""
@@ -71,6 +80,15 @@ class Embedder:
     def encode_query(self, text: str) -> list[float]:
         """Encode a single search query (applies the query task prefix)."""
         return self._encode([self._query_prefix + text])[0]
+
+    def encode_queries(self, texts: list[str]) -> list[list[float]]:
+        """Encode several short query-side texts in one batch (query task prefix).
+
+        For comparing a query against other short phrases on the same side of the
+        asymmetric model, e.g. a field-data topic against candidate AR titles, where
+        a document prefix on the titles would skew the scores.
+        """
+        return self._encode([self._query_prefix + t for t in texts])
 
     @property
     def dim(self) -> int:

@@ -25,6 +25,9 @@ ARC_COLLECTION_NAME = "arc_reference"
 # Real (AR title -> ARC code) precedent pairs mined from past reports, kept
 # separate from the book collection so each can be rebuilt independently.
 ARC_PRECEDENT_COLLECTION_NAME = "arc_precedent"
+# Best Practice list (Section B), a standalone collection with no relationship to
+# the ARC collections above.
+BP_COLLECTION_NAME = "bp_reference"
 
 
 class ReportStore:
@@ -45,8 +48,17 @@ class ReportStore:
         return bool(res.get("ids"))
 
     def ingested_report_ids(self) -> set[str]:
-        """The set of report_ids already in the store."""
+        """The set of report_ids already in the store (any schema version)."""
         res = self.collection.get(include=["metadatas"])
+        return {m["report_id"] for m in res.get("metadatas", []) if m.get("report_id")}
+
+    def report_ids_at_version(self, version: str) -> set[str]:
+        """report_ids whose chunks were written at `version` (backs resumable ingest).
+
+        A report is "done" only when its chunks carry the current INGEST_VERSION;
+        reports absent or written under an older version are reprocessed.
+        """
+        res = self.collection.get(where={"ingest_version": version}, include=["metadatas"])
         return {m["report_id"] for m in res.get("metadatas", []) if m.get("report_id")}
 
     def add_chunks(self, chunks: list["Chunk"], embeddings: list[list[float]]) -> None:
@@ -54,6 +66,7 @@ class ReportStore:
         if not chunks:
             return
         ids = [f"{c.metadata['report_id']}#{c.metadata['chunk_index']}" for c in chunks]
+        self._ar_titles_cache = None
         self.collection.upsert(
             ids=ids,
             embeddings=embeddings,
@@ -62,6 +75,7 @@ class ReportStore:
         )
 
     def delete_report(self, report_id: str) -> None:
+        self._ar_titles_cache = None
         self.collection.delete(where={"report_id": report_id})
 
     def query(self, query_embedding: list[float], k: int = 6) -> list[tuple[str, dict, float]]:
@@ -74,6 +88,130 @@ class ReportStore:
         metas = res.get("metadatas", [[]])[0]
         dists = res.get("distances", [[]])[0]
         return [(doc, meta, 1.0 - dist) for doc, meta, dist in zip(docs, metas, dists)]
+
+    def ar_titles(self) -> list[str]:
+        """Every AR section heading in the store, one entry per distinct heading.
+
+        Backs the field-data title gate, which weighs a topic's words by how rare they
+        are across AR titles. A full metadata scan (~27k rows), so the result is cached
+        on the instance and dropped whenever the store is written to.
+        """
+        cached = getattr(self, "_ar_titles_cache", None)
+        if cached is None:
+            res = self.collection.get(where={"ar_number": {"$ne": ""}}, include=["metadatas"])
+            cached = sorted({m.get("section", "") for m in res.get("metadatas", [])} - {""})
+            self._ar_titles_cache = cached
+        return cached
+
+    def chunks_for(
+        self, report_id: str, ar_number: str | None = None
+    ) -> list[tuple[str, dict]]:
+        """Every chunk of a report (or one of its ARs), in document order.
+
+        A deterministic metadata fetch, NOT semantic search: "summarize AR-5 of
+        AS0612" must return exactly that report's (that AR's) chunks, never the
+        globally-nearest AR-5 from some other report. Ordered by `chunk_index` so
+        the reassembled text reads top-to-bottom as it does in the report. Empty
+        when the report_id (or that ar_number within it) is not in the store.
+        """
+        if not report_id:
+            return []
+        if ar_number:
+            where: dict = {
+                "$and": [{"report_id": report_id}, {"ar_number": str(ar_number)}]
+            }
+        else:
+            where = {"report_id": report_id}
+        res = self.collection.get(where=where, include=["documents", "metadatas"])
+        rows = list(zip(res.get("documents", []), res.get("metadatas", [])))
+        rows.sort(key=lambda r: r[1].get("chunk_index", 0))
+        return [(doc, meta) for doc, meta in rows]
+
+    # --- pre-assessment checklist queries (Feature 2, waterfall.py) ----------
+
+    def reports_for_sic(self, level: str, value: str):
+        """Distinct reports whose `level` (sic4/sic3/sic2) equals `value` (Pass A)."""
+        from .waterfall import ReportRef
+
+        if not value:
+            return []
+        res = self.collection.get(where={level: value}, include=["metadatas"])
+        out: list = []
+        seen: set[str] = set()
+        for m in res.get("metadatas", []):
+            rid = m.get("report_id")
+            if rid and rid not in seen:
+                seen.add(rid)
+                out.append(ReportRef(rid, m.get("era", "")))
+        return out
+
+    def profile_search(self, query_embedding: list[float], k: int):
+        """Semantic search restricted to facility_profile chunks (Pass B)."""
+        from .waterfall import ReportRef
+
+        res = self.collection.query(
+            query_embeddings=[query_embedding],
+            n_results=k,
+            where={"section_type": "facility_profile"},
+        )
+        metas = res.get("metadatas", [[]])[0]
+        dists = res.get("distances", [[]])[0]
+        return [
+            ReportRef(m.get("report_id"), m.get("era", ""), 1.0 - d)
+            for m, d in zip(metas, dists)
+        ]
+
+    def ar_chunk_search(self, query_embedding: list[float], k: int):
+        """Semantic search restricted to AR-section chunks, ranked (field-data lookup).
+
+        Mirrors `profile_search` but filters on "this chunk belongs to some AR" rather
+        than a section type, so a topic query lands on past write-ups of that
+        recommendation instead of on executive summaries or facility descriptions.
+        """
+        from .fielddata import ARInstance
+
+        res = self.collection.query(
+            query_embeddings=[query_embedding],
+            n_results=k,
+            where={"ar_number": {"$ne": ""}},
+        )
+        metas = res.get("metadatas", [[]])[0]
+        dists = res.get("distances", [[]])[0]
+        return [
+            ARInstance(
+                report_id=m.get("report_id", ""),
+                ar_number=m.get("ar_number", ""),
+                title=m.get("section", ""),
+                era=m.get("era", ""),
+                score=1.0 - d,
+            )
+            for m, d in zip(metas, dists)
+        ]
+
+    def ar_sections(self, report_ids: set[str]):
+        """Every AR-section chunk of the given reports (exhaustive, no ranking)."""
+        from .waterfall import ARSection
+
+        if not report_ids:
+            return []
+        res = self.collection.get(
+            where={
+                "$and": [
+                    {"report_id": {"$in": list(report_ids)}},
+                    {"ar_number": {"$ne": ""}},
+                ]
+            },
+            include=["metadatas"],
+        )
+        return [
+            ARSection(
+                report_id=m.get("report_id"),
+                ar_number=m.get("ar_number", ""),
+                title=m.get("section", ""),
+                era=m.get("era", ""),
+            )
+            for m in res.get("metadatas", [])
+        ]
 
     def list_docs(self) -> list[dict]:
         """Distinct reports in the store with their chunk counts (backs GET /api/documents)."""
@@ -157,6 +295,21 @@ class ArcStore:
         dists = res.get("distances", [[]])[0]
         return [(doc, meta, 1.0 - dist) for doc, meta, dist in zip(docs, metas, dists)]
 
+    def get_by_code(self, code: str) -> tuple[str, dict] | None:
+        """Exact metadata lookup by ARC code (no semantic search), or None.
+
+        Backs the reverse "what is the name for ARC 3.4113" direction: a literal
+        code should resolve to its description deterministically.
+        """
+        if not code:
+            return None
+        res = self.collection.get(where={"code": code}, include=["documents", "metadatas"])
+        metas = res.get("metadatas", [])
+        if not metas:
+            return None
+        docs = res.get("documents", []) or [""]
+        return docs[0], metas[0]
+
     def count(self) -> int:
         return self.collection.count()
 
@@ -196,5 +349,54 @@ class ArcLookupStore:
         ranked = sorted(best.values(), key=lambda h: h[2], reverse=True)
         return ranked[:k]
 
+    def get_by_code(self, code: str) -> tuple[str, dict] | None:
+        """Exact code lookup, book first (authoritative description) then precedent."""
+        return self.book.get_by_code(code) or self.precedent.get_by_code(code)
+
     def count(self) -> int:
         return self.book.count() + self.precedent.count()
+
+
+class BPStore:
+    """Vector store for the Best Practice list (Section B), fully standalone.
+
+    Its own `bp_reference` collection, no relationship to the ARC collections or the
+    report corpus. Same nomic embeddings and cosine convention as the other stores.
+    Small and fully derived from one docx, so ingest rebuilds it wholesale.
+    """
+
+    def __init__(self, path: str | None = None):
+        import chromadb  # lazy: heavy import
+
+        db_path = repo_path(path or get_settings().chroma_path)
+        db_path.mkdir(parents=True, exist_ok=True)
+        self.client = chromadb.PersistentClient(path=str(db_path))
+        self.collection = self.client.get_or_create_collection(
+            BP_COLLECTION_NAME,
+            metadata={"hnsw:space": "cosine"},
+        )
+
+    def reset(self) -> None:
+        self.client.delete_collection(BP_COLLECTION_NAME)
+        self.collection = self.client.get_or_create_collection(
+            BP_COLLECTION_NAME,
+            metadata={"hnsw:space": "cosine"},
+        )
+
+    def add_entries(
+        self, ids: list[str], texts: list[str], metadatas: list[dict], embeddings: list[list[float]]
+    ) -> None:
+        if not ids:
+            return
+        self.collection.add(ids=ids, embeddings=embeddings, documents=texts, metadatas=metadatas)
+
+    def query(self, query_embedding: list[float], k: int = 10) -> list[tuple[str, dict, float]]:
+        """Return up to k (document, metadata, similarity) tuples, best first."""
+        res = self.collection.query(query_embeddings=[query_embedding], n_results=k)
+        docs = res.get("documents", [[]])[0]
+        metas = res.get("metadatas", [[]])[0]
+        dists = res.get("distances", [[]])[0]
+        return [(doc, meta, 1.0 - dist) for doc, meta, dist in zip(docs, metas, dists)]
+
+    def count(self) -> int:
+        return self.collection.count()
