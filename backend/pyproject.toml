@@ -16,7 +16,12 @@ dependencies = [
     "openpyxl>=3.1",
     # Session D: RAG ingest (docx extraction, embeddings, vector store)
     "python-docx>=1.1",
-    "sentence-transformers>=2.6",
+    "sentence-transformers>=2.6,<6",
+    # nomic-embed-text-v1.5's remote model code calls
+    # PreTrainedModel.get_extended_attention_mask, which transformers removed after
+    # the 5.13 series; newer versions break every embedding call (seen in a fresh
+    # Docker build that resolved 5.17). Verified working: transformers 5.13.1.
+    "transformers<5.14",
     "einops>=0.7",  # required by nomic-embed-text-v1.5's remote model code
     "chromadb>=0.5",
     # Session E: ARC reference lookup (parses the official ARC list PDF)
