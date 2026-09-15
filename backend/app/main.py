@@ -5,10 +5,17 @@ Session C adds /api/export (xlsx download). Later sessions add the ingest router
 """
 from __future__ import annotations
 
+import asyncio
+import logging
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .api import chat, export, health, skills
+from .chat.orchestrator import warmup
+
+logger = logging.getLogger(__name__)
 
 # Vite/React dev origins.
 DEV_ORIGINS = [
@@ -18,8 +25,22 @@ DEV_ORIGINS = [
 ]
 
 
+@asynccontextmanager
+async def _lifespan(app: FastAPI):
+    """Kick off model/store warmup in the background at startup.
+
+    The task is fire-and-forget so it does not block the server from accepting
+    requests: a message sent in the first few seconds still lazy-loads on the
+    request path, but by the time the user has typed anything the singletons are
+    usually already built, so the first real turn is fast. A reference is held on
+    `app.state` so the task is not garbage-collected mid-run.
+    """
+    app.state.warmup_task = asyncio.create_task(warmup())
+    yield
+
+
 def create_app() -> FastAPI:
-    app = FastAPI(title="ITAC AI Assistant", version="0.1.0")
+    app = FastAPI(title="ITAC AI Assistant", version="0.1.0", lifespan=_lifespan)
 
     app.add_middleware(
         CORSMiddleware,

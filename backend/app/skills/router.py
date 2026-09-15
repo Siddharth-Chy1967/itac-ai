@@ -49,6 +49,10 @@ class RouterDecision(BaseModel):
     skills: list[str] = Field(default_factory=list)
     needs_rag: bool = True
     wants_table: bool = False
+    # Best-practice pre-assessment (Section B): the user gave a facility description
+    # and wants the best practices to check for on the site visit. Independent of the
+    # flags above; drives the BP candidate + synthesis path in the orchestrator.
+    wants_bp_checklist: bool = False
     # Self-contained rewrite of the user's message for embedding-based retrieval,
     # with pronouns and vague references ("the AR") resolved against recent history.
     # None on the first turn (the raw message is already self-contained) and whenever
@@ -71,8 +75,9 @@ def build_router_prompt(message: str, history: list[Message], registry: dict[str
 
     decides = (
         "which skill instruction files apply, whether the past-report knowledge base "
-        "should be searched (needs_rag), and whether the answer should be rendered as "
-        "a table (wants_table)"
+        "should be searched (needs_rag), whether the answer should be rendered as "
+        "a table (wants_table), and whether the user wants a best-practice "
+        "pre-assessment checklist (wants_bp_checklist)"
     )
     if recent:
         decides += ", plus a self-contained search query for the knowledge base "\
@@ -95,6 +100,15 @@ def build_router_prompt(message: str, history: list[Message], registry: dict[str
         "wants_table: true only when the user wants a table, workbook, spreadsheet, "
         "or xlsx built or rendered. False when prose answers the request.",
         "",
+        "wants_bp_checklist: true when the user describes a facility (its industry, "
+        "processes, equipment, or materials) AND asks what best/sustainable practices "
+        "to look for, check, or note on a site visit. It is the pairing that matters: "
+        "a facility description together with a best-practices ask. False for a bare "
+        "practices question with no facility described, and false for questions about "
+        "one specific named past report. A request to WRITE or DRAFT the text of one "
+        "specific best practice (\"write me the LED lighting best practice\") is also "
+        "false: that is a drafting request, not a pre-assessment checklist.",
+        "",
         "Skills available:",
     ]
     for skill in _routable(registry):
@@ -114,7 +128,8 @@ def build_router_prompt(message: str, history: list[Message], registry: dict[str
     if recent:
         lines.append(
             'Respond ONLY with JSON: {"skills": [...], "needs_rag": true|false, '
-            '"wants_table": true|false, "retrieval_query": "..."}'
+            '"wants_table": true|false, "wants_bp_checklist": true|false, '
+            '"retrieval_query": "..."}'
         )
         lines.append(
             "retrieval_query: the knowledge base is searched by embedding similarity, "
@@ -130,8 +145,8 @@ def build_router_prompt(message: str, history: list[Message], registry: dict[str
         )
     else:
         lines.append(
-            'Respond ONLY with JSON: '
-            '{"skills": [...], "needs_rag": true|false, "wants_table": true|false}'
+            'Respond ONLY with JSON: {"skills": [...], "needs_rag": true|false, '
+            '"wants_table": true|false, "wants_bp_checklist": true|false}'
         )
 
     lines.append(f"Select at most {MAX_SKILLS} skills. Empty list if none apply.")
@@ -181,6 +196,7 @@ def parse_decision(raw: str, registry: dict[str, Skill]) -> RouterDecision:
         skills=chosen,
         needs_rag=bool(data.get("needs_rag", True)),
         wants_table=bool(data.get("wants_table", False)),
+        wants_bp_checklist=bool(data.get("wants_bp_checklist", False)),
         retrieval_query=retrieval_query,
     )
 
@@ -219,11 +235,12 @@ async def route_skills(
             decision = parse_decision(raw, registry)
             logger.info(
                 "Skill routing for %r -> skills=%s needs_rag=%s wants_table=%s "
-                "retrieval_query=%r",
+                "wants_bp_checklist=%s retrieval_query=%r",
                 message[:80],
                 decision.skills,
                 decision.needs_rag,
                 decision.wants_table,
+                decision.wants_bp_checklist,
                 decision.retrieval_query,
             )
             return decision
