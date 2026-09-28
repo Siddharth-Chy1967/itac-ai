@@ -1,13 +1,13 @@
 # ITAC AI Assistant
 
-A specialized AI assistant for the ASU **ITAC** (Industrial Training and Assessment Center). It combines:
+A specialized AI assistant for the ASU **ITAC** (Industrial Training and Assessment Center). It does two jobs:
 
-- **RAG** over past assessment reports (ingested locally, never committed), with SIC and section metadata on every chunk
-- **Deterministic lookup modes** for the questions students ask most (which reports, which ARC code, what to measure, most common ARs for an industry): these render straight from retrieved data, so a small local model cannot embellish them
-- An **auto-triggering skills system** that loads ITAC formatting conventions into context on demand
-- A **deterministic Excel rendering engine** — the LLM emits a structured `TableSpec`, Python (openpyxl) renders it, so formatting correctness is deterministic, not probabilistic
+1. **Answers questions about past assessments.** RAG over ingested reports, plus deterministic lookup modes for the questions students ask most.
+2. **Turns utility bills into an analysis workbook.** Drop a year of PDFs on a page, review the proposed columns, download the spreadsheet.
 
-The LLM layer is **provider-agnostic** (Gemini free tier by default; Ollama fully local). Switching providers is a `.env` change.
+Both run locally. Report data and client bills never leave the machine.
+
+Design principle throughout: **a model decides meaning, Python decides output.** The LLM classifies and summarizes; deterministic code renders every number, table and citation. Where a mode can be answered from retrieved data alone, it is, so a small local model cannot embellish it.
 
 ---
 
@@ -20,27 +20,120 @@ One chat box; the orchestrator picks the mode from the message. Every mode that 
 | **answer** | "How did past reports calculate compressed air leak savings?" | RAG + LLM, strictly grounded in the retrieved chunks, with source cards |
 | **enumerate** | "Which reports mention compressed air leaks?" | Deterministic list of the most recent matching reports (adaptive relevance floor) |
 | **arc** | "What ARC code fits installing occupancy sensors?" / "What is ARC 2.4236?" | Deterministic: official ARC list + AR titles mined from past reports |
-| **field** | "What data do I need to collect for insulating bare equipment?" | Deterministic: the inputs past write-ups of that AR recorded, how often, how they were obtained (measured, nameplate, plant personnel…) and any instruments named, each with a verbatim quote |
+| **field** | "What data do I need to collect for insulating bare equipment?" | Deterministic: the inputs past write-ups of that AR recorded, how often, how they were obtained (measured, nameplate, plant personnel) and any instruments named, each with a verbatim quote |
 | **sic_rank** | "Most common ARs for SIC 3444" | Deterministic top-10 AR themes for the industry, with SIC-family fallback and modern-report counts |
 | **checklist** | "Pre-assessment checklist for my site visit, SIC 2752, commercial printer" | Two-pass waterfall (same SIC + similar process), AR themes summarized by the LLM |
 | **summarize** | "Summarize the vitals of AR-5 in AS0612" | Fetches that exact report/AR by id (never semantic top-k) and summarizes it |
 | **best practice** | "Best practices to check at a plastics plant" / "Write the LED lighting best practice" | Checklist from the `bp_reference` collection; write-ups render the official text verbatim |
-| **table / xlsx** | "Put these utility bills in an Excel table" | LLM emits a `TableSpec`; openpyxl renders a downloadable workbook |
+| **table / xlsx** | "Put these numbers in an Excel table" | LLM emits a `TableSpec`; openpyxl renders a downloadable workbook |
+
+---
+
+## Utility bill analysis (`/bills`)
+
+Upload utility PDFs, get an analysis workbook. One source PDF can hold a year of bills; grouping splits it.
+
+### The pipeline
+
+```
+uploaded PDFs
+  -> group each source PDF into individual bills      (bill_extraction)
+  -> extract every bill's printed values              (bill_value_extraction, cached)
+  -> relabel readings from where OCR found them       (grid)
+  -> interpret the labels those bills printed         (semantics)
+  -> REVIEW GATE: proposed columns shown to the user
+  -> pivot into per-meter monthly sheets              (shape)
+  -> render the workbook                              (workbook)
+```
+
+### Why the review gate exists
+
+Column layout is the one part a model genuinely influences. Showing the proposed columns before anything is written makes a mistake a two-second fix rather than a wrong spreadsheet someone forwards to a client. Nothing is written to disk until the layout is confirmed.
+
+### How labels become columns
+
+`semantics.py` resolves each printed label in this order:
+
+1. A previously accepted mapping for that utility, reused verbatim
+2. `SEED_TERMS`: **99 labels resolved by rules, no model at all**
+3. Anything left over goes to the model
+
+So a familiar bill needs no model judgement. A new utility company's unfamiliar wording is what reaches step 3, which is exactly what the review gate is there to catch.
+
+The model sees **labels, never amounts.** Column merging is by meaning, not by per-company rules.
+
+### Why OCR, not just the vision model
+
+The vision model reads *what* the numbers are well, and guesses badly at *which label* owns which number once they sit in a table. On SRP bills it returned every reading labelled "Energy", with the row's real name filed elsewhere.
+
+`grid.py` fixes this with geometry instead of judgement. RapidOCR reports each text box and its position; a label and its value share a printed line, so pairing them is arithmetic on coordinates. No model is involved: the numbers come from OCR, the pairing from position, and the meaning of each label is still decided later by `semantics`.
+
+`grid.py` only ever rewrites `measurements` (meter readings). It never touches charge rows, so it cannot affect the charge columns.
+
+### Validation
+
+`validation_checks.py` runs **offline arithmetic only and never modifies an extracted value.** It sums individual charges, taxes and signed discounts and compares them against the printed current charges, excluding payments, carried-forward balances and repeated subtotals so nothing is counted twice. A match is an arithmetic check, not proof of complete extraction. Months that do not reconcile are highlighted in the workbook for review.
+
+### What runs when
+
+- **One bill at a time, strictly in order.** One Ollama instance holds one model in VRAM, so two bills at once do not go twice as fast; they contend, and on a smaller card they fail.
+- **Upload returns immediately.** The HTTP layer never waits for the worker: you get a job id and the browser polls.
+- **One file's failure is that file's failure.** A 40-bill batch where bill 7 is a scanned fax still delivers the other 39.
+- **Cancellation is cooperative.** A cancelled job stops before its next file, so caches and workbooks are never truncated.
+- **State lives in memory, work lives on disk.** A restart loses the job list but never the expensive part: re-running a batch re-reads its caches and skips the model.
+
+### How long it takes
+
+Measured on a 24-page, 12-bill PDF: roughly **3.3 minutes per bill**, so about **35 to 40 minutes for 12 months** on a cold run. A re-run against warm caches finishes in one to two minutes because the model is skipped. Confirming the layout at the review gate does no model work at all.
+
+If that is too slow, the levers are `BILLS_OCR_DPI` and `BILLS_IMAGE_MAX_SIDE`. Lower means faster and less accurate; leave them alone until you have seen the quality at defaults.
+
+### Where the output goes
+
+Each upload gets its own folder:
+
+```
+backend/data/bills/<job-id>/
+├── 001_<your upload>.pdf
+├── analysis_cache/          # per-page grouping analysis, keyed by document hash
+├── extraction_cache/        # per-bill extractions, keyed by file fingerprint
+├── output/                  # the grouped single-bill PDFs
+└── Utility Analysis.xlsx    # the workbook
+```
+
+Use the download button rather than digging through the folders. Caches are per job folder, so re-uploading the same PDF starts cold.
+
+### API
+
+| Method | Route | Purpose |
+| --- | --- | --- |
+| `POST` | `/api/bills/upload` | Accept PDFs, return a job id |
+| `GET` | `/api/bills` | List jobs |
+| `GET` | `/api/bills/{id}` | Job status and per-file progress |
+| `GET` | `/api/bills/{id}/columns` | The proposed column layout |
+| `POST` | `/api/bills/{id}/columns` | Accept the layout (with corrections) and build |
+| `GET` | `/api/bills/{id}/download` | The finished workbook |
+| `POST` | `/api/bills/{id}/cancel` | Stop a running job |
+| `DELETE` | `/api/bills/{id}` | Delete a job and its folder |
 
 ---
 
 ## What's implemented vs. still stubbed
 
-**Implemented:** all chat modes above, streaming `/api/chat`, `/api/health`, `/api/skills`, `/api/export` (xlsx download), Gemini and Ollama providers, the report/ARC/best-practice ingest CLIs, model warmup at startup, the Chat page, and the Docker launch (`start.bat` / `stop.bat`).
+**Implemented:** all chat modes above, the full bill pipeline and `/bills` page, streaming `/api/chat`, `/api/health`, `/api/skills`, `/api/export`, the eight `/api/bills` routes, Gemini and Ollama providers, the report/ARC/best-practice ingest CLIs, startup warmup, and the Docker launch (`start.bat` / `stop.bat`).
 
 **Not built yet:**
 
-- **Ingest API** — `backend/app/api/ingest.py` is empty; there are no `/api/ingest` or `/api/documents` endpoints. Ingest runs from the command line (below).
-- **Knowledge Base page** — `/knowledge` shows a placeholder until that API exists.
-- **Anthropic provider** — `backend/app/llm/anthropic.py` is empty; `LLM_PROVIDER=anthropic` raises a clear "not implemented" error.
-- **`backend/app/rag/pipeline.py`** — an empty placeholder; retrieval lives in `retrieve.py` and the orchestrator.
+- **Ingest API.** There are no `/api/ingest` or `/api/documents` endpoints; ingest runs from the command line (below). `backend/app/api/ingest.py` has been deleted rather than left as an empty placeholder.
+- **Knowledge Base page.** Removed from the frontend. The app serves `/chat` and `/bills`.
+- **Anthropic provider.** `backend/app/llm/anthropic.py` is empty; `LLM_PROVIDER=anthropic` raises a clear "not implemented" error.
+- **`backend/app/rag/pipeline.py`.** An empty placeholder; retrieval lives in `retrieve.py` and the orchestrator.
 
-The Skills and Notes Guide pages were removed from the frontend; skills still auto-load in chat.
+### Bill model provider is Ollama-only
+
+The bill pipeline talks to Ollama directly (`/api/chat`, `/api/tags`, `/api/show`, images base64-encoded in Ollama's format). `BILLS_VLM_MODEL` switches the model **within Ollama**; it cannot point at a hosted API.
+
+The chat side does have a provider abstraction (`app/llm/`), but `LLMProvider.complete()` takes no images and no output schema, so the bill pipeline cannot use it as written. Making bills provider-agnostic means widening that interface. The seam is small: bills only calls six things on its client (`cache_label`, `describe`, `close`, `ensure_ready`, `parse_pdf`, `parse_text`), and `pipeline.py:_client_factory` is the single place the client is constructed.
 
 > Full implementation spec: [`docs/itac-ai-architecture.md`](docs/itac-ai-architecture.md).
 
@@ -48,7 +141,23 @@ The Skills and Notes Guide pages were removed from the frontend; skills still au
 
 ## ⚠️ Data privacy wall
 
-**Report data never ships to GitHub.** The `data/` directory (raw uploads + the ChromaDB vector store) and `.env` are gitignored. The repository contains **code and skills only**. Each deployment ingests its own corpus locally.
+**Client data never ships to GitHub.** The repository contains **code and skills only.** Gitignored:
+
+| Path | What it holds |
+| --- | --- |
+| `**/data/reports/` | Raw assessment reports |
+| `**/data/chroma/` | The ChromaDB vector store built from them |
+| `**/data/bills/` | Uploaded client utility bills, caches and generated workbooks |
+| `backend/tests/bills/fixtures/` | Real client bills kept as local-only regression fixtures |
+| `Utility_Bill_Share_*/` | The standalone extractor's working folder |
+| `.env` | Provider selection and API keys |
+
+Note the `**/` prefixes. Patterns written as `data/chroma/` are anchored to the repo root by git and silently fail to match `backend/data/chroma/`, which is what this project actually uses.
+
+Two consequences worth knowing:
+
+- **A fresh clone has an empty knowledge base.** The ingest CLIs ship, but the corpus does not. Each deployment ingests its own.
+- **50 of the tests skip on a fresh clone.** Every test touching the real-bill fixtures guards with `requires_fixtures`, so the suite passes without them. Those 50 are the regression tests that verify real client bills end to end, so GitHub is not a complete test environment. Keep the fixture set backed up privately; it cannot be recovered from the repo.
 
 **Confirm with ITAC leadership before ingesting any client reports.**
 
@@ -56,13 +165,14 @@ The Skills and Notes Guide pages were removed from the frontend; skills still au
 
 ## Stack
 
-| Layer     | Tech                                                          |
-| --------- | ------------------------------------------------------------- |
-| Backend   | Python 3.11, FastAPI, pydantic-settings, ChromaDB, sentence-transformers (`nomic-embed-text-v1.5`, fp16 on CUDA), python-docx, openpyxl |
-| LLM       | Provider adapter: Gemini · Ollama (Anthropic not yet implemented) |
-| Frontend  | Vite + React + Tailwind, served by nginx in Docker            |
-| Packaging | docker-compose (backend + frontend; Ollama runs on the host)  |
-| Tests     | pytest (356 tests, offline, fakes for the store/embedder/LLM) |
+| Layer | Tech |
+| --- | --- |
+| Backend | Python 3.11, FastAPI, pydantic-settings, ChromaDB, sentence-transformers (`nomic-embed-text-v1.5`, fp16 on CUDA), python-docx, openpyxl |
+| Bills | pypdf + pymupdf (split and render), RapidOCR (CPU, box geometry), Qwen2.5-VL via Ollama, openpyxl |
+| LLM | Provider adapter: Gemini, Ollama (Anthropic not yet implemented) |
+| Frontend | Vite + React + Tailwind, served by nginx in Docker |
+| Packaging | docker-compose (backend + frontend; Ollama runs on the host) |
+| Tests | pytest, 637 tests, offline, fakes for the store/embedder/LLM |
 
 ## Theme
 
@@ -79,12 +189,21 @@ The ITAC logo lives at `frontend/public/itac-logo.png` and appears in the app he
 
 ```
 itac-ai/
-├── backend/    # FastAPI app: api, llm adapters, skills engine, rag, xlsx, chat orchestrator
-│   └── app/rag/   # extract/chunk/embed/store, retrieve, waterfall (checklist, SIC ranking,
-│                  # best practice), fielddata (on-site data guide), ingest CLIs
-├── skills/     # Markdown skill files (committed — contain no client data)
-├── data/       # reports/ and chroma/ are GITIGNORED; reference/ (ARC list, Best Practice list) is committed
-├── frontend/   # Vite + React + Tailwind SPA
+├── backend/
+│   └── app/
+│       ├── api/      # health, chat, skills, export, bills
+│       ├── llm/      # provider adapters (base, factory, gemini, ollama)
+│       ├── chat/     # orchestrator, mode routing, warmup
+│       ├── rag/      # extract/chunk/embed/store, retrieve, waterfall
+│       │             # (checklist, SIC ranking, best practice),
+│       │             # fielddata (on-site data guide), ingest CLIs
+│       ├── bills/    # grouping, extraction, grid (OCR geometry), semantics,
+│       │             # shape, workbook, validation_checks, jobs, pipeline
+│       └── xlsx/     # TableSpec -> openpyxl renderer
+├── skills/     # Markdown skill files (committed, contain no client data)
+├── data/       # reports/, chroma/ and bills/ are GITIGNORED;
+│               # reference/ (ARC list, Best Practice list) is committed
+├── frontend/   # Vite + React + Tailwind SPA (/chat, /bills)
 └── docs/       # Architecture blueprint
 ```
 
@@ -107,23 +226,32 @@ See the [architecture spec §2](docs/itac-ai-architecture.md) for the full file-
 
 ## Getting started
 
-> Fastest path is **Docker** (below). The manual backend/frontend steps are for local development.
+> Fastest path is **Docker** (below). The manual steps are for local development.
 
 ### 1. Configure
 
 ```bash
 cp .env.example .env
-# edit .env — set LLM_PROVIDER and the matching API key
+# edit .env: set LLM_PROVIDER and the matching API key
 ```
+
+Two settings worth checking before your first run:
+
+- **`WARMUP_ON_STARTUP`** defaults to `true`, which pre-builds the embedder, the three Chroma collections and the chat model at boot so your first message is fast. Set it to `false` and everything loads on the first request instead, which means waiting while you have already typed.
+- **`LLM_PROVIDER=ollama`** requires Ollama to actually be running. If it is not, you will see repeated `Ollama connection error` lines and skill routing will fall back to the default mode.
 
 ### 2. Backend
 
 ```bash
 cd backend
 python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
-pip install -e .            # or: pip install -r requirements.txt
+pip install -e .
 uvicorn app.main:app --reload
 ```
+
+`Application startup complete` appears immediately; the server accepts connections while warmup continues in the background. The real "ready" signals are `Warmup: embedder + stores ready` and `Warmup: Ollama chat model loaded`.
+
+Note that `.env` lives at the repo root, outside the directory `--reload` watches, so a change to it needs a manual restart. Settings are read once per process (`get_settings` is `lru_cache`d).
 
 ### 3. Frontend
 
@@ -133,12 +261,12 @@ npm install
 npm run dev
 ```
 
-### Or with Docker (recommended — one command)
+### Or with Docker (recommended, one command)
 
 Requires **Docker Desktop** (with WSL2 backend on Windows). From the repo root:
 
 ```bash
-cp .env.example .env     # then edit .env: set LLM_PROVIDER + the matching API key
+cp .env.example .env     # then edit .env
 docker compose up --build
 ```
 
@@ -146,12 +274,12 @@ Open **http://localhost:8080**.
 
 What it does:
 
-- **frontend** — builds the Vite SPA and serves it with nginx on `:8080`, proxying `/api` to the backend (same-origin, so no CORS; chat SSE streams through unbuffered).
-- **backend** — FastAPI + RAG on CPU. Your corpus (`./data`, incl. the ~800MB Chroma DB) and `.env` stay on the host and are mounted/injected at runtime — never baked into an image.
-- The embedding model (~500MB) downloads when the backend first starts (models are warmed up at startup) and is cached in a named volume, so later starts are fast.
-- A `.env` file is required: compose (and `start.bat`) will not start without it. For a key-free local setup use `LLM_PROVIDER=ollama` and an installed `OLLAMA_MODEL`.
+- **frontend** builds the Vite SPA and serves it with nginx on `:8080`, proxying `/api` to the backend (same-origin, so no CORS; chat SSE streams through unbuffered).
+- **backend** runs FastAPI + RAG. Your corpus (`./data`, including the Chroma DB) and `.env` stay on the host and are mounted or injected at runtime, never baked into an image.
+- The embedding model (~500MB) downloads on first start into a named volume, so later starts are fast. The container sets `HF_HOME=/srv/hf-cache`, which means it does **not** reuse a model already cached in your Windows user profile; expect one re-download.
+- A `.env` file is required: compose (and `start.bat`) will not start without one.
 
-**If `LLM_PROVIDER=ollama`:** run Ollama on the host as usual (`ollama serve`, model pulled). The backend container reaches it automatically via `host.docker.internal` — this keeps chat on your host GPU. Gemini/Anthropic providers need no extra setup.
+**If `LLM_PROVIDER=ollama`:** run Ollama on the host as usual (`ollama serve`, model pulled). The backend container reaches it via `host.docker.internal`, which keeps inference on your host GPU. This is also what the bill pipeline uses.
 
 Common commands:
 
@@ -163,25 +291,36 @@ docker compose down            # stop
 
 ---
 
+## Working on this repo
+
+`git add -A`, `commit` and `push` are safe to run while a bill batch is processing. They only read the working tree, and everything the batch writes is gitignored.
+
+Avoid `git pull`, `checkout`, `stash` and `reset` while a batch is running. Those modify files under `backend/`, which `--reload` is watching, and a reload loses the in-memory job list. The disk caches survive, so a re-run is fast, but the progress you were watching is gone.
+
+---
+
 ## Build order
 
 Implemented and verified end-to-end in this sequence (see [spec §11](docs/itac-ai-architecture.md)):
 
 1. Config + LLM layer (Gemini + Ollama) + `/api/health` + streaming `/api/chat`
 2. Skills loader + router + `/api/skills`
-3. Excel engine (`TableSpec` → xlsx) + tests + table mode
-4. RAG pipeline + citations (ingest via CLI; the ingest/documents endpoints are still to do)
-5. Frontend: Chat page (Knowledge Base is a placeholder; Skills and Notes Guide pages removed)
+3. Excel engine (`TableSpec` to xlsx) + tests + table mode
+4. RAG pipeline + citations (ingest via CLI)
+5. Frontend: Chat page
 6. docker-compose + one-click `start.bat` / `stop.bat`
 7. Feature 1: ARC code lookup with precedent mining; enumerate-mode fixes
 8. Feature 2: pre-assessment checklist waterfall (SIC + process similarity) and SIC top-10 AR ranking
 9. Feature 3: on-site field data guide; summarize mode; Best Practice checklist and write-ups
+10. Feature 4: the utility bill pipeline, `/bills` page and review gate
 
 ### Recent changes
 
-- **Result cap:** every mode that lists results (enumerate, source cards, checklist themes, SIC ranking, ARC candidates, field parameters, best-practice items) shows at most 10.
-- **Field data guide:** write-ups now count only when their AR title is genuinely the same recommendation (similarity plus distinctive-word coverage), text is trimmed to the AR's own detail section, and each parameter reports how past write-ups obtained it, with verbatim evidence. Checked against the source reports for 65 AR types.
-- **SIC ranking:** grouping no longer merges unrelated ARs that share generic words (e.g. motors with lighting/AC, pallets with cardboard); labels use the majority phrasing; ties order deterministically and single-report themes are flagged.
+- **Utility bill pipeline (new).** Upload to workbook, with the column review gate before anything is written. Label interpretation is by meaning rather than per-company rules; reading labels are corrected from OCR box geometry; reconciliation is arithmetic only and never edits an extracted value.
+- **Ignore rules corrected.** `data/reports/` and `data/chroma/` were anchored to the repo root and never matched `backend/data/`. Re-anchored with `**/`, and `**/data/bills/` added.
+- **Result cap.** Every mode that lists results shows at most 10.
+- **Field data guide.** Write-ups count only when their AR title is genuinely the same recommendation (similarity plus distinctive-word coverage), text is trimmed to the AR's own detail section, and each parameter reports how past write-ups obtained it, with verbatim evidence. Checked against the source reports for 65 AR types.
+- **SIC ranking.** Grouping no longer merges unrelated ARs that share generic words (motors with lighting, pallets with cardboard); labels use the majority phrasing; ties order deterministically and single-report themes are flagged.
 
 ---
 
