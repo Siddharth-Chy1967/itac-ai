@@ -1,7 +1,7 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import AppHeader from "./components/AppHeader.jsx";
+import Bills from "./pages/Bills.jsx";
 import Chat from "./pages/Chat.jsx";
-import KnowledgeBase from "./pages/KnowledgeBase.jsx";
 
 export default function App() {
   return (
@@ -12,7 +12,7 @@ export default function App() {
           <Routes>
             <Route path="/" element={<Navigate to="/chat" replace />} />
             <Route path="/chat" element={<Chat />} />
-            <Route path="/knowledge" element={<KnowledgeBase />} />
+            <Route path="/bills" element={<Bills />} />
             <Route path="*" element={<Navigate to="/chat" replace />} />
           </Routes>
         </main>

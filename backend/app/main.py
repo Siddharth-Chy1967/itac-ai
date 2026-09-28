@@ -12,8 +12,9 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from .api import chat, export, health, skills
+from .api import bills, chat, export, health, skills
 from .chat.orchestrator import warmup
+from .config import get_settings
 
 logger = logging.getLogger(__name__)
 
@@ -35,8 +36,18 @@ async def _lifespan(app: FastAPI):
     usually already built, so the first real turn is fast. A reference is held on
     `app.state` so the task is not garbage-collected mid-run.
     """
-    app.state.warmup_task = asyncio.create_task(warmup())
-    yield
+    if get_settings().warmup_on_startup:
+        app.state.warmup_task = asyncio.create_task(warmup())
+    else:
+        logger.info("Warmup disabled; chat singletons load on first use.")
+    # The bill worker must be created on the running loop, and stopped with it, so
+    # a batch can never outlive the app that is reporting its progress.
+    store = bills.get_store()
+    store.start()
+    try:
+        yield
+    finally:
+        await store.stop()
 
 
 def create_app() -> FastAPI:
@@ -54,6 +65,7 @@ def create_app() -> FastAPI:
     app.include_router(chat.router, prefix="/api")
     app.include_router(skills.router, prefix="/api")
     app.include_router(export.router, prefix="/api")
+    app.include_router(bills.router, prefix="/api")
     return app
 
 

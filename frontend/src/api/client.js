@@ -59,3 +59,62 @@ export async function streamChat({ message, history = [], mode = "chat", signal,
     }
   }
 }
+
+// --- Utility-bill uploads (/api/bills) ---------------------------------------
+//
+// Processing a batch takes minutes, so upload returns a job id immediately and
+// the page polls. Nothing is written to a workbook until the proposed column
+// layout has been confirmed.
+
+async function json(res, what) {
+  if (!res.ok) {
+    let detail = `${res.status}`;
+    try {
+      const body = await res.json();
+      if (body?.detail) detail = body.detail;
+    } catch {
+      // A 413 from nginx is HTML, not JSON: keep the status code.
+    }
+    throw new Error(`${what}: ${detail}`);
+  }
+  return res.json();
+}
+
+/** POST /api/bills/upload -> the created job. `files` is a FileList or array. */
+export async function uploadBills(files) {
+  const form = new FormData();
+  for (const file of files) form.append("files", file, file.name);
+  const res = await fetch("/api/bills/upload", { method: "POST", body: form });
+  return json(res, "Upload failed");
+}
+
+/** GET /api/bills/{id} -> job status, progress, sheets and flagged months. */
+export async function getBillJob(id) {
+  return json(await fetch(`/api/bills/${id}`), "Could not read job status");
+}
+
+/** GET /api/bills/{id}/columns -> the proposed layout for the review gate. */
+export async function getBillColumns(id) {
+  return json(await fetch(`/api/bills/${id}/columns`), "Could not read columns");
+}
+
+/** POST /api/bills/{id}/columns -> accept the layout and build the workbook. */
+export async function confirmBillColumns(id, overrides = []) {
+  const res = await fetch(`/api/bills/${id}/columns`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ overrides }),
+  });
+  return json(res, "Could not build the workbook");
+}
+
+/** POST /api/bills/{id}/cancel -> stop the batch before its next file. */
+export async function cancelBillJob(id) {
+  return json(await fetch(`/api/bills/${id}/cancel`, { method: "POST" }),
+              "Could not cancel the job");
+}
+
+/** The workbook download URL for a finished job. */
+export function billWorkbookUrl(id) {
+  return `/api/bills/${id}/download`;
+}

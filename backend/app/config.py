@@ -192,6 +192,40 @@ class Settings(BaseSettings):
     rag_field_title_min_combined: float = 0.93
     rag_field_title_coverage_weight: float = 0.25
 
+    # --- Utility-bill extraction (Session F) --------------------------------
+    # Vision model that reads bill pages. Qwen2.5-VL is the calibrated default;
+    # it must be a model Ollama reports with vision capability.
+    bills_vlm_model: str = "qwen2.5vl:latest"
+    # Text-only model for page checks that need no image. Blank reuses the VLM so
+    # only one model occupies VRAM.
+    bills_text_model: str = ""
+    # Context sizing. Raised per request up to the max for long bills.
+    bills_num_ctx: int = 16384
+    bills_max_num_ctx: int = 32768
+    bills_timeout_seconds: float = 900.0
+    bills_keep_alive: str = "15m"
+    # OCR (RapidOCR on CPU) feeds exact characters alongside the page image.
+    bills_ocr: bool = True
+    bills_ocr_dpi: int = 300
+    bills_ocr_min_score: float = 0.5
+    bills_image_max_side: int = 1344
+    bills_image_token_budget: int = 6000
+    # Attempts per request when the reply is not valid JSON for the schema.
+    bills_max_attempts: int = 2
+    # Working root for bill jobs: uploads, page/extraction caches and workbooks.
+    # Inside Docker this resolves under the mounted ./data volume, never the image.
+    bills_path: str = "./data/bills"
+    # Reconciliation tolerance in dollars. Real bills round to the cent, so an exact
+    # equality test flags healthy bills for review; see validation_checks.
+    bills_amount_tolerance: float = 0.02
+
+    # Pre-build the chat/retrieval singletons at startup (see chat.orchestrator.warmup).
+    # That puts torch, the embedding model and three Chroma collections in memory
+    # before anything asks for them, which a bill-only run never uses and which
+    # competes with the VLM for the same GPU. Turn it off on a constrained machine:
+    # the first chat turn then pays the load cost instead.
+    warmup_on_startup: bool = True
+
     @field_validator(
         "llm_provider",
         "gemini_model",

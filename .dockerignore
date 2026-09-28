@@ -17,3 +17,8 @@ README.md
 backend/.venv/
 backend/venv/
 backend/*.log
+
+# Real client utility bills: local-only regression fixtures and the original share
+# folder. Never copied into an image.
+Utility_Bill_Share_*/
+backend/tests/

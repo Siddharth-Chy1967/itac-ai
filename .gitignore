@@ -1,11 +1,20 @@
-﻿.venv/
+.venv/
 venv/
 node_modules/
-data/reports/
-data/chroma/
+**/data/reports/
+**/data/chroma/
 *.log
 .env
 __pycache__/
 *.pyc
 *.egg-info/
 frontend/dist/
+
+# Client utility bills + extractor venv (real client data, never commit)
+Utility_Bill_Share_*/
+
+# Real client bills used as local-only regression fixtures (never commit)
+backend/tests/bills/fixtures/
+
+# Bill job workspaces: uploaded client PDFs, grouped bills, extraction cache
+**/data/bills/

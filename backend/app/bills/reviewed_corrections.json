@@ -1,0 +1,47 @@
+{
+  "format_version": 1,
+  "model": "gpt-5.6-terra",
+  "cache_version": "bill_extraction_v3",
+  "reviewed_by": "Codex: visual comparison against supplied grouped PDF pages",
+  "reviewed_on": "2026-09-03",
+  "bills": {
+    "1508ea01fc5c72adff7433fd67c0fc26ad89aa57d54bde9f9d0aea19877f7b1e": {
+      "original_cache_sha256": "c6e994fc4c4881437f97d5b0bd381967817a1e36631105a1d5f993f3447e3a2b",
+      "changes": [
+        {"collection": "financial_entries", "entry_number": 4, "field": "amount_text", "label": "Balance Before Charges", "bill_page_number": 1, "old": "$345.59", "new": "-$345.59", "reason": "Electricity bill 006: source prints a minus sign on Balance Before Charges. This is the deposit-interest credit balance, not a positive balance."}
+      ]
+    },
+    "698d312622138ccd3cab0d7727b6912e7780e22dd0fa0053485e845731358659": {
+      "original_cache_sha256": "ad1cfd7949383208530f30bb101f508f756f04997c1f8bdac32becd5c94ec082",
+      "changes": [
+        {"collection": "financial_entries", "entry_number": 15, "field": "amount_text", "label": "City Sales Tax", "bill_page_number": 1, "old": "66.53", "new": "86.53", "reason": "Water bill 004: visual source review reads City Sales Tax as 86.53, not 66.53. Supplied page 1, printed page 1 of 4."}
+      ]
+    },
+    "9201242c4536341580b071d4415b8347207ad1448f59705d6fd5fed4146a74a6": {
+      "original_cache_sha256": "f51d3c911ce9fb133abf610b586fcff90f2cc4f5a1bea38ea24e86e8c3ac6021",
+      "changes": [
+        {"collection": "financial_entries", "entry_number": 14, "field": "amount_text", "label": "City Sales Tax", "bill_page_number": 1, "old": "30.31", "new": "80.31", "reason": "Water bill 010: visual source review reads City Sales Tax as 80.31, not 30.31. Supplied page 1, printed page 1 of 4."}
+      ]
+    },
+    "91079377ae973b9547e00cb23d7f606b922bcdc8d2a61314c553a6daf382fbb4": {
+      "original_cache_sha256": "be7083b1c4a22558fc9b4e125093c7e672a4d1b3801cf893a5e2c05e22a51d0d",
+      "changes": [
+        {"collection": "financial_entries", "entry_number": 15, "field": "amount_text", "label": "City Sales Tax", "bill_page_number": 1, "old": "30.31", "new": "80.31", "reason": "Water bill 011: visual source review reads City Sales Tax as 80.31. The separate, genuine service-end-date discrepancy between supplied pages remains unchanged in extraction_notes."}
+      ]
+    },
+    "58b23c2ff7c30b632f320531beca84654b474eaa68c6b3d6480bde97a705b700": {
+      "original_cache_sha256": "8c454c54b94d3a2822706253143066a36d18826b15d1718d897288dfb9660361",
+      "changes": [
+        {"collection": "financial_entries", "entry_number": 6, "field": "amount_text", "label": "Natural Gas Sales Undertake", "bill_page_number": 2, "old": "$1,367.87", "new": "$(1,367.97)", "reason": "Gas bill 002: enlarged source-page inspection shows parentheses and cents .97. Both the extracted sign and one digit were wrong. Correction is from the printed row, not calculated from its subtotal."}
+      ]
+    },
+    "e69c311217789c23b499757fab16efb3f172c06c453a505bf54b11667b2b7794": {
+      "original_cache_sha256": "97fe54f9150438980934fcb68c9cca70e7d3ab47cd1ad8e344c3e43e655f0d57",
+      "changes": [
+        {"collection": "bill", "field": "current_charges_text", "bill_page_number": 1, "old": "$31,741.75", "new": "$32,041.75", "reason": "Gas bill 005: source page 1 Total Current Charges reads $32,041.75. Page 2 Account Total independently repeats that amount."},
+        {"collection": "financial_entries", "entry_number": 11, "field": "amount_text", "label": "Total Current Charges", "bill_page_number": 1, "old": "$31,741.75", "new": "$32,041.75", "reason": "Gas bill 005: same source-verified correction to the separately retained summary financial row."},
+        {"collection": "extraction_notes", "entry_number": 3, "field": "text", "bill_page_number": 1, "old": "Page 1 lists Total Current Charges as $31,741.75, while page 2 lists Account Total as $32,041.75; both printed values were preserved.", "new": "Source review: page 1 Total Current Charges and page 2 Account Total both read $32,041.75. The original extraction misread page 1; the original value and note are retained in Corrections and the unchanged cache.", "reason": "Remove the false source-conflict claim caused by the extraction misread. Preserve the original note in the audit trail."}
+      ]
+    }
+  }
+}

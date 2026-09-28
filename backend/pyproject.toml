@@ -26,6 +26,14 @@ dependencies = [
     "chromadb>=0.5",
     # Session E: ARC reference lookup (parses the official ARC list PDF)
     "pypdf>=4",
+    # Session F: utility-bill extraction (PDF render, OCR, local VLM, Excel analysis)
+    "pymupdf>=1.24",
+    "rapidocr>=3",
+    "onnxruntime>=1.17",
+    "pandas>=2.2",
+    "numpy>=1.26",
+    "python-dotenv>=1",
+    "python-multipart>=0.0.9",  # multipart upload of bill PDFs
 ]
 
 [project.optional-dependencies]

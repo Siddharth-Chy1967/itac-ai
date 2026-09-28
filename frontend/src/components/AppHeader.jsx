@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 // Nav appears on every page; the ITAC logo is a required header element sitewide.
 const NAV = [
   { to: "/chat", label: "Chat" },
-  { to: "/knowledge", label: "Knowledge Base" },
+  { to: "/bills", label: "Utility Bills" },
 ];
 
 export default function AppHeader() {
