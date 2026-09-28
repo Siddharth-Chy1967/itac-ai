@@ -61,8 +61,18 @@ the bill has only one page.
 Provide a brief explanation for choosing the page role and utility classification.
 
 Additional grouping information:
-- bill_date: copy the explicitly labeled bill or invoice date.
-  Do not substitute the due date or a service date.
+- bill_date: copy the date the bill was issued, exactly as printed.
+  A bill prints several dates. This field is the issue date only, whatever
+  the page calls it: "Statement Date", "Bill Date", "Billing Date",
+  "Invoice Date", "Date Billed", "Date Issued", "Bill Prepared" and
+  "Statement of Account" all name it. Prefer a label containing
+  "statement" or "bill" when the page prints more than one of these.
+  Never return the due date ("Payment Due", "Due Date", "Pay By",
+  "Amount Due By"), a service or meter-read date, a prior statement
+  date, or a date from a historical usage table.
+  Every page of one bill prints the same issue date, so return the same
+  value on a continuation page as on its opening page. If this page does
+  not print the issue date, return null rather than the nearest other date.
 - invoice_number: copy the invoice number, not the account number.
 - billing_period_label: copy an explicitly named billing or delivery
   month from the current bill or account-detail heading.
@@ -350,7 +360,10 @@ def review_suspicious_boundaries(
 
 
 PROJECT_FOLDER = Path(__file__).resolve().parent
-PAGE_CACHE_VERSION = "page_analysis_v4"
+# Bumped whenever PAGE_ANALYSIS_INSTRUCTIONS changes: the prompt is not part of the
+# cache key, so a saved analysis made under older wording would otherwise be reused.
+# v5: bill_date is the issue/statement date under any label, never the due date.
+PAGE_CACHE_VERSION = "page_analysis_v5"
 
 
 def process_source_pdf(source_pdf, *, project_folder=PROJECT_FOLDER, inference_config=None):

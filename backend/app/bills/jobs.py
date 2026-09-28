@@ -92,6 +92,11 @@ class Job:
     workbook: Path | None = None
     warnings: list[str] = field(default_factory=list)
 
+    # Value extraction is the long phase and counts bills, not uploaded files: one
+    # PDF can hold a year of them, so file counts sit at 100% for the whole wait.
+    bills_total: int = 0
+    bills_done: int = 0
+
     _cancelled: bool = False
 
     @property
@@ -109,12 +114,21 @@ class Job:
         self.updated_at = _now()
 
     @property
-    def progress(self) -> tuple[int, int]:
+    def progress(self) -> tuple[int, int, str]:
+        """How far along the batch is, counted in whatever it is currently doing.
+
+        Grouping advances per uploaded file; value extraction, which is the part
+        that actually takes the time, advances per bill. Reporting the unit lets
+        the browser say "3 of 12 bills" instead of showing a full bar for the
+        thirty-five minutes after the last file was grouped.
+        """
+        if self.bills_total:
+            return self.bills_done, self.bills_total, "bills"
         done = sum(1 for f in self.files if f.state in ("done", "error", "skipped"))
-        return done, len(self.files)
+        return done, len(self.files), "files"
 
     def as_dict(self) -> dict:
-        done, total = self.progress
+        done, total, unit = self.progress
         rows = [row for plan in self.plans for row in plan.rows]
         return {
             "id": self.id,
@@ -123,7 +137,7 @@ class Job:
             "created_at": self.created_at,
             "updated_at": self.updated_at,
             "files": [f.as_dict() for f in self.files],
-            "progress": {"done": done, "total": total},
+            "progress": {"done": done, "total": total, "unit": unit},
             "bills": len(self.bills),
             "sheets": [
                 {
@@ -146,6 +160,9 @@ class Job:
             "unchecked": sum(1 for row in rows if row.status == "not_checked"),
             "warnings": self.warnings,
             "has_workbook": self.workbook is not None and self.workbook.is_file(),
+            # Shown next to the download button: the batch runs for long enough that
+            # people close the tab, and the file is then only findable on disk.
+            "workbook_path": str(self.workbook) if self.workbook is not None else None,
         }
 
 

@@ -114,9 +114,13 @@ def _grouped_paths(result) -> list[Path]:
 
 def _extract_bills(job: Job, grouped, workspace: Path, get_client, settings):
     bills = []
+    job.bills_total = len(grouped)
+    job.bills_done = 0
     for path in grouped:
         if job.cancelled:
             return bills
+        job.touch(message=f"Extracting bill {job.bills_done + 1} of {job.bills_total}: "
+                          f"{Path(path).name}.")
         fingerprint = sha256(Path(path).read_bytes()).hexdigest()
         try:
             bill, _, _ = bve.load_bill(
@@ -126,9 +130,15 @@ def _extract_bills(job: Job, grouped, workspace: Path, get_client, settings):
         except Exception as error:
             logger.exception("Extraction failed for %s", path)
             job.warnings.append(f"{Path(path).name}: {type(error).__name__}: {error}")
+            # A bill that failed is still a bill accounted for, so the bar advances
+            # rather than stalling at the one that broke.
+            job.bills_done += 1
+            job.touch()
             continue
         bill = name_rows_from_sections(bill)
         bills.append((fingerprint[:12], _with_printed_readings(job, bill, Path(path), settings)))
+        job.bills_done += 1
+        job.touch()
     return bills
 
 
@@ -186,5 +196,9 @@ def build_workbook(job: Job, *, settings=None) -> Path:
     if flagged:
         summary += (f" {flagged} month(s) did not reconcile against their printed "
                     "total and are highlighted for review.")
+    # Name the file's location in the message itself. A batch runs long enough that
+    # the tab is often closed by now, and the browser's own download is the only
+    # other way anyone would find it.
+    summary += f" Saved to {destination}."
     job.touch(JobState.DONE, summary)
     return destination

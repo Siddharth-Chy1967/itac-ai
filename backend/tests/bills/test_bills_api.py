@@ -172,7 +172,10 @@ class ApiTests(unittest.TestCase):
             created = upload(client)
             self.assertEqual(created.status_code, 200)
             job_id = created.json()["id"]
-            self.assertEqual(created.json()["progress"], {"done": 0, "total": 1})
+            # Before any bill is grouped, progress is still counted in uploaded files.
+            self.assertEqual(
+                created.json()["progress"], {"done": 0, "total": 1, "unit": "files"}
+            )
 
             status = client.get(f"/api/bills/{job_id}")
             self.assertEqual(status.status_code, 200)

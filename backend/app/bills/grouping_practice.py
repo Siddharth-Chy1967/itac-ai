@@ -1,3 +1,4 @@
+import re
 from datetime import datetime
 
 def has_complete_page_sequence(printed_numbers, printed_total_pages):
@@ -94,20 +95,94 @@ def has_field_conflict(page_records, field_name):
 
     return len(known_values) > 1
 
-def has_group_conflict(page_records):
-    fields_to_check = [
-        "printed_total_pages",
-        "utility_company",
-        "invoice_number",
-        "bill_date",
-        "billing_period_key",
+CONFLICT_FIELDS = [
+    "printed_total_pages",
+    "utility_company",
+    "invoice_number",
+    "bill_date",
+    "billing_period_key",
+]
+
+
+def normalize_account_number(value):
+    """An account number with its printed punctuation and spacing removed.
+
+    Bills print the same account as "019735300 - 0276883 - 4" and
+    "0197353000276883 4", so a character-level comparison finds a difference
+    where the page shows none.
+    """
+    if value is None:
+        return None
+
+    cleaned = re.sub(r"[^0-9a-z]+", "", str(value).casefold())
+
+    return cleaned or None
+
+
+def has_same_account(page_records):
+    """True when every page that prints an account number prints the same one."""
+    accounts = {
+        normalize_account_number(page.get("account_number"))
+        for page in page_records
+    }
+    accounts.discard(None)
+
+    return len(accounts) == 1
+
+
+def field_conflicts(page_records, *, ignore=()):
+    """The bill-level fields whose pages disagree, with the values they printed.
+
+    `ignore` drops a field from the check. Stage 2 uses it for `bill_date`, which
+    the model reads off the page rather than the page printing it structurally.
+    """
+    conflicts = {}
+
+    for field_name in CONFLICT_FIELDS:
+        if field_name in ignore:
+            continue
+
+        if has_field_conflict(page_records, field_name):
+            conflicts[field_name] = [
+                page.get(field_name) for page in page_records
+            ]
+
+    return conflicts
+
+
+def blocking_conflicts(page_records, completeness):
+    """Conflicts that should stop a group from being accepted.
+
+    A disagreement over `bill_date` alone is not one of them when the pages carry
+    complete printed numbering and one account number. Printed numbering ("1" and
+    "2 of 2") is on the page; `bill_date` is whichever date the model picked out of
+    the several a bill prints, so when the structure says one bill, a date that
+    differs means the model misread a date -- not that two bills were merged.
+
+    Where the numbering is absent or contradictory, `bill_date` still blocks: that
+    is the case the check was written for, and there is no stronger evidence to
+    fall back on.
+    """
+    trustworthy_structure = completeness == "complete" and has_same_account(page_records)
+
+    return field_conflicts(
+        page_records, ignore=("bill_date",) if trustworthy_structure else ()
+    )
+
+
+def describe_conflicts(conflicts):
+    """A reason naming each field and what its pages printed."""
+    parts = [
+        f"{field} {' vs '.join('null' if v is None else str(v) for v in values)}"
+        for field, values in conflicts.items()
     ]
 
-    for field_name in fields_to_check:
-        if has_field_conflict(page_records, field_name):
-            return True
+    return "Conflicting bill-level information: " + "; ".join(parts) + "."
 
-    return False
+
+def has_group_conflict(page_records):
+    """Kept for callers that only need a yes/no over every field."""
+    return bool(field_conflicts(page_records))
 
 
 def get_page_completeness(printed_numbers, printed_total_pages):
@@ -293,8 +368,10 @@ def group_bill_pages(pages):
 
         reason = None
 
-        if has_group_conflict(group):
-            reason = "Conflicting bill-level information."
+        conflicts = blocking_conflicts(group, completeness)
+
+        if conflicts:
+            reason = describe_conflicts(conflicts)
 
         elif completeness == "invalid":
             reason = "Invalid or contradictory printed numbering."

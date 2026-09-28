@@ -172,7 +172,9 @@ export default function Bills() {
 }
 
 function JobPanel({ job, running, onCancel, onReset }) {
-  const { done, total } = job.progress;
+  // `unit` is "bills" once value extraction starts. Counting uploaded files there
+  // would show a full bar for the whole of the longest phase.
+  const { done, total, unit } = job.progress;
   const percent = total ? Math.round((done / total) * 100) : 0;
   return (
     <section className="rounded-xl border border-slate-200 bg-white p-4">
@@ -196,8 +198,15 @@ function JobPanel({ job, running, onCancel, onReset }) {
         </div>
       </div>
 
-      <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
-        <div className="h-full bg-itac-blue transition-all" style={{ width: `${percent}%` }} />
+      <div className="mt-3 flex items-center gap-2">
+        <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-slate-100">
+          <div className="h-full bg-itac-blue transition-all" style={{ width: `${percent}%` }} />
+        </div>
+        {total ? (
+          <span className="shrink-0 text-xs tabular-nums text-slate-500">
+            {done} / {total} {unit}
+          </span>
+        ) : null}
       </div>
 
       <ul className="mt-3 divide-y divide-slate-100 text-sm">
@@ -319,6 +328,15 @@ function Result({ job }) {
           Download .xlsx
         </a>
       </div>
+
+      {job.workbook_path ? (
+        <p className="mt-3 text-xs text-slate-600">
+          Also saved on disk at{" "}
+          <code className="rounded bg-white/70 px-1 py-0.5 font-mono text-[11px] text-slate-800">
+            {job.workbook_path}
+          </code>
+        </p>
+      ) : null}
 
       <ul className="mt-3 space-y-1 text-xs text-slate-700">
         {job.sheets.map((sheet) => (
