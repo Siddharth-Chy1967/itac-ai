@@ -20,10 +20,11 @@ if TYPE_CHECKING:
 
 # The no-em-dash rule is baked in here permanently and is NOT routed (spec §5.1).
 BASE_SYSTEM_PROMPT = """\
-You are the ITAC AI Assistant, a specialized assistant for the ASU ITAC
+You are ARchie, the ITAC AI assistant, a specialized assistant for the ASU ITAC
 (Industrial Training and Assessment Center). You help staff and students
 with industrial energy/assessment reports, ITAC formatting conventions,
-and site-visit note-taking.
+and site-visit note-taking. Your name is ARchie (the "AR" is for Assessment
+Recommendation).
 
 Accuracy rules:
 - Be precise and concise. Do not invent facts, figures, savings, or citations.
@@ -57,8 +58,11 @@ Writing conventions:
 - Never use em dashes (—). Use commas, parentheses, or separate sentences
   instead. This rule is absolute.
 - Use clear, professional prose suitable for engineering assessment reports.
-Easter egg (applies ONLY to the direct question of who created/built you or who you are; do NOT let this leak into or override any other answer, the ITAC identity, or the accuracy rules above): if asked, respond playfully that your creator is "Siddharth, the goat." Never claim to be Siddharth yourself, you are the ITAC AI assistant; he built you.
+Easter egg (applies ONLY to the direct question of who created/built you or who you are; do NOT let this leak into or override any other answer, the ITAC identity, or the accuracy rules above): if asked, respond playfully that your creator is "Siddharth, the goat." Never claim to be Siddharth yourself, you are ARchie, the ITAC AI assistant; he built you.
+Team: if asked who is on the ITAC team (students, staff, professors), say that
+information has not been added to ARchie yet. Do not guess names.
 """
+# PENDING: team members, professors and Lyndee are to be added here once provided.
 
 _SKILLS_PREAMBLE = (
     "The following ITAC skill instructions apply to this request. They are "
@@ -138,9 +142,9 @@ student takes into the site visit:
 - First line: the basis, e.g. "Based on 14 past reports: 6 matching SIC 259x, 8
   matching your process description." Use the counts from the reference material.
 - Then one checkbox line per theme (at most 10), in the given order, phrased as a concrete field
-  action beginning "Check", e.g. "[ ] Check compressed air system: leaks, pressure
-  setpoints, controls". End each line with "(found in N past reports)" using the
-  theme's count.
+  action beginning "Check", in the form "[ ] Check <system>: <what to look at>",
+  written for that theme's own system. End each line with
+  "(found in N past reports)" using the theme's count.
 - Terse. No scores, no similarity or ranking commentary, no closing paragraph.
 - If the reference material marks the basis as thin, say so on the first line and
   still list the themes that exist."""
@@ -230,6 +234,91 @@ report voice:
   checklist, no closing commentary. Just the write-up(s)."""
 
 
+# On-site data guide for one AR type. The reference material holds the past write-ups
+# of that AR (their own text) plus what was counted across them. Written for every AR
+# type alike: nothing here names a particular recommendation.
+FIELD_MODE_INSTRUCTION = """\
+OUTPUT MODE: SITE-VISIT DATA GUIDE.
+The user is preparing to write up the Assessment Recommendation (AR) named in their
+message and needs to know what to gather on the site visit. The reference material
+holds past ITAC write-ups of that AR, each labeled with its report_id. Read how those
+write-ups calculated their savings and what values they used, then answer under these
+four headings, in this order:
+
+1. What to measure: the physical quantities to measure or observe on site, with units.
+2. Equipment and data loggers to bring: the instruments, meters and loggers the
+   write-ups used (or that are needed to get the measurements above), and what each
+   is used for.
+3. Data to collect on site: nameplate data, counts, inventories, operating hours and
+   schedules, set points, photos, and questions to ask facility staff.
+4. Information needed for the calculations: every input to the savings and cost
+   equations the write-ups used, including what comes from utility bills, vendor
+   quotes or standard references rather than the site visit.
+
+Rules:
+- Ground every item in the write-ups. After each item, cite the report_id(s) it came
+  from in parentheses, e.g. "(AS0612, AS0599)".
+- If a heading needs something standard that none of the write-ups records, you may
+  add it in a final line under that heading starting "General practice (not from past
+  reports):". Keep those few and clearly marked.
+- Short bullet lines, no preamble, no closing paragraph. First line: "Based on N past
+  write-ups of <AR title>." using the count given in the material.
+- If the material says no past write-ups were found, say so in one line, then give the
+  four headings from general engineering practice, and label the whole answer as
+  general guidance, not drawn from past reports.
+- Never invent report_ids, savings figures or values."""
+
+
+# Short "what is this facility" intro shown above a SIC's AR frequency table.
+SIC_INTRO_INSTRUCTION = """\
+OUTPUT MODE: INDUSTRY INTRO.
+The reference material names an industry code and its official title. In 2 to 4
+short bullet lines under the heading "What this facility likely has", describe the
+processes and the major energy-using equipment a facility of that kind typically
+runs, so an assessor knows what to expect on site. General knowledge only; do not
+mention past reports, counts or recommendations (a table of those follows). No
+preamble, no closing line, never use em dashes."""
+
+
+def format_field_material(guide: "FieldGuide", *, max_writeups: int = 6,
+                          max_chars: int = 3500) -> str:
+    """The past write-ups of one AR, as reference material for FIELD_MODE_INSTRUCTION."""
+    if not guide.instances:
+        return (
+            "<reference_material>\n"
+            f"No past write-ups of \"{guide.topic}\" were found in the knowledge base.\n"
+            "</reference_material>"
+        )
+    title = guide.matched_titles[0][0] if guide.matched_titles else guide.topic
+    lines = [
+        "<reference_material>",
+        f"AR topic asked about: {guide.topic}",
+        f"Past write-ups found: {len(guide.instances)} (most common title: {title})",
+    ]
+    if not guide.exact_match:
+        lines.append(
+            "No AR on file has exactly that title; these are the closest recorded ARs. "
+            "Say so on the first line."
+        )
+    if guide.parameters:
+        lines.append("Inputs counted across the write-ups (label: write-ups recording it):")
+        lines.extend(f"- {p.label}: {p.count}" for p in guide.parameters)
+    if guide.methods:
+        lines.append("Instruments and sources named in the write-ups:")
+        lines.extend(f"- {m.label} ({m.kind}): {m.count}" for m in guide.methods)
+    lines.append("")
+    pairs = list(zip(guide.instances, guide.texts))[:max_writeups]
+    for i, (inst, text) in enumerate(pairs, 1):
+        body = text.strip()
+        if len(body) > max_chars:
+            body = body[:max_chars] + " [...]"
+        lines.append(f"[{i}] report_id={inst.report_id} fiscal_year={inst.era or '?'} "
+                     f"AR: {inst.title}")
+        lines.extend([body, ""])
+    lines.append("</reference_material>")
+    return "\n".join(lines)
+
+
 def _render_skills(skills: list["Skill"]) -> str:
     """Wrap each selected skill's markdown body in a labeled block (spec §5b)."""
     blocks = [_SKILLS_PREAMBLE]
@@ -248,6 +337,8 @@ def assemble_system_prompt(
     bp_checklist_mode: bool = False,
     bp_writeup_mode: bool = False,
     summarize_mode: bool = False,
+    field_mode: bool = False,
+    sic_intro_mode: bool = False,
 ) -> str:
     """Compose the full system prompt in spec §5 order.
 
@@ -269,7 +360,11 @@ def assemble_system_prompt(
 
     # (d) Output-mode instructions. Prose is the default; table mode switches the
     # model to emitting a ```tablespec JSON block the xlsx engine renders.
-    if summarize_mode:
+    if field_mode:
+        parts.append(FIELD_MODE_INSTRUCTION)
+    elif sic_intro_mode:
+        parts.append(SIC_INTRO_INSTRUCTION)
+    elif summarize_mode:
         parts.append(SUMMARIZE_MODE_INSTRUCTION)
     elif checklist_mode:
         parts.append(CHECKLIST_MODE_INSTRUCTION)
@@ -601,9 +696,13 @@ def render_sic_ranking_answer(result: "SicARRanking") -> str:
             f"counts is not a ranking."
         )
     if not result.era_confident:
+        recent = (
+            "None of these reports is" if result.modern_reports == 0
+            else f"Only {result.modern_reports} of these reports "
+                 f"{'is' if result.modern_reports == 1 else 'are'}"
+        )
         notes.append(
-            f"Only {result.modern_reports} of these reports "
-            f"{'is' if result.modern_reports == 1 else 'are'} from 2017 or later, so "
+            f"{recent} from 2017 or later, so "
             f"the 'since 2017' counts are too small to tell current advice from "
             f"superseded advice. Check anything lighting or motor related against "
             f"today's practice before using it."

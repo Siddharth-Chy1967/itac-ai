@@ -52,10 +52,35 @@ def shape(bills, *, tolerance=TOLERANCE):
     labels = [l for _, b in bills for l in labels_from_bill(b)]
     mapping = interpret_labels(labels, client=None)
     return build_sheets(bills, mapping, parse_amount=parse_amount,
-                        parse_number=parse_number, tolerance=tolerance)
+                        parse_number=parse_number, tolerance=tolerance,
+                        derive_columns=True)
 
 
 class SheetKeyTests(unittest.TestCase):
+    def test_two_undated_bills_are_both_kept(self):
+        first = bill(entries=[entry("Energy Charge", "60.00")], current="60.00", start=None, end=None)
+        second = bill(entries=[entry("Energy Charge", "70.00")], current="70.00", start=None, end=None)
+        plans = shape([("a", first), ("b", second)])
+        self.assertEqual(len(plans[0].rows), 2)
+
+    def test_a_month_that_omits_its_meter_joins_the_series_that_prints_it(self):
+        with_meter = bill(entries=[entry("Energy Charge", "60.00", meter="0413226")],
+                          current="60.00", account="0197", start="1/1/2025", end="1/31/2025")
+        without = bill(entries=[entry("Energy Charge", "70.00")], current="70.00",
+                       account="0197", start="2/1/2025", end="2/28/2025")
+        plans = shape([("a", with_meter), ("b", without)])
+        self.assertEqual(len(plans), 1)
+        self.assertEqual(len(plans[0].rows), 2)
+
+    def test_a_month_that_could_belong_to_two_meters_stays_apart(self):
+        first = bill(entries=[entry("Energy Charge", "60.00", meter="11111")], current="60.00",
+                     account="0197")
+        second = bill(entries=[entry("Energy Charge", "61.00", meter="22222")], current="61.00",
+                      account="0197", start="2/1/2025", end="2/28/2025")
+        unknown = bill(entries=[entry("Energy Charge", "70.00")], current="70.00",
+                       account="0197", start="3/1/2025", end="3/31/2025")
+        self.assertEqual(len(shape([("a", first), ("b", second), ("c", unknown)])), 3)
+
     def test_meter_names_the_sheet_when_present(self):
         key = sheet_key_for(bill(entries=[entry("Energy Charge", "60.00", meter="10953811")]))
         self.assertEqual(key.meter, "10953811")
@@ -120,11 +145,14 @@ class PeriodTests(unittest.TestCase):
         self.assertEqual(period.label, "Jan-21")
 
     def test_a_service_range_printed_in_the_billing_label_is_used(self):
-        # A real SRP extraction left the dates empty and filed the range here;
-        # the statement date would have put January's bill in March.
-        b = bill(start=None, end=None, bill_date="3/10/2022")
+        # A real SRP extraction left the dates empty and filed the range here.
+        b = bill(start=None, end=None, bill_date=None)
         b.billing_period_label = "SERVICE FROM 1/12/2022 - 2/8/2022"
         self.assertEqual(period_for(b).label, "Feb-22")
+
+    def test_the_statement_date_names_the_month(self):
+        b = bill(start="1/12/2022", end="2/8/2022", bill_date="3/10/2022")
+        self.assertEqual(period_for(b).label, "Mar-22")
 
     def test_unparseable_dates_do_not_crash_the_row(self):
         period = period_for(bill(start="sometime", end="later"))
@@ -682,8 +710,16 @@ class RealBillShapeTests(unittest.TestCase):
             self.assertEqual(len(plan.rows), 12, plan.title)
 
     def test_the_series_are_complete(self):
+        # Rows are labelled by statement date. Gas bill 2's invoice date is blacked
+        # out, so it falls back to Jan-21 beside bill 1 and February is empty; both
+        # are reported.
+        expected = {"electricity": [], "gas": [
+            "No bill for Feb-21",
+            "2 bills named Jan-21 (one has no statement date, so it is named by its "
+            "service period).",
+        ]}
         for plan in self.plans:
-            self.assertEqual(plan.warnings, [], plan.title)
+            self.assertEqual(plan.warnings, expected[plan.key.utility_type], plan.title)
 
     def test_every_electricity_row_reconciles(self):
         electricity = next(p for p in self.plans if p.key.utility_type == "electricity")

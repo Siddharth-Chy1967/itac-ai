@@ -14,6 +14,7 @@ from app.bills.grouping_practice import (
     group_bill_pages,
     has_same_account,
     normalize_account_number,
+    without_misfiled_invoice_numbers,
 )
 
 ACCOUNT = "019735300 - 0276883 - 4"
@@ -129,6 +130,109 @@ class ConflictMessageTests(unittest.TestCase):
 
     def test_a_missing_value_reads_as_null(self):
         self.assertIn("null", describe_conflicts({"invoice_number": ["INV-1", None]}))
+
+
+class MisfiledInvoiceNumberTests(unittest.TestCase):
+    """qwen2.5vl files the account number under invoice_number on PNM page 1.
+
+    The page beside it carries the real invoice, so the two disagree and a bill
+    whose account matches throughout was refused.
+    """
+
+    def test_an_invoice_equal_to_the_account_is_dropped(self):
+        pages = [
+            page(1, "bill_start", invoice_number=ACCOUNT),
+            page(2, "continuation", invoice_number="A342026493"),
+        ]
+        cleaned = without_misfiled_invoice_numbers(pages)
+
+        self.assertIsNone(cleaned[0]["invoice_number"])
+        self.assertEqual(cleaned[1]["invoice_number"], "A342026493")
+
+    def test_it_is_dropped_despite_different_punctuation(self):
+        pages = [page(1, "bill_start", invoice_number="0197353000276883 4")]
+        self.assertIsNone(without_misfiled_invoice_numbers(pages)[0]["invoice_number"])
+
+    def test_a_real_invoice_number_is_kept(self):
+        pages = [page(1, "bill_start", invoice_number="A342026493")]
+        self.assertEqual(
+            without_misfiled_invoice_numbers(pages)[0]["invoice_number"],
+            "A342026493",
+        )
+
+    def test_the_originals_are_not_mutated(self):
+        pages = [page(1, "bill_start", invoice_number=ACCOUNT)]
+        without_misfiled_invoice_numbers(pages)
+        self.assertEqual(pages[0]["invoice_number"], ACCOUNT)
+
+    def test_two_real_invoice_numbers_still_conflict(self):
+        pages = [
+            page(1, "bill_start", invoice_number="A1"),
+            page(2, "continuation", invoice_number="A2"),
+        ]
+        self.assertIn("invoice_number", blocking_conflicts(pages, "complete"))
+
+
+class PageTotalGapTests(unittest.TestCase):
+    """PNM prints "Page 1" bare, then "Page 2 of 2" on the page after it."""
+
+    def test_a_missing_page_total_does_not_break_the_sequence(self):
+        pages = [
+            page(1, "bill_start", printed_total_pages=None, bill_date="02/17/2025"),
+            page(2, "continuation", printed_total_pages=2, bill_date=None,
+                 invoice_number="A845029295"),
+        ]
+        result = group_bill_pages(pages)
+
+        self.assertEqual(result["review_pages"], [])
+        self.assertEqual([d["pages"] for d in result["group_details"]], [[1, 2]])
+
+    def test_totals_that_both_exist_and_disagree_still_block(self):
+        pages = [
+            page(1, "bill_start", printed_total_pages=2),
+            page(2, "continuation", printed_total_pages=3),
+        ]
+        self.assertEqual(group_bill_pages(pages)["review_pages"], [1, 2])
+
+    def test_non_consecutive_printed_numbers_do_not_link(self):
+        """With no shared date or invoice, the sequence is the only evidence left."""
+        pages = [
+            page(1, "bill_start", printed_page_number=1, printed_total_pages=None,
+                 bill_date=None),
+            page(2, "continuation", printed_page_number=5, printed_total_pages=None,
+                 bill_date=None),
+        ]
+        self.assertEqual(group_bill_pages(pages)["review_pages"], [1, 2])
+
+    def test_a_consecutive_sequence_links_with_no_other_evidence(self):
+        """The counterpart: sequence alone is enough, which is the PNM case."""
+        pages = [
+            page(1, "bill_start", printed_total_pages=None, bill_date=None),
+            page(2, "continuation", printed_total_pages=2, bill_date=None),
+        ]
+        self.assertEqual(group_bill_pages(pages)["review_pages"], [])
+
+    def test_different_accounts_still_block(self):
+        pages = [
+            page(1, "bill_start"),
+            page(2, "continuation", account_number="999888777"),
+        ]
+        self.assertEqual(group_bill_pages(pages)["review_pages"], [1, 2])
+
+    def test_two_months_of_one_account_are_not_merged(self):
+        """The case the loosened sequence rule must not break."""
+        pages = [
+            page(1, "bill_start", bill_date="01/15/2025", invoice_number="A1"),
+            page(2, "continuation", bill_date="01/15/2025", invoice_number="A1"),
+            page(3, "bill_start", printed_page_number=1,
+                 bill_date="02/15/2025", invoice_number="A2"),
+            page(4, "continuation", printed_page_number=2,
+                 bill_date="02/15/2025", invoice_number="A2"),
+        ]
+        result = group_bill_pages(pages)
+
+        self.assertEqual(result["review_pages"], [])
+        self.assertEqual([d["pages"] for d in result["group_details"]], [[1, 2], [3, 4]])
 
 
 class EndToEndGroupingTests(unittest.TestCase):

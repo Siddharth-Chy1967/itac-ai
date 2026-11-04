@@ -928,6 +928,9 @@ class FieldGuide:
     exact_match: bool = True  # False when the best title was only a close match
     thin: bool = False
     low_support: bool = False  # only single-report parameters survived
+    # Each counted write-up's own text, parallel to `instances`, so a hosted model can
+    # write the field guide from the reports themselves.
+    texts: list[str] = field(default_factory=list)
 
 
 # --- store / embedder protocols ---------------------------------------------
@@ -1050,8 +1053,11 @@ def build_field_guide(
     by_key: dict[str, FieldParameter] = {}
     methods: dict[str, CollectionMethod] = {}
     measures: dict[str, set[str]] = {}
+    texts: list[str] = []
     for inst in instances:
-        extract = extract_writeup(writeup_text(store.chunks_for(inst.report_id, inst.ar_number)))
+        text = writeup_text(store.chunks_for(inst.report_id, inst.ar_number))
+        texts.append(text)
+        extract = extract_writeup(text)
         for key, f in extract.parameters.items():
             param = by_key.get(key)
             if param is None:
@@ -1101,4 +1107,5 @@ def build_field_guide(
         exact_match=best_title >= gate.exact,
         thin=len(instances) < min_support,
         low_support=low_support,
+        texts=texts,
     )

@@ -179,12 +179,14 @@ class Period:
     start: date | None
     end: date | None
     bill_date: date | None
+    due_date: date | None = None
 
     @property
     def anchor(self) -> date | None:
-        # The service end is what an assessor calls "the month"; fall back through
-        # start then bill date rather than leaving a row unplaceable.
-        return self.end or self.start or self.bill_date
+        # The statement date names the month (report convention). Fall back through
+        # service end and start, then the due date, rather than leave a row
+        # unplaceable; `detect_gaps` reports any month this lands twice.
+        return self.bill_date or self.end or self.start or self.due_date
 
     @property
     def label(self) -> str:
@@ -214,7 +216,8 @@ def period_for(bill) -> Period:
         match = _PRINTED_RANGE.search(getattr(bill, "billing_period_label", None) or "")
         if match:
             start, end = _as_date(match.group(1)), _as_date(match.group(2))
-    return Period(start=start, end=end, bill_date=_as_date(bill.bill_date))
+    return Period(start=start, end=end, bill_date=_as_date(bill.bill_date),
+                  due_date=_as_date(getattr(bill, "due_date", None)))
 
 
 # --- rows -------------------------------------------------------------------
@@ -550,6 +553,20 @@ def detect_gaps(plan: SheetPlan) -> None:
     if missing:
         plan.warnings.append("No bill for " + ", ".join(missing))
 
+    # Two bills named for one month usually means one had no readable statement
+    # date and fell back to its service period. Say which, so it is checked.
+    by_month: dict[tuple[int, int], list[MonthRow]] = defaultdict(list)
+    for row in plan.rows:
+        if row.period.anchor:
+            by_month[(row.period.anchor.year, row.period.anchor.month)].append(row)
+    for (y, m), rows in sorted(by_month.items()):
+        if len(rows) < 2:
+            continue
+        note = f"{len(rows)} bills named {_MONTHS[m - 1]}-{y % 100:02d}"
+        if any(r.period.bill_date is None for r in rows):
+            note += " (one has no statement date, so it is named by its service period)"
+        plan.warnings.append(note + ".")
+
 
 # --- building ---------------------------------------------------------------
 
@@ -561,11 +578,15 @@ def build_sheets(
     parse_amount,
     parse_number,
     tolerance: Decimal = Decimal("0.02"),
+    derive_columns: bool = False,
 ) -> list[SheetPlan]:
     """Arrange extracted bills into analysis sheets.
 
     `bills` is (bill_id, BillExtraction) pairs; the id is carried through so a
     flagged row can be traced back to the PDF it came from.
+
+    `derive_columns` adds the columns no bill prints (see `add_derived_columns`).
+    Off by default: the workbook is meant to hold printed figures only.
     """
     grouped: dict[SheetKey, list[tuple[str, object]]] = defaultdict(list)
     for bill_id, bill in bills:
@@ -577,42 +598,46 @@ def build_sheets(
     for key, members in grouped.items():
         plans.append(_build_one(key, members, mapping,
                                 parse_amount=parse_amount, parse_number=parse_number,
-                                tolerance=tolerance))
+                                tolerance=tolerance, derive_columns=derive_columns))
     plans.sort(key=lambda p: (p.key.utility_type, p.key.company, p.title))
     return plans
 
 
+_IDENTITY = ("meter", "account", "rate_schedule")
+
+
+def _fits(partial: SheetKey, full: SheetKey) -> bool:
+    """`partial` could be the same series as `full`, just printing less of its identity."""
+    return (partial != full and partial.company == full.company
+            and partial.utility_type == full.utility_type
+            and all(getattr(partial, name) in (None, getattr(full, name)) for name in _IDENTITY))
+
+
 def _merge_partial_keys(grouped: dict[SheetKey, list]) -> dict[SheetKey, list]:
-    """Fold a bill that omitted its rate schedule into the series that printed one.
+    """Fold a bill that omitted part of its identity into the series that printed it.
 
     Utilities commonly print the rate only on the first bill of a series (the
-    packaged SRP set prints it once in twelve). Left alone that produces two
+    packaged SRP set prints it once in twelve), and a model may read the meter
+    number off one month's bill and not the next. Left alone either produces two
     sheets for one meter: a twelve-row one and a one-row one.
     """
     merged: dict[SheetKey, list] = {}
-    for key, members in grouped.items():
-        if key.rate_schedule is not None:
-            merged[key] = list(members)
-    for key, members in grouped.items():
-        if key.rate_schedule is not None:
-            continue
-        candidates = [
-            k for k in merged
-            if k.company == key.company and k.utility_type == key.utility_type
-            and k.meter == key.meter and k.account == key.account
-        ]
-        # Exactly one candidate means the rate is genuinely just missing from this
-        # bill. Two or more means the site has several rate schedules and we cannot
-        # tell which one this bill belongs to -- guessing would silently file a
-        # month under the wrong meter, so it stays on its own sheet instead.
+    # Most specific keys first, so a partial key meets every series it could join.
+    for key in sorted(grouped, key=lambda k: sum(getattr(k, n) is None for n in _IDENTITY)):
+        candidates = [k for k in merged if _fits(key, k)]
+        # Exactly one candidate means the detail is genuinely just missing from this
+        # bill. Two or more means the site has several series and we cannot tell
+        # which one this bill belongs to -- guessing would silently file a month
+        # under the wrong meter, so it stays on its own sheet instead.
         if len(candidates) == 1:
-            merged[candidates[0]].extend(members)
+            merged[candidates[0]].extend(grouped[key])
         else:
-            merged[key] = list(members)
+            merged[key] = list(grouped[key])
     return merged
 
 
-def _build_one(key, members, mapping, *, parse_amount, parse_number, tolerance) -> SheetPlan:
+def _build_one(key, members, mapping, *, parse_amount, parse_number, tolerance,
+               derive_columns=False) -> SheetPlan:
     used: dict[str, LabelSemantics] = {}
     rows: list[MonthRow] = []
     seen: dict[tuple, MonthRow] = {}
@@ -621,7 +646,9 @@ def _build_one(key, members, mapping, *, parse_amount, parse_number, tolerance) 
 
     for bill_id, bill in members:
         period = period_for(bill)
-        if period.key() in seen:
+        # Only a dated period can be proven a duplicate. Two bills with no readable
+        # date are two unknown months, and dropping one would lose a whole bill.
+        if period.anchor is not None and period.key() in seen:
             warnings.append(
                 f"Duplicate bill for {period.label} ignored (same service period)."
             )
@@ -695,7 +722,8 @@ def _build_one(key, members, mapping, *, parse_amount, parse_number, tolerance) 
     plan = SheetPlan(key=key, columns=sorted(used.values(), key=LabelSemantics.sort_key),
                      rows=rows, warnings=warnings)
     reconcile(plan, tolerance)
-    add_derived_columns(plan)
+    if derive_columns:
+        add_derived_columns(plan)
     detect_gaps(plan)
     return plan
 

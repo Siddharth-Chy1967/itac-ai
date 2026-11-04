@@ -21,6 +21,10 @@ services:
       # on the host (the default provider here), reach it via the host gateway. Harmless
       # when the provider is Gemini/Anthropic (nothing connects to it).
       OLLAMA_BASE_URL: http://host.docker.internal:11434
+      # .env's relative ./data/bills resolves under /srv/backend, outside the ./data
+      # mount; pin both onto it so workbooks and the answer cache survive on the host.
+      BILLS_PATH: /srv/data/bills
+      BILLS_CACHE_PATH: /srv/data/bill_cache
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:

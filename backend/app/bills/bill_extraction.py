@@ -94,11 +94,6 @@ class BoundaryReview(BaseModel):
     evidence: str
 
 
-# Cache folder of the boundary reviews made by the original OpenAI implementation.
-# Still read first so existing reviews are reused; new local reviews are saved beside
-# it under the local model's label (see local_inference.cache_label).
-BOUNDARY_REVIEW_MODEL = "gpt-5.6-luna"
-
 BOUNDARY_REVIEW_INSTRUCTIONS = """
 Review two neighboring pages from a collection of utility bills.
 The first supplied PDF is the earlier page; the second is the later page.
@@ -366,14 +361,28 @@ PROJECT_FOLDER = Path(__file__).resolve().parent
 PAGE_CACHE_VERSION = "page_analysis_v5"
 
 
-def process_source_pdf(source_pdf, *, project_folder=PROJECT_FOLDER, inference_config=None):
+def process_source_pdf(source_pdf, *, project_folder=PROJECT_FOLDER, inference_config=None,
+                       cache_folder=None, client_factory=None, model_label=None):
     """Inspect, group and save one source PDF; return its actual grouped PDF paths.
 
     `inference_config` lets the application supply a `LocalInferenceConfig` built
     from its own Settings. Left None, the standalone behaviour is unchanged: the
     config is read from the environment beside `project_folder`.
+
+    `cache_folder` is where saved page analyses live. It defaults to
+    `project_folder`, which is the standalone layout. The application passes a
+    shared root instead so a document analysed once is never analysed again: the
+    entries are keyed by the document's own sha256, and the model does not return
+    the same answer twice, so re-reading a PDF is what made grouping unrepeatable.
+
+    `client_factory` builds the model client (any object with `parse_pdf`,
+    `parse_text`, `ensure_ready`, `describe` and `close`) and `model_label` names
+    its provider and model; the application passes both for the configured provider. Saved analyses are kept
+    per client `cache_label` -- provider and model -- so answers from one model
+    are never reused under another.
     """
     project_folder = Path(project_folder).resolve()
+    cache_root = Path(cache_folder).resolve() if cache_folder is not None else project_folder
     source_pdf = Path(source_pdf)
     if not source_pdf.is_absolute():
         source_pdf = project_folder / source_pdf
@@ -384,12 +393,17 @@ def process_source_pdf(source_pdf, *, project_folder=PROJECT_FOLDER, inference_c
     # The local model is only contacted on a cache miss.
     if inference_config is None:
         inference_config = LocalInferenceConfig.from_env(project_folder)
+    if client_factory is None:
+        client_factory = lambda: LocalInferenceClient(inference_config)  # noqa: E731
+        model_label = inference_config.cache_label
+    elif not model_label:
+        raise ValueError("model_label is required with client_factory")
     client = None
 
     def get_client():
         nonlocal client
         if client is None:
-            client = LocalInferenceClient(inference_config)
+            client = client_factory()
             print(f"Local inference: {client.describe()}")
             client.ensure_ready()
         return client
@@ -402,7 +416,7 @@ def process_source_pdf(source_pdf, *, project_folder=PROJECT_FOLDER, inference_c
         raise ValueError(f"The PDF has no pages: {source_pdf.name}")
 
     document_id = sha256(source_pdf.read_bytes()).hexdigest()
-    cache_folder = project_folder / "analysis_cache" / document_id / PAGE_CACHE_VERSION
+    cache_folder = cache_root / "analysis_cache" / document_id / PAGE_CACHE_VERSION / model_label
     cached_analyses = [
         load_saved_analysis(cache_folder / f"page_{page['page_number']:03d}.json")
         for page in page_results
@@ -452,12 +466,11 @@ def process_source_pdf(source_pdf, *, project_folder=PROJECT_FOLDER, inference_c
                 f"of {page_analysis.printed_total_pages}"
             )
 
-        reviews_root = project_folder / "analysis_cache" / document_id / "boundary_review_v1"
+        reviews_root = cache_root / "analysis_cache" / document_id / "boundary_review_v1"
         grouping_pages, unresolved = review_suspicious_boundaries(
             client, analyzed_pages, page_paths,
-            reviews_root / inference_config.cache_label,
+            reviews_root / model_label,
             get_client=get_client,
-            reuse_folders=[reviews_root / BOUNDARY_REVIEW_MODEL],
         )
     finally:
         if client is not None:

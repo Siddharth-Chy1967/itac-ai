@@ -176,7 +176,7 @@ def _write_column_totals(sheet, plan: SheetPlan, row_count: int, total_column: i
     if not row_count:
         return
     excel_row = 4 + row_count
-    label = sheet.cell(excel_row, 1, "Total")
+    label = sheet.cell(excel_row, 1, "TOTALS")
     label.font, label.fill, label.border = Font(bold=True), TOTAL_FILL, BORDER
 
     for index, column in enumerate(plan.columns, start=2):

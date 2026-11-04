@@ -130,6 +130,32 @@ def has_same_account(page_records):
     return len(accounts) == 1
 
 
+def without_misfiled_invoice_numbers(page_records):
+    """The pages with an "invoice number" that is really the account number removed.
+
+    The prompt tells the model to copy the invoice number "not the account number",
+    and qwen2.5vl files the account number there anyway on the opening page of PNM
+    bills. The page beside it carries the real invoice ("A342026493"), so the two
+    disagree and grouping refuses a bill whose account number matches throughout.
+
+    A value equal to that page's own account number is not an invoice number, so it
+    is dropped rather than compared. Distinct *real* invoice numbers still mean
+    separate bills; this only removes a value the page never presented as one.
+    """
+    cleaned = []
+
+    for page in page_records:
+        account = normalize_account_number(page.get("account_number"))
+        invoice = normalize_account_number(page.get("invoice_number"))
+
+        if account is not None and invoice == account:
+            page = {**page, "invoice_number": None}
+
+        cleaned.append(page)
+
+    return cleaned
+
+
 def field_conflicts(page_records, *, ignore=()):
     """The bill-level fields whose pages disagree, with the values they printed.
 
@@ -163,6 +189,7 @@ def blocking_conflicts(page_records, completeness):
     is the case the check was written for, and there is no stronger evidence to
     fall back on.
     """
+    page_records = without_misfiled_invoice_numbers(page_records)
     trustworthy_structure = completeness == "complete" and has_same_account(page_records)
 
     return field_conflicts(
@@ -409,16 +436,24 @@ def group_bill_pages(pages):
 
             previous_printed = previous.get("printed_page_number")
 
+            # A page total that one of the two pages simply does not print must not
+            # void an otherwise consecutive sequence: PNM prints "Page 1" bare and
+            # "Page 2 of 2" on the page after it. Totals that are both present and
+            # disagree are still a mismatch.
+            totals = {
+                previous.get("printed_total_pages"),
+                page.get("printed_total_pages"),
+            }
+            totals.discard(None)
+
             numbered_link = (
                 previous_printed is not None
                 and page.get("printed_page_number") == previous_printed + 1
-                and previous.get("printed_total_pages") is not None
-                and previous["printed_total_pages"]
-                == page.get("printed_total_pages")
+                and len(totals) <= 1
             )
 
-            first_account = previous.get("account_number")
-            second_account = page.get("account_number")
+            first_account = normalize_account_number(previous.get("account_number"))
+            second_account = normalize_account_number(page.get("account_number"))
 
             accounts_differ = (
                 bool(first_account)

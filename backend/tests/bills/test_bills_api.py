@@ -1,8 +1,8 @@
 """Upload API and job-runner tests.
 
-No model and no network: the grouping step is stubbed to hand back the packaged
-bill PDFs, whose extractions are already cached, so the whole route -- upload,
-poll, review gate, build, download -- runs offline and deterministically.
+No model and no network: the grouping step is stubbed to hand back synthetic
+digital bills and the model is a fake provider, so the whole route -- upload,
+extract, verify, review gate, build, download -- runs offline and deterministically.
 """
 from decimal import Decimal
 from pathlib import Path
@@ -17,11 +17,14 @@ from openpyxl import load_workbook
 from app.api import bills as bills_api
 from app.bills.jobs import Job, JobState, JobStore, _safe_name
 from app.main import create_app
-from .test_fixtures import BILL_FOLDERS, HAVE_FIXTURES, requires_fixtures
+from dataclasses import replace
 
-TESTS_DIR = Path(__file__).resolve().parent
-ELECTRICITY = TESTS_DIR / BILL_FOLDERS[0]
-GAS = TESTS_DIR / BILL_FOLDERS[1]
+from app.bills.local_inference import LocalInferenceConfig
+from app.bills.page_text import read_pdf
+from app.bills.verify import numbers_in
+from .synthetic import FakeProvider, Month, figures_for, make_bill_pdf
+
+NO_OCR = replace(LocalInferenceConfig(), ocr_enabled=False)
 
 PDF_BYTES = b"%PDF-1.4\n% a stand-in for an uploaded scan\n"
 
@@ -210,13 +213,21 @@ class ApiTests(unittest.TestCase):
             self.assertEqual(client.get(f"/api/bills/{job_id}").status_code, 404)
 
 
-@unittest.skipUnless(HAVE_FIXTURES, "real-bill fixtures are not present")
 class EndToEndTests(unittest.TestCase):
-    """Upload -> extract -> review gate -> build -> download, with no model.
+    """Upload -> extract -> verify -> review gate -> build -> download, no model.
 
-    Grouping is stubbed to return the packaged bill PDFs; their extractions are
-    already cached, so `load_bill` never reaches Ollama.
+    Grouping is stubbed to hand back synthetic digital bills (see `synthetic`),
+    and the model is a fake provider that answers from the page text. Page text,
+    verification, column naming, shaping and rendering are all the real code.
     """
+
+    MONTHS = [
+        Month("01/16/2026"),
+        Month("02/17/2026", on_kwh="22,640.000", off_kwh="19,360.000",
+              total_kwh="42,000.000", demand="182.400"),
+        Month("03/16/2026", on_kwh="18,240.000", off_kwh="15,120.000",
+              total_kwh="33,360.000", demand="160.000"),
+    ]
 
     def setUp(self):
         self.tmp = Path(self.enterContext(__import__("tempfile").TemporaryDirectory()))
@@ -226,43 +237,42 @@ class EndToEndTests(unittest.TestCase):
         patcher = patch("app.api.bills.get_settings")
         settings = patcher.start()
         self.addCleanup(patcher.stop)
-        settings.return_value.bills_path = str(self.tmp)
+        settings.return_value.bills_path = str(self.tmp / "jobs")
 
-        # The cached extractions live beside the fixtures, so the pipeline must
-        # look for them there rather than in the (empty) job directory.
-        from .test_fixtures import FIXTURES
-        self.fixtures = FIXTURES
+        from app.config import get_settings
+        self.settings = get_settings().model_copy(update={
+            "bills_cache_path": str(self.tmp / "cache"), "bills_derived_columns": False,
+        })
+        settings_patch = patch("app.bills.pipeline.get_settings", return_value=self.settings)
+        settings_patch.start()
+        self.addCleanup(settings_patch.stop)
 
-        def fake_group(source_pdf, *, project_folder, inference_config=None):
-            folder = ELECTRICITY if "elec" in Path(source_pdf).name else GAS
-            return sorted(folder.glob("bill_*.pdf"))
+        source = self.tmp / "source"
+        source.mkdir()
+        self.pdfs = [make_bill_pdf(source, f"bill_{i:03d}.pdf", month)
+                     for i, month in enumerate(self.MONTHS, start=1)]
+        self.answers = {m.statement: figures_for(m) for m in self.MONTHS}
+        self.provider = FakeProvider(self.answers)
+        provider_patch = patch("app.bills.pipeline.make_provider",
+                               side_effect=lambda settings: self.provider)
+        provider_patch.start()
+        self.addCleanup(provider_patch.stop)
+
+        # Records where the pipeline asked for cached analyses to be kept, so the
+        # shared-cache wiring is asserted rather than assumed.
+        self.cache_folders = []
+        self.model_labels = []
+
+        def fake_group(source_pdf, *, project_folder, inference_config=None,
+                       cache_folder=None, client_factory=None, model_label=None):
+            self.cache_folders.append(cache_folder)
+            self.model_labels.append(model_label)
+            return list(self.pdfs)
 
         group_patch = patch("app.bills.pipeline.bill_extraction.process_source_pdf",
                             side_effect=fake_group)
         group_patch.start()
         self.addCleanup(group_patch.stop)
-
-        real_load = __import__("app.bills.bill_value_extraction", fromlist=["x"]).load_bill
-
-        def cached_load(path, fingerprint, project_folder, model, **kw):
-            return real_load(path, fingerprint, self.fixtures, model, run_inference=False)
-
-        load_patch = patch("app.bills.pipeline.bve.load_bill", side_effect=cached_load)
-        load_patch.start()
-        self.addCleanup(load_patch.stop)
-
-        # No Ollama in the test environment: label interpretation uses rules.
-        client_patch = patch("app.bills.pipeline.LocalInferenceClient",
-                             side_effect=RuntimeError("no model in tests"))
-        client_patch.start()
-        self.addCleanup(client_patch.stop)
-
-        # Nor OCR: re-reading every fixture page at 300 DPI takes minutes. The
-        # printed-row reader has its own tests (test_grid); here it finds nothing,
-        # which leaves the cached extractions exactly as they were.
-        grid_patch = patch("app.bills.pipeline.grid.printed_rows", return_value=[])
-        self.grid_rows = grid_patch.start()
-        self.addCleanup(grid_patch.stop)
 
     def run_job(self, client, name="elec.pdf"):
         created = upload(client, [("files", (name, PDF_BYTES, "application/pdf"))])
@@ -276,51 +286,99 @@ class EndToEndTests(unittest.TestCase):
             time.sleep(0.02)
         self.fail("job did not settle")
 
+    def build(self, client):
+        job_id, _ = self.run_job(client)
+        built = client.post(f"/api/bills/{job_id}/columns", json={"overrides": []})
+        self.assertEqual(built.status_code, 200, built.text)
+        download = client.get(f"/api/bills/{job_id}/download")
+        return built.json(), load_workbook(io.BytesIO(download.content))
+
+    def test_analyses_are_cached_outside_the_job_folder_per_model(self):
+        """Deleting a job must not throw away the model's answers, and answers
+        from one provider/model are never read back under another."""
+        with self.client_ctx() as client:
+            job_id, _ = self.run_job(client)
+            job_directory = Path(bills_api.get_store().get(job_id).directory)
+        self.assertTrue(self.cache_folders)
+        for cache_folder in self.cache_folders:
+            self.assertNotIn(job_directory, Path(cache_folder).parents)
+        self.assertEqual(set(self.model_labels), {"openai-fake-model"})
+        cached = list((self.tmp / "cache" / "extraction_cache").glob("*/openai-fake-model/*.json"))
+        self.assertEqual(len(cached), 3)
+
+    def test_a_second_run_reads_the_cache_not_the_model(self):
+        with self.client_ctx() as client:
+            self.run_job(client)
+            self.run_job(client)
+        self.assertEqual(len(self.provider.calls), 3)
+
+    def test_the_model_is_shown_page_images_and_text_without_axis_labels(self):
+        with self.client_ctx() as client:
+            self.run_job(client)
+        images, text = self.provider.calls[0]
+        self.assertEqual(images, 2)
+        self.assertIn("Electricity (kWh)", text)
+        self.assertNotIn("25000", text)
+        self.assertNotIn("45000", text)
+
     def test_batch_stops_at_the_review_gate_before_writing_anything(self):
         with self.client_ctx() as client:
             job_id, body = self.run_job(client)
             self.assertEqual(body["state"], "awaiting_review", body["message"])
-            self.assertEqual(body["bills"], 12)
+            self.assertEqual(body["bills"], 3)
             self.assertFalse(body["has_workbook"])
             self.assertEqual(client.get(f"/api/bills/{job_id}/download").status_code, 404)
 
             columns = client.get(f"/api/bills/{job_id}/columns").json()["columns"]
             names = [c["canonical"] for c in columns]
-            self.assertIn("On-Peak Energy Charge", names)
-            self.assertIn("Demand Charge", names)
-            # Account activity must never be offered as a column.
-            self.assertNotIn("Previous Balance", names)
+            for expected in ("On-Peak kWh", "Off-Peak kWh", "Total kWh", "Billed Demand",
+                             "On-Peak Use and Charge", "Customer Charge",
+                             "Palo Verde Regulatory Credit"):
+                self.assertIn(expected, names)
+            credit = next(c for c in columns if c["canonical"] == "Palo Verde Regulatory Credit")
+            self.assertEqual((credit["group"], credit["sign"]), ("credits", "credit"))
 
     def test_confirming_the_layout_builds_a_downloadable_workbook(self):
         with self.client_ctx() as client:
-            job_id, _ = self.run_job(client)
-            built = client.post(f"/api/bills/{job_id}/columns", json={"overrides": []})
-            self.assertEqual(built.status_code, 200, built.text)
-            body = built.json()
-            self.assertEqual(body["state"], "done")
-            self.assertEqual(len(body["sheets"]), 1)
-            self.assertEqual(body["sheets"][0]["rows"], 12)
-            self.assertTrue(body["has_workbook"])
+            body, book = self.build(client)
+        self.assertEqual(body["state"], "done")
+        self.assertEqual(len(body["sheets"]), 1)
+        self.assertEqual(body["sheets"][0]["rows"], 3)
+        self.assertEqual(body["flagged"], [])
+        self.assertIn("Overall Utility Analysis", book.sheetnames)
+        sheet = book[book.sheetnames[0]]
+        self.assertEqual(sheet.cell(3, 1).value, "Statement Date")
+        self.assertEqual(sheet.max_row, 3 + 3 + 1)  # header + months + totals
+        self.assertEqual(sheet.cell(7, 1).value, "TOTALS")
 
-            download = client.get(f"/api/bills/{job_id}/download")
-            self.assertEqual(download.status_code, 200)
-            self.assertIn("spreadsheetml", download.headers["content-type"])
+    def test_every_cell_is_a_printed_figure(self):
+        with self.client_ctx() as client:
+            _, book = self.build(client)
+        printed = set()
+        for pdf in self.pdfs:
+            printed |= {abs(n) for page in read_pdf(pdf, NO_OCR) for n in numbers_in(page.text)}
+        sheet = book[book.sheetnames[0]]
+        for row in sheet.iter_rows(min_row=4, max_row=6, min_col=2, values_only=True):
+            for value in row:
+                if isinstance(value, (int, float)):
+                    self.assertIn(abs(Decimal(str(value))), printed, value)
 
-            book = load_workbook(io.BytesIO(download.content))
-            self.assertIn("Overall Utility Analysis", book.sheetnames)
-            sheet = book[book.sheetnames[0]]
-            self.assertEqual(sheet.cell(3, 1).value, "Statement Date")
-            self.assertEqual(sheet.max_row, 3 + 12 + 1)  # header + months + totals
+    def test_rows_are_labelled_by_statement_month(self):
+        with self.client_ctx() as client:
+            _, book = self.build(client)
+        sheet = book[book.sheetnames[0]]
+        months = [sheet.cell(r, 1).value.strftime("%Y-%m") for r in range(4, 7)]
+        self.assertEqual(months, ["2026-01", "2026-02", "2026-03"])
 
     def test_a_reviewer_override_moves_a_column_and_rebuilds(self):
         with self.client_ctx() as client:
             job_id, _ = self.run_job(client)
             response = client.post(f"/api/bills/{job_id}/columns", json={
-                "overrides": [{"label": "facilities charge", "group": "usage"}]
+                "overrides": [{"label": "customer charge", "group": "usage"}]
             })
             self.assertEqual(response.status_code, 200, response.text)
             columns = client.get(f"/api/bills/{job_id}/columns").json()["columns"]
-            moved = next(c for c in columns if c["canonical"] == "Facilities Charge")
+            moved = next(c for c in columns if c["canonical"] == "Customer Charge")
             self.assertEqual(moved["group"], "usage")
             self.assertEqual(moved["source"], "review")
 
@@ -328,38 +386,42 @@ class EndToEndTests(unittest.TestCase):
         with self.client_ctx() as client:
             job_id, _ = self.run_job(client)
             response = client.post(f"/api/bills/{job_id}/columns", json={
-                "overrides": [{"label": "facilities charge", "canonical": "Demand Charge"}]
+                "overrides": [{"label": "customer charge", "canonical": "On-Peak kWh"}]
             })
             self.assertEqual(response.status_code, 400)
             self.assertIn("ambiguous", response.json()["detail"])
 
-    def test_the_gas_batch_reports_its_two_unreconciled_months(self):
+    def test_a_figure_not_on_the_page_is_dropped_and_warned(self):
+        answer = self.answers["02/17/2026"]
+        answer["readings"][0]["value"] = "25,000.000"   # not printed; an axis tick
         with self.client_ctx() as client:
-            job_id, _ = self.run_job(client, name="gas.pdf")
-            body = client.post(f"/api/bills/{job_id}/columns",
-                               json={"overrides": []}).json()
-        self.assertEqual(len(body["flagged"]), 2)
-        self.assertEqual({f["difference"] for f in body["flagged"]}, {"0.10", "1000.00"})
-        self.assertIn("did not reconcile", body["message"])
+            job_id, body = self.run_job(client)
+            columns = client.get(f"/api/bills/{job_id}/columns").json()["columns"]
+            built = client.post(f"/api/bills/{job_id}/columns", json={"overrides": []}).json()
+        self.assertTrue(any("'25,000.000' is not printed" in w for w in body["warnings"]))
+        self.assertIn("On-Peak kWh", [c["canonical"] for c in columns])
+        self.assertEqual(built["flagged"], [])
 
-    def test_a_model_outage_is_reported_as_a_warning_not_a_failure(self):
+    def test_line_items_that_do_not_sum_to_the_total_are_flagged(self):
+        month = self.MONTHS[2]
+        self.pdfs[2] = make_bill_pdf(self.tmp / "source", "bill_003b.pdf", month,
+                                     total="$3,500.00")
+        self.answers[month.statement] = figures_for(
+            month, total_current_charges={"text": "$3,500.00", "page": 2})
+        with self.client_ctx() as client:
+            job_id, body = self.run_job(client)
+            built = client.post(f"/api/bills/{job_id}/columns", json={"overrides": []}).json()
+        self.assertTrue(any("Line items total" in w for w in body["warnings"]))
+        self.assertEqual(len(built["flagged"]), 1)
+        self.assertIn("did not reconcile", built["message"])
+
+    def test_a_model_outage_on_one_bill_keeps_the_others(self):
+        self.provider.fail = {"02/17/2026"}
         with self.client_ctx() as client:
             _, body = self.run_job(client)
         self.assertEqual(body["state"], "awaiting_review")
-        self.assertTrue(any("built-in vocabulary" in w for w in body["warnings"]))
-
-    def test_every_bill_is_checked_against_its_printed_rows(self):
-        with self.client_ctx() as client:
-            _, body = self.run_job(client)
-        self.assertEqual(self.grid_rows.call_count, body["bills"])
-
-    def test_a_printed_row_failure_keeps_the_bill_and_warns(self):
-        self.grid_rows.side_effect = RuntimeError("OCR engine missing")
-        with self.client_ctx() as client:
-            _, body = self.run_job(client)
-        self.assertEqual(body["state"], "awaiting_review")
-        self.assertGreater(body["bills"], 0)
-        self.assertTrue(any("not checked against the page" in w for w in body["warnings"]))
+        self.assertEqual(body["bills"], 2)
+        self.assertTrue(any("model unavailable" in w for w in body["warnings"]))
 
     def client_ctx(self):
         return TestClient(create_app())

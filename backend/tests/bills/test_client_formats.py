@@ -61,7 +61,8 @@ def shape(bills):
     labels = [l for _, b in bills for l in labels_from_bill(b)]
     mapping = interpret_labels(labels, client=None)
     return build_sheets(bills, mapping, parse_amount=parse_amount,
-                        parse_number=parse_number, tolerance=Decimal("0.02"))
+                        parse_number=parse_number, tolerance=Decimal("0.02"),
+                        derive_columns=True)
 
 
 class Rate20Tests(unittest.TestCase):

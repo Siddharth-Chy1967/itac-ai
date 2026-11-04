@@ -12,11 +12,16 @@ from ..config import get_settings
 from .base import LLMProvider, LLMError
 from .gemini import GeminiProvider
 from .ollama import OllamaProvider
+from .openai import OpenAIProvider
 
 
 def _build(provider_name: str, model_override: str | None = None) -> LLMProvider:
     name = provider_name.lower()
     s = get_settings()
+    if name == "openai":
+        return OpenAIProvider(api_key=s.resolved_openai_api_key,
+                              model=model_override or s.resolved_openai_model,
+                              reasoning_effort=s.openai_reasoning_effort)
     if name == "gemini":
         return GeminiProvider(api_key=s.gemini_api_key, model=model_override or s.gemini_model)
     if name == "ollama":

@@ -18,3 +18,7 @@ backend/tests/bills/fixtures/
 
 # Bill job workspaces: uploaded client PDFs, grouped bills, extraction cache
 **/data/bills/
+
+# Bill model-output cache: keyed by content hash, kept out of data/bills so that
+# reclaiming space there does not force a re-read. Holds account numbers.
+**/data/bill_cache/

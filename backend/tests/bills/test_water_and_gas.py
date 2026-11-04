@@ -53,7 +53,8 @@ def shape(bills):
     labels = [l for _, b in bills for l in labels_from_bill(b)]
     mapping = interpret_labels(labels, client=None)
     return build_sheets(bills, mapping, parse_amount=parse_amount,
-                        parse_number=parse_number, tolerance=Decimal("0.02"))
+                        parse_number=parse_number, tolerance=Decimal("0.02"),
+                        derive_columns=True)
 
 
 class WaterTests(unittest.TestCase):
@@ -245,7 +246,14 @@ class RealGasBillTests(unittest.TestCase):
 
     def test_twelve_months_on_one_sheet(self):
         self.assertEqual(len(self.plan.rows), 12)
-        self.assertEqual(self.plan.warnings, [])
+        # Rows are labelled by statement date. Bill 2's invoice date is blacked out
+        # on the PDF, so it falls back to its service period (Jan-21) and lands on
+        # top of bill 1; the next statement is 3/26/2021, so February is empty.
+        self.assertEqual(self.plan.warnings, [
+            "No bill for Feb-21",
+            "2 bills named Jan-21 (one has no statement date, so it is named by its "
+            "service period).",
+        ])
 
     def test_volume_in_mmbtu_gains_a_therms_column(self):
         self.assertIn("Usage (Therms)", [c.canonical for c in self.plan.columns])

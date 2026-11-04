@@ -40,6 +40,7 @@ from .prompts import (
     assemble_system_prompt,
     format_bp_material,
     format_checklist_material,
+    format_field_material,
     format_reference_material,
     render_arc_answer,
     render_bp_writeup_answer,
@@ -180,6 +181,40 @@ _CHECKLIST_BOILER = re.compile(
 # wildcard forms too (see `_SIC_DIGITS`); previously this demanded exactly four digits,
 # so "my SIC is 25xx" parsed to None and the industry pass silently never ran.
 _SIC_IN_MESSAGE = re.compile(rf"\bsic\b[^0-9]{{0,10}}?({_SIC_DIGITS})", re.IGNORECASE)
+# Newer reports and clients quote NAICS. It is translated to SIC through the offline
+# Census concordance (see rag.industry), since the corpus is indexed by SIC.
+_NAICS_IN_MESSAGE = re.compile(r"\bnaics\b[^0-9]{0,10}?(\d{2,6})(?!\d)", re.IGNORECASE)
+# "My next assessment is SIC 2431", "upcoming visit, NAICS 332710": an industry code
+# with no other ask means "what ARs should I expect", the SIC frequency ranking.
+_NEXT_ASSESSMENT_INTENT = re.compile(
+    r"""
+    \b(?:
+        (?:next|upcoming|new|future|first)\s+(?:\w+\s+){0,2}?
+            (?:assessment|audit|site\s*visit|visit|client|facility|plant)
+      | (?:related|relevant|likely|expected?)\s+(?:\w+\s+)?(?:a\.?r\.?s?|recommendations?)\b
+      | what\s+(?:a\.?r\.?s?|recommendations?)\b
+    )
+    """,
+    re.IGNORECASE | re.VERBOSE,
+)
+
+
+def _naics_sic(message: str) -> tuple[str | None, str | None]:
+    """(SIC, plain note) for a NAICS code in the message, or (None, None)."""
+    m = _NAICS_IN_MESSAGE.search(message)
+    if not m:
+        return None, None
+    from ..rag.industry import naics_to_sic
+
+    found = naics_to_sic(m.group(1))
+    if not found:
+        return None, f"NAICS {m.group(1)} is not in the NAICS-to-SIC table."
+    title, sics = found
+    # A NAICS can span several SICs (311611 -> 0751, 2011, 2048). ITAC assesses plants,
+    # so a manufacturing SIC (major groups 20-39) is the one to search on.
+    sics = sorted(sics, key=lambda s: not 20 <= int(s[:2]) <= 39)
+    note = f"NAICS {m.group(1)} ({title}) corresponds to SIC {', '.join(sics[:4])}."
+    return sics[0], note
 
 
 # "What ARs does this industry usually get?" -- a frequency question about a SIC, not a
@@ -216,6 +251,10 @@ _FIELD_INTENT = re.compile(
       | on[-\s]?site\s+(?:data|measurements?|readings)
       | field\s+(?:data|measurements?|checklist)
       | vitals\s+for\b
+      | what\s+(?:do\s+i|should\s+i|would\s+i|do\s+we|should\s+we)\s+need
+            (?=\s+(?:to\s+(?:know|bring|have)\s+)?(?:for|about|on|when)\b)
+      | what\s+(?:equipment|tools?|instruments?|meters?|(?:data\s+)?loggers?)\s+
+            (?:do\s+i|should\s+i|do\s+we|should\s+we|to)\s+(?:need|bring|take|use)
     )
     """,
     re.IGNORECASE | re.VERBOSE,
@@ -227,7 +266,8 @@ _FIELD_INTENT = re.compile(
 _FIELD_STRIP = (
     r"for|on|about|regarding|when|to|do|doing|writing|an?|the|my|this|that|ar|"
     r"recommendation|write[-\s]?up|assessment|site\s*visit|visit|in|order|"
-    r"collect|gather|measure|record|take|bring|need|site|field|data|checklist"
+    r"collect|gather|measure|record|take|bring|need|site|field|data|checklist|"
+    r"know|have|use"
 )
 _FIELD_TOPIC = re.compile(
     rf"(?:{_FIELD_INTENT.pattern})(?:\s+(?:{_FIELD_STRIP})(?=\s|$))*\s*(?P<topic>.+)$",
@@ -249,7 +289,8 @@ def _field_topic(message: str) -> str | None:
     m = _FIELD_TOPIC.search(message)
     if not m:
         return None
-    topic = _FIELD_TOPIC_TAIL.sub("", m.group("topic")).strip(" ?.!,:;\"'")
+    topic = m.group("topic").strip(" ?.!,:;\"'")
+    topic = _FIELD_TOPIC_TAIL.sub("", topic).strip(" ?.!,:;\"'")
     return topic if re.search(r"[A-Za-z]{3}", topic) else None
 
 
@@ -259,8 +300,11 @@ def _classify_mode(message: str) -> str:
         return "arc"
     if _FIELD_INTENT.search(message):
         return "field"
-    if _SIC_RANK_INTENT.search(message) and _SIC_IN_MESSAGE.search(message):
+    has_code = _SIC_IN_MESSAGE.search(message) or _NAICS_IN_MESSAGE.search(message)
+    if has_code and (_SIC_RANK_INTENT.search(message) or _NEXT_ASSESSMENT_INTENT.search(message)):
         return "sic_rank"
+    if _NAICS_IN_MESSAGE.search(message) and not _CHECKLIST_INTENT.search(message):
+        return "checklist"
     if _CHECKLIST_INTENT.search(message):
         return "checklist"
     if _ENUMERATE_INTENT.search(message):
@@ -354,8 +398,10 @@ def _parse_checklist_query(message: str) -> tuple[str | None, str | None]:
     the SIC mention and the checklist boilerplate removed, kept only when substantive
     (>= 3 words).
     """
-    sic_m = _SIC_IN_MESSAGE.search(message)
+    sic_m = _SIC_IN_MESSAGE.search(message) or _NAICS_IN_MESSAGE.search(message)
     sic = sic_m.group(1) if sic_m else None
+    if sic_m is not None and sic_m.re is _NAICS_IN_MESSAGE:
+        sic = _naics_sic(message)[0]
 
     desc = message
     if sic_m:
@@ -929,6 +975,41 @@ def _field_sources(guide) -> list[dict]:
     ]
 
 
+def _hosted_model() -> bool:
+    """True when chat runs on a hosted model, strong enough to write from evidence.
+
+    The local model keeps the deterministic renderings: a small model paraphrasing
+    counted evidence is how unrecorded items crept into answers.
+    """
+    return get_settings().llm_provider.lower() != "ollama"
+
+
+def _industry_header(message: str, sic: str) -> str | None:
+    """"Industry: SIC 2431 Millwork (...)", plus the NAICS translation when one was given."""
+    from ..rag.industry import describe_sic
+
+    described = describe_sic(sic)
+    if described is None:
+        return None
+    _naics, note = _naics_sic(message)
+    return f"Industry: {described}" + (f"\n{note}" if note else "")
+
+
+async def _industry_intro(header: str) -> str | None:
+    """A few lines on what a facility of this industry runs, or None on any failure."""
+    system = assemble_system_prompt([], reference_material=(
+        f"<reference_material>\n{header}\n</reference_material>"), sic_intro_mode=True)
+    try:
+        text = await get_provider().complete(
+            [Message(role="user", content="What does this kind of facility run?")],
+            system=system, max_tokens=300,
+        )
+    except Exception:  # noqa: BLE001 - the intro is optional; the table still renders
+        logger.exception("Industry intro failed; showing the table without it")
+        return None
+    return text.strip() or None
+
+
 async def _rank_sic_ars(sic: str):
     """Rank the AR themes most written for a SIC, off the event loop, or None on failure."""
     settings = get_settings()
@@ -1241,6 +1322,9 @@ async def run_chat(
     enumerate_answer: str | None = None  # enumerate lists render deterministically too
     sic_rank_answer: str | None = None  # SIC AR frequency table, likewise deterministic
     field_answer: str | None = None  # on-site data list, likewise deterministic
+    field_mode = False  # hosted model writes the on-site guide from the write-ups
+    field_fallback: str | None = None  # the counted list, if that model call fails
+    sic_header: str | None = None  # plain industry name above the SIC ranking
     bp_writeup_answer: str | None = None  # BP write-up renders deterministically too
     enumerate_mode = False
     checklist_mode = False
@@ -1332,7 +1416,15 @@ async def run_chat(
             if guide is not None:
                 if guide.instances:
                     yield _sources_event(_field_sources(guide))
-                field_answer = render_field_guide_answer(guide)
+                if _hosted_model():
+                    # A hosted model reads the write-ups themselves and organizes what
+                    # to measure, bring, collect and calculate, citing each report. The
+                    # counted list stays as the fallback if the model call fails.
+                    field_mode = True
+                    field_fallback = render_field_guide_answer(guide)
+                    reference_material = format_field_material(guide)
+                else:
+                    field_answer = render_field_guide_answer(guide)
     elif mode == "sic_rank":
         # "Most common ARs for SIC 3089": a frequency table over the corpus. Rendered
         # deterministically (like ARC and enumerate) because the counts ARE the answer
@@ -1345,6 +1437,7 @@ async def run_chat(
             if result is not None:
                 if result.themes:
                     yield _sources_event(_sic_rank_sources(result))
+                sic_header = _industry_header(message, sic)
                 sic_rank_answer = render_sic_ranking_answer(result)
     elif mode == "checklist":
         # Pre-assessment: split into SIC and/or facility description and run the
@@ -1404,6 +1497,15 @@ async def run_chat(
     # The SIC frequency table is a counted result: emit it verbatim so no count,
     # AR title, or era split can be paraphrased into something untrue.
     if sic_rank_answer is not None:
+        if sic_header:
+            yield Event("token", {"t": sic_header + "\n\n"})
+            # A short general-knowledge intro of the facility type sits between the
+            # industry name and the counted table; the counts themselves never pass
+            # through the model. Skipped quietly if the model is local or fails.
+            if _hosted_model():
+                intro = await _industry_intro(sic_header)
+                if intro:
+                    yield Event("token", {"t": intro + "\n\n"})
         yield Event("token", {"t": sic_rank_answer})
         yield Event("done", {})
         return
@@ -1433,6 +1535,7 @@ async def run_chat(
         bp_checklist_mode=bp_checklist_mode,
         bp_writeup_mode=bp_writeup_mode,
         summarize_mode=summarize_mode,
+        field_mode=field_mode,
     )
 
     # 4. MAIN COMPLETION (streaming). Buffer tokens so table mode can reparse the
@@ -1464,6 +1567,12 @@ async def run_chat(
                     return  # table failed; the error is terminal, no `done`
         yield Event("done", {})
     except LLMError as e:
+        if field_fallback is not None and not chunks:
+            # The model never started: give the counted list instead of an error.
+            logger.warning("Field guide model call failed, using counted list: %s", e)
+            yield Event("token", {"t": field_fallback})
+            yield Event("done", {})
+            return
         yield Event("error", {"message": str(e)})
     except Exception as e:  # noqa: BLE001 - surface anything else as an SSE error
         logger.exception("Unexpected orchestrator error")

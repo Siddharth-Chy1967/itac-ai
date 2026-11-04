@@ -3,6 +3,9 @@ import { streamChat } from "../api/client.js";
 import ChatInput from "../components/ChatInput.jsx";
 import ChatMessage from "../components/ChatMessage.jsx";
 
+// ARchie opens every chat with this line. It is shown, not sent to the model.
+const GREETING = "Hey, my name is ARchie, how can I help?";
+
 export default function Chat() {
   const [messages, setMessages] = useState([]);
   const [streaming, setStreaming] = useState(false);
@@ -80,6 +83,7 @@ export default function Chat() {
       ) : (
         <div className="flex-1 overflow-y-auto">
           <div className="mx-auto max-w-3xl space-y-4 px-4 py-6">
+            <ChatMessage message={{ role: "assistant", content: GREETING, sources: [], files: [] }} />
             {messages.map((m, i) => (
               <ChatMessage key={i} message={m} />
             ))}
@@ -106,9 +110,10 @@ function EmptyState() {
   return (
     <div className="flex h-full flex-col items-center justify-center px-4 text-center text-white">
       <img src="/itac-logo.png" alt="" className="mb-8 h-48 w-48 md:h-64 md:w-64" />
-      <p className="text-2xl font-semibold">ITAC AI Assistant</p>
+      <p className="text-2xl font-semibold">{GREETING}</p>
       <p className="mt-2 max-w-md text-sm text-white/70">
-        Ask about past assessment reports, ITAC formatting conventions, or request a formatted table.
+        Ask what to measure for any AR, which ARs are common for your next assessment's
+        SIC or NAICS code, or about past assessment reports.
       </p>
     </div>
   );

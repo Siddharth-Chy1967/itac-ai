@@ -324,8 +324,10 @@ def _get_ocr_engine():
 
 
 def ocr_page(page, config: LocalInferenceConfig) -> str:
-    """OCR one PyMuPDF page at `ocr_dpi`, as reading-order text."""
-    return text_from_items(ocr_page_items(page, config))
+    """OCR one PyMuPDF page at `ocr_dpi`, as reading-order text, chart axes removed."""
+    from .page_text import split_axis_labels
+
+    return text_from_items(split_axis_labels(ocr_page_items(page, config))[0])
 
 
 def ocr_page_items(page, config: LocalInferenceConfig) -> list[OcrItem]:
@@ -382,7 +384,12 @@ def load_pdf_pages(
                     label = f"Page {len(pages) + 1}"
                 text = page.get_text("text", sort=True).strip()
                 if len(text) >= TEXT_LAYER_MIN_CHARS:
-                    transcript, source = text, "PDF text layer"
+                    # Chart axis labels are printed but are not bill figures; the
+                    # model never sees them (see page_text).
+                    from .page_text import split_axis_labels, text_layer_items
+
+                    transcript = text_from_items(split_axis_labels(text_layer_items(page))[0])
+                    source = "PDF text layer"
                 elif config.ocr_enabled:
                     transcript, source = ocr_page(page, config), "OCR"
                 else:

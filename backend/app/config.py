@@ -29,14 +29,21 @@ class Settings(BaseSettings):
     )
 
     # LLM provider selection
-    llm_provider: str = "gemini"  # gemini | ollama | anthropic
+    llm_provider: str = "gemini"  # openai | gemini | ollama | anthropic
 
     # Provider credentials / endpoints
     gemini_api_key: str = ""
     anthropic_api_key: str = ""
+    # Blank = the bill reader's key (BILLS_LLM_API_KEY), then OPENAI_API_KEY.
+    openai_api_key: str = ""
     ollama_base_url: str = "http://localhost:11434"
 
     # Models
+    # Blank = whatever the bill reader uses (BILLS_LLM_MODEL, else gpt-6-luna), so
+    # chat and bills share one key and one model.
+    openai_model: str = ""
+    # Chat answers are retrieval-grounded; low effort keeps replies quick and cheap.
+    openai_reasoning_effort: str = "low"
     ollama_model: str = "llama3.3"
     gemini_model: str = "gemini-2.0-flash"
     anthropic_model: str = "claude-haiku-latest"
@@ -193,6 +200,26 @@ class Settings(BaseSettings):
     rag_field_title_coverage_weight: float = 0.25
 
     # --- Utility-bill extraction (Session F) --------------------------------
+    # Which model reads bill pages. Deliberately separate from LLM_PROVIDER above,
+    # which drives chat: switching bills to a hosted model must not switch chat.
+    #   ollama             local Ollama at OLLAMA_BASE_URL (model: BILLS_LLM_MODEL,
+    #                      else BILLS_VLM_MODEL)
+    #   openai             OpenAI Responses API (default model gpt-6-luna)
+    #   openai_compatible  any /chat/completions endpoint at BILLS_LLM_BASE_URL
+    #                      (OpenRouter, vLLM, LM Studio, ...)
+    bills_llm_provider: str = "ollama"
+    bills_llm_model: str = ""           # blank = the provider's default
+    bills_llm_api_key: str = ""         # blank = OPENAI_API_KEY from the environment
+    bills_llm_base_url: str = ""        # blank = the provider's default endpoint
+    bills_llm_reasoning_effort: str = "medium"  # none | low | medium | high
+    # Page images sent with the page text: always | never | auto. auto sends them to
+    # hosted models always, and to the local model only for pages without a text
+    # layer (scans): on digital PDFs qwen2.5vl read more lines, and fewer wrong
+    # labels, from the exact text alone than from text plus images.
+    bills_llm_images: str = "auto"
+    # Columns no bill prints (Total kWh summed from TOU periods, MMBtu conversions,
+    # cost per gallon). Off by default: every workbook value must be a printed figure.
+    bills_derived_columns: bool = False
     # Vision model that reads bill pages. Qwen2.5-VL is the calibrated default;
     # it must be a model Ollama reports with vision capability.
     bills_vlm_model: str = "qwen2.5vl:latest"
@@ -215,6 +242,15 @@ class Settings(BaseSettings):
     # Working root for bill jobs: uploads, page/extraction caches and workbooks.
     # Inside Docker this resolves under the mounted ./data volume, never the image.
     bills_path: str = "./data/bills"
+    # Model output cached across jobs, keyed by document/bill content hash.
+    #
+    # Deliberately NOT inside a job folder. Job folders hold the uploaded PDFs, the
+    # split bills and rendered pages -- hundreds of megabytes that people delete to
+    # reclaim space. The caches are a few hundred KB of JSON, and throwing them away
+    # means re-asking a model that answers differently each time, so the same PDF
+    # groups one run and is refused the next. Keeping them here makes a re-upload
+    # both instant and repeatable, and leaves job folders safe to delete.
+    bills_cache_path: str = "./data/bill_cache"
     # Reconciliation tolerance in dollars. Real bills round to the cent, so an exact
     # equality test flags healthy bills for review; see validation_checks.
     bills_amount_tolerance: float = 0.02
@@ -232,6 +268,15 @@ class Settings(BaseSettings):
         "ollama_model",
         "anthropic_model",
         "router_model_override",
+        "openai_model",
+        "openai_api_key",
+        "openai_reasoning_effort",
+        "bills_llm_provider",
+        "bills_llm_model",
+        "bills_llm_base_url",
+        "bills_llm_reasoning_effort",
+        "bills_llm_images",
+        "bills_llm_api_key",
         mode="before",
     )
     @classmethod
@@ -247,9 +292,27 @@ class Settings(BaseSettings):
         return v
 
     @property
+    def resolved_openai_model(self) -> str:
+        """Chat's OpenAI model: its own setting, else the bill reader's."""
+        if self.openai_model:
+            return self.openai_model
+        if self.bills_llm_provider.lower() == "openai" and self.bills_llm_model:
+            return self.bills_llm_model
+        return "gpt-6-luna"
+
+    @property
+    def resolved_openai_api_key(self) -> str:
+        """Chat's OpenAI key: its own setting, else the bill reader's."""
+        import os
+
+        return (self.openai_api_key or self.bills_llm_api_key
+                or os.environ.get("OPENAI_API_KEY", "")).strip()
+
+    @property
     def active_model(self) -> str:
         """The model name for the currently selected provider."""
         return {
+            "openai": self.resolved_openai_model,
             "gemini": self.gemini_model,
             "ollama": self.ollama_model,
             "anthropic": self.anthropic_model,

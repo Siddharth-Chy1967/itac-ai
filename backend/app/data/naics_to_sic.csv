@@ -1,0 +1,1485 @@
+naics,naics_title,vintages,sic4
+111110,Soybean Farming,1997 2002 2007 2012 2017 2022,0116
+111120,Oilseed (except Soybean) Farming,1997 2002 2007 2012 2017 2022,0119
+111130,Dry Pea and Bean Farming,1997 2002 2007 2012 2017 2022,0119
+111140,Wheat Farming,1997 2002 2007 2012 2017 2022,0111
+111150,Corn Farming,1997 2002 2007 2012 2017 2022,0115 0119
+111160,Rice Farming,1997 2002 2007 2012 2017 2022,0112
+111191,Oilseed and Grain Combination Farming,1997 2002 2007 2012 2017 2022,0119
+111199,All Other Grain Farming,1997 2002 2007 2012 2017 2022,0119
+111211,Potato Farming,1997 2002 2007 2012 2017 2022,0134 0161 0139
+111219,Other Vegetable (except Potato) and Melon Farming,1997 2002 2007 2012 2017 2022,0161 0139
+111310,Orange Groves,1997 2002 2007 2012 2017 2022,0174
+111320,Citrus (except Orange) Groves,1997 2002 2007 2012 2017 2022,0174
+111331,Apple Orchards,1997 2002 2007 2012 2017 2022,0175
+111332,Grape Vineyards,1997 2002 2007 2012 2017 2022,0172
+111333,Strawberry Farming,1997 2002 2007 2012 2017 2022,0171
+111334,Berry (except Strawberry) Farming,1997 2002 2007 2012 2017 2022,0171
+111335,Tree Nut Farming,1997 2002 2007 2012 2017 2022,0173
+111336,Fruit and Tree Nut Combination Farming,1997 2002 2007 2012 2017 2022,0179
+111339,Other Noncitrus Fruit Farming,1997 2002 2007 2012 2017 2022,0175 0179
+111411,Mushroom Production,1997 2002 2007 2012 2017 2022,0182
+111419,Other Food Crops Grown Under Cover,1997 2002 2007 2012 2017 2022,0182
+111421,Nursery and Tree Production,1997 2002 2007 2012 2017 2022,0181 0811
+111422,Floriculture Production,1997 2002 2007 2012 2017 2022,0181
+111910,Tobacco Farming,1997 2002 2007 2012 2017 2022,0132
+111920,Cotton Farming,1997 2002 2007 2012 2017 2022,0131
+111930,Sugarcane Farming,1997 2002 2007 2012 2017 2022,0133
+111940,Hay Farming,1997 2002 2007 2012 2017 2022,0139
+111991,Sugar Beet Farming,1997 2002 2007 2012 2017 2022,0133
+111992,Peanut Farming,1997 2002 2007 2012 2017 2022,0139
+111998,All Other Miscellaneous Crop Farming,1997 2002 2007 2012 2017 2022,0139 0191 0831 0919 2099
+112111,Beef Cattle Ranching and Farming,1997 2002 2007 2012 2017 2022,0212 0241
+112112,Cattle Feedlots,1997 2002 2007 2012 2017 2022,0211
+112120,Dairy Cattle and Milk Production,1997 2002 2007 2012 2017 2022,0241
+112210,Hog and Pig Farming,1997 2002 2007 2012 2017 2022,0213
+112310,Chicken Egg Production,1997 2002 2007 2012 2017 2022,0252
+112320,Broilers and Other Meat Type Chicken Production,1997 2002 2007 2012 2017 2022,0251
+112330,Turkey Production,1997 2002 2007 2012 2017 2022,0253
+112340,Poultry Hatcheries,1997 2002 2007 2012 2017 2022,0254
+112390,Other Poultry Production,1997 2002 2007 2012 2017 2022,0259
+112410,Sheep Farming,1997 2002 2007 2012 2017 2022,0214
+112420,Goat Farming,1997 2002 2007 2012 2017 2022,0214
+112511,Finfish Farming and Fish Hatcheries,1997 2002 2007 2012 2017 2022,0273 0921
+112512,Shellfish Farming,1997 2002 2007 2012 2017 2022,0273 0921
+112519,Other Aquaculture,1997 2002 2007 2012 2017 2022,0273 0279 0139 0191 0831 0919 2099
+112910,Apiculture,1997 2002 2007 2012 2017 2022,0279
+112920,Horses and Other Equine Production,1997 2002 2007 2012 2017 2022,0272
+112930,Fur-Bearing Animal and Rabbit Production,1997 2002 2007 2012 2017 2022,0271
+112990,All Other Animal Production,1997 2002 2007 2012 2017 2022,0219 0279 0291
+113110,Timber Tract Operations,1997 2002 2007 2012 2017 2022,0811
+113210,Forest Nurseries and Gathering of Forest Products,1997 2002 2007 2012 2017 2022,0831
+113310,Logging,1997 2002 2007 2012 2017 2022,2411
+114111,Finfish Fishing,1997 2002 2007 2012 2017 2022,0912
+114112,Shellfish Fishing,1997 2002 2007 2012 2017 2022,0913
+114119,Other Marine Fishing,1997 2002 2007 2012 2017 2022,0919
+114210,Hunting and Trapping,1997 2002 2007 2012 2017 2022,0971
+115111,Cotton Ginning,1997 2002 2007 2012 2017 2022,0724
+115112,"Soil Preparation, Planting, and Cultivating",1997 2002 2007 2012 2017 2022,0711 0721
+115113,"Crop Harvesting, Primarily by Machine",1997 2002 2007 2012 2017 2022,0722
+115114,Postharvest Crop Activities (except Cotton Ginning),1997 2002 2007 2012 2017 2022,0723
+115115,Farm Labor Contractors and Crew Leaders,1997 2002 2007 2012 2017 2022,0761
+115116,Farm Management Services,1997 2002 2007 2012 2017 2022,0762
+115210,Support Activities for Animal Production,1997 2002 2007 2012 2017 2022,0751 0752 7699
+115310,Support Activities for Forestry,1997 2002 2007 2012 2017 2022,0851
+211111,Crude Petroleum and Natural Gas Extraction,1997 2002 2007 2012,1311
+211112,Natural Gas Liquid Extraction,1997 2002 2007 2012,1321 2819
+211120,Crude Petroleum Extraction,2017 2022,1311
+211130,Natural Gas Extraction,2017 2022,1311 1321 2819
+212111,Bituminous Coal and Lignite Surface Mining,1997 2002 2007 2012 2017,1221
+212112,Bituminous Coal Underground Mining,1997 2002 2007 2012 2017,1222
+212113,Anthracite Mining,1997 2002 2007 2012 2017,1231
+212114,Surface Coal Mining,2022,1221 1231
+212115,Underground Coal Mining,2022,1222 1231
+212210,Iron Ore Mining,1997 2002 2007 2012 2017 2022,1011
+212220,Gold Ore and Silver Ore Mining,2022,1041 1044
+212221,Gold Ore Mining,1997 2002 2007 2012 2017,1041
+212222,Silver Ore Mining,1997 2002 2007 2012 2017,1044
+212230,"Copper, Nickel, Lead, and Zinc Mining",2017 2022,1031 1021 1061
+212231,Lead Ore and Zinc Ore Mining,1997 2002 2007 2012,1031
+212234,Copper Ore and Nickel Ore Mining,1997 2002 2007 2012,1021 1061
+212290,Other Metal Ore Mining,2022,1094 1061 1099
+212291,Uranium-Radium-Vanadium Ore Mining,1997 2002 2007 2012 2017,1094
+212299,All Other Metal Ore Mining,1997 2002 2007 2012 2017,1061 1099
+212311,Dimension Stone Mining and Quarrying,1997 2002 2007 2012 2017 2022,1411
+212312,Crushed and Broken Limestone Mining and Quarrying,1997 2002 2007 2012 2017 2022,1422
+212313,Crushed and Broken Granite Mining and Quarrying,1997 2002 2007 2012 2017 2022,1423
+212319,Other Crushed and Broken Stone Mining and Quarrying,1997 2002 2007 2012 2017 2022,1429 1499
+212321,Construction Sand and Gravel Mining,1997 2002 2007 2012 2017 2022,1442
+212322,Industrial Sand Mining,1997 2002 2007 2012 2017 2022,1446
+212323,"Kaolin, Clay, and Ceramic and Refractory Minerals Mining",2022,1455 3295 1459
+212324,Kaolin and Ball Clay Mining,1997 2002 2007 2012 2017,1455 3295
+212325,Clay and Ceramic and Refractory Minerals Mining,1997 2002 2007 2012 2017,1459 3295
+212390,Other Nonmetallic Mineral Mining and Quarrying,2022,1474 1475 1479 3295 1499
+212391,"Potash, Soda, and Borate Mineral Mining",1997 2002 2007 2012 2017,1474
+212392,Phosphate Rock Mining,1997 2002 2007 2012 2017,1475
+212393,Other Chemical and Fertilizer Mineral Mining,1997 2002 2007 2012 2017,1479 3295
+212399,All Other Nonmetallic Mineral Mining,1997 2002 2007 2012 2017,1499 3295
+213111,Drilling Oil and Gas Wells,1997 2002 2007 2012 2017 2022,1381
+213112,Support Activities for Oil and Gas Operations,1997 2002 2007 2012 2017 2022,1382 1389
+213113,Support Activities for Coal Mining,1997 2002 2007 2012 2017 2022,1241
+213114,Support Activities for Metal Mining,1997 2002 2007 2012 2017 2022,1081
+213115,Support Activities for Nonmetallic Minerals (except Fuels) Mining,1997 2002 2007 2012 2017 2022,1481
+221111,Hydroelectric Power Generation,1997 2002 2007 2012 2017 2022,4911 4931 4939
+221112,Fossil Fuel Electric Power Generation,1997 2002 2007 2012 2017 2022,4911 4931 4939
+221113,Nuclear Electric Power Generation,1997 2002 2007 2012 2017 2022,4911 4931 4939
+221114,Solar Electric Power Generation,2012 2017 2022,4911 4931 4939
+221115,Wind Electric Power Generation,2012 2017 2022,4911 4931 4939
+221116,Geothermal Electric Power Generation,2012 2017 2022,4911 4931 4939
+221117,Biomass Electric Power Generation,2012 2017 2022,4911 4931 4939
+221118,Other Electric Power Generation,2012 2017 2022,4911 4931 4939
+221119,Other Electric Power Generation,1997 2002 2007,4911 4931 4939
+221121,Electric Bulk Power Transmission and Control,1997 2002 2007 2012 2017 2022,4911 4931 4939
+221122,Electric Power Distribution,1997 2002 2007 2012 2017 2022,4911 4931 4939
+221210,Natural Gas Distribution,1997 2002 2007 2012 2017 2022,4923 4924 4925 4931 4932 4939
+221310,Water Supply and Irrigation Systems,1997 2002 2007 2012 2017 2022,4941 4971
+221320,Sewage Treatment Facilities,1997 2002 2007 2012 2017 2022,4952
+221330,Steam and Air-Conditioning Supply,1997 2002 2007 2012 2017 2022,4961
+233110,Land Subdivision and Land Development,1997,6552
+233210,Single Family Housing Construction,1997,1521 1531 8741
+233220,Multifamily Housing Construction,1997,1522 1531 8741
+233310,Manufacturing and Industrial Building Construction,1997,1531 1541 8741
+233320,Commercial and Institutional Building Construction,1997,1522 1531 1541 1542 8741
+234110,Highway and Street Construction,1997,1611 8741
+234120,Bridge and Tunnel Construction,1997,1622 8741
+234910,"Water, Sewer, and Pipeline Construction",1997,1623 8741
+234920,Power and Communication Transmission Line Construction,1997,1623 8741
+234930,Industrial Nonbuilding Structure Construction,1997,1629 8741
+234990,All Other Heavy Construction,1997,1629 7353 8741
+235110,"Plumbing, Heating, and Air-Conditioning Contractors",1997,1711 7699
+235210,Painting and Wall Covering Contractors,1997,1721 1799
+235310,Electrical Contractors,1997,1731
+235410,Masonry and Stone Contractors,1997,1741
+235420,"Drywall, Plastering, Acoustical, and Insulation Contractors",1997,1742 1743 1771
+235430,"Tile, Marble, Terrazzo, and Mosaic Contractors",1997,1743
+235510,Carpentry Contractors,1997,1751
+235520,Floor Laying and Other Floor Contractors,1997,1752
+235610,"Roofing, Siding, and Sheet Metal Contractors",1997,1761
+235710,Concrete Contractors,1997,1771
+235810,Water Well Drilling Contractors,1997,1781
+235910,Structural Steel Erection Contractors,1997,1791
+235920,Glass and Glazing Contractors,1997,1793 1799
+235930,Excavation Contractors,1997,1794
+235940,Wrecking and Demolition Contractors,1997,1795
+235950,Building Equipment and Other Machinery Installation Contractors,1997,1796
+235990,All Other Special Trade Contractors,1997,1799
+236115,New Single-Family Housing Construction (except For-Sale Builders),2002 2007 2012 2017 2022,1521 1531 8741
+236116,New Multifamily Housing Construction (except For-Sale Builders),2002 2007 2012 2017 2022,1522 1531 8741
+236117,New Housing For-Sale Builders,2002 2007 2012 2017 2022,1521 1531 8741 1522
+236118,Residential Remodelers,2002 2007 2012 2017 2022,1521 1531 8741 1522
+236210,Industrial Building Construction,2002 2007 2012 2017 2022,1531 1541 8741 1629 7353
+236220,Commercial and Institutional Building Construction,2002 2007 2012 2017 2022,1522 1531 8741 1541 1542 1799
+237110,Water and Sewer Line and Related Structures Construction,2002 2007 2012 2017 2022,1623 8741 1629 7353 1781
+237120,Oil and Gas Pipeline and Related Structures Construction,2002 2007 2012 2017 2022,1382 1389 1623 8741 1629
+237130,Power and Communication Line and Related Structures Construction,2002 2007 2012 2017 2022,1623 8741 1629
+237210,Land Subdivision,2002 2007 2012 2017 2022,6552
+237310,"Highway, Street, and Bridge Construction",2002 2007 2012 2017 2022,1611 8741 1622 1721 1799
+237990,Other Heavy and Civil Engineering Construction,2002 2007 2012 2017 2022,1622 8741 1629 7353 1799
+238110,Poured Concrete Foundation and Structure Contractors,2002 2007 2012 2017 2022,1771
+238120,Structural Steel and Precast Concrete Contractors,2002 2007 2012 2017 2022,1791
+238130,Framing Contractors,2002 2007 2012 2017 2022,1751
+238140,Masonry Contractors,2002 2007 2012 2017 2022,1741 1742 1743 1771
+238150,Glass and Glazing Contractors,2002 2007 2012 2017 2022,1793 1799
+238160,Roofing Contractors,2002 2007 2012 2017 2022,1761
+238170,Siding Contractors,2002 2007 2012 2017 2022,1761
+238190,"Other Foundation, Structure, and Building Exterior Contractors",2002 2007 2012 2017 2022,1791 1799
+238210,Electrical Contractors and Other Wiring Installation Contractors,2002 2007 2012 2017 2022,1711 7699 1731
+238220,"Plumbing, Heating, and Air-Conditioning Contractors",2002 2007 2012 2017 2022,1711 7699 1791 1796
+238290,Other Building Equipment Contractors,2002 2007 2012 2017 2022,1796 1799
+238310,Drywall and Insulation Contractors,2002 2007 2012 2017 2022,1742 1743 1771 1791 1799 1752
+238320,Painting and Wall Covering Contractors,2002 2007 2012 2017 2022,1721 1799
+238330,Flooring Contractors,2002 2007 2012 2017 2022,1752
+238340,Tile and Terrazzo Contractors,2002 2007 2012 2017 2022,1743
+238350,Finish Carpentry Contractors,2002 2007 2012 2017 2022,1751
+238390,Other Building Finishing Contractors,2002 2007 2012 2017 2022,1761 1799
+238910,Site Preparation Contractors,2002 2007 2012 2017 2022,1382 1389 1241 1081 1481 1629 7353 8741 1711 7699 1794 1795 1799
+238990,All Other Specialty Trade Contractors,2002 2007 2012 2017 2022,1629 7353 8741 1771 1799 7342 7349 4581
+311111,Dog and Cat Food Manufacturing,1997 2002 2007 2012 2017 2022,2047
+311119,Other Animal Food Manufacturing,1997 2002 2007 2012 2017 2022,2048 0723
+311211,Flour Milling,1997 2002 2007 2012 2017 2022,2034 2041
+311212,Rice Milling,1997 2002 2007 2012 2017 2022,2044 2099
+311213,Malt Manufacturing,1997 2002 2007 2012 2017 2022,2083
+311221,Wet Corn Milling and Starch Manufacturing,1997 2002 2007 2012 2017 2022,2046
+311222,Soybean Processing,1997 2002 2007,2075 2079
+311223,Other Oilseed Processing,1997 2002 2007,2074 2079 2076
+311224,Soybean and Other Oilseed Processing,2012 2017 2022,2075 2079 2074 2076
+311225,Fats and Oils Refining and Blending,1997 2002 2007 2012 2017 2022,2046 2074 2075 2076 2079
+311230,Breakfast Cereal Manufacturing,1997 2002 2007 2012 2017 2022,2043
+311311,Sugarcane Mills,1997 2002 2007,2061
+311312,Cane Sugar Refining,1997 2002 2007,2062
+311313,Beet Sugar Manufacturing,1997 2002 2007 2012 2017 2022,2063
+311314,Cane Sugar Manufacturing,2012 2017 2022,2061 2062
+311320,Chocolate and Confectionery Manufacturing from Cacao Beans,1997 2002 2007,2066
+311330,Confectionery Manufacturing from Purchased Chocolate,1997 2002 2007,2064 2066 5441
+311340,Nonchocolate Confectionery Manufacturing,1997 2002 2007 2012 2017 2022,2064 5441 2067 2099
+311351,Chocolate and Confectionery Manufacturing from Cacao Beans,2012 2017 2022,2066
+311352,Confectionery Manufacturing from Purchased Chocolate,2012 2017 2022,2064 2066 5441
+311411,"Frozen Fruit, Juice, and Vegetable Manufacturing",1997 2002 2007 2012 2017 2022,2037
+311412,Frozen Specialty Food Manufacturing,1997 2002 2007 2012 2017 2022,2038
+311421,Fruit and Vegetable Canning,1997 2002 2007 2012 2017 2022,2033 2035
+311422,Specialty Canning,1997 2002 2007 2012 2017 2022,2032
+311423,Dried and Dehydrated Food Manufacturing,1997 2002 2007 2012 2017 2022,2034 2099
+311511,Fluid Milk Manufacturing,1997 2002 2007 2012 2017 2022,2026
+311512,Creamery Butter Manufacturing,1997 2002 2007 2012 2017 2022,2021
+311513,Cheese Manufacturing,1997 2002 2007 2012 2017 2022,2022
+311514,"Dry, Condensed, and Evaporated Dairy Product Manufacturing",1997 2002 2007 2012 2017 2022,2023 2026
+311520,Ice Cream and Frozen Dessert Manufacturing,1997 2002 2007 2012 2017 2022,2024
+311611,Animal (except Poultry) Slaughtering,1997 2002 2007 2012 2017 2022,0751 2011 2048
+311612,Meat Processed from Carcasses,1997 2002 2007 2012 2017 2022,2013 5147
+311613,Rendering and Meat Byproduct Processing,1997 2002 2007 2012 2017 2022,2077 2013
+311615,Poultry Processing,1997 2002 2007 2012 2017 2022,2015
+311710,Seafood Product Preparation and Packaging,2012 2017 2022,2077 2091 2092
+311711,Seafood Canning,1997 2002 2007,2077 2091
+311712,Fresh and Frozen Seafood Processing,1997 2002 2007,2077 2092
+311811,Retail Bakeries,1997 2002 2007 2012 2017 2022,5461
+311812,Commercial Bakeries,1997 2002 2007 2012 2017 2022,2051 2052
+311813,"Frozen Cakes, Pies, and Other Pastries Manufacturing",1997 2002 2007 2012 2017 2022,2053
+311821,Cookie and Cracker Manufacturing,1997 2002 2007 2012 2017 2022,2052
+311822,Flour Mixes and Dough Manufacturing from Purchased Flour,1997 2002 2007,2045
+311823,Dry Pasta Manufacturing,1997 2002 2007,2098 2099
+311824,"Dry Pasta, Dough, and Flour Mixes Manufacturing from Purchased Flour",2012 2017 2022,2045 2098 2099
+311830,Tortilla Manufacturing,1997 2002 2007 2012 2017 2022,2099
+311911,Roasted Nuts and Peanut Butter Manufacturing,1997 2002 2007 2012 2017 2022,2068 2099
+311919,Other Snack Food Manufacturing,1997 2002 2007 2012 2017 2022,2052 2096
+311920,Coffee and Tea Manufacturing,1997 2002 2007 2012 2017 2022,2043 2087 2095 2099
+311930,Flavoring Syrup and Concentrate Manufacturing,1997 2002 2007 2012 2017 2022,2087
+311941,"Mayonnaise, Dressing, and Other Prepared Sauce Manufacturing",1997 2002 2007 2012 2017 2022,2035 2099
+311942,Spice and Extract Manufacturing,1997 2002 2007 2012 2017 2022,2082 2087 2099 2899
+311991,Perishable Prepared Food Manufacturing,1997 2002 2007 2012 2017 2022,2099
+311999,All Other Miscellaneous Food Manufacturing,1997 2002 2007 2012 2017 2022,2015 2032 2034 2087 2099
+312111,Soft Drink Manufacturing,1997 2002 2007 2012 2017 2022,2086
+312112,Bottled Water Manufacturing,1997 2002 2007 2012 2017 2022,2086 5149
+312113,Ice Manufacturing,1997 2002 2007 2012 2017 2022,2097
+312120,Breweries,1997 2002 2007 2012 2017 2022,2082
+312130,Wineries,1997 2002 2007 2012 2017 2022,2084 2085
+312140,Distilleries,1997 2002 2007 2012 2017 2022,2085
+312210,Tobacco Stemming and Redrying,1997 2002 2007,2141
+312221,Cigarette Manufacturing,1997 2002 2007,2111
+312229,Other Tobacco Product Manufacturing,1997 2002 2007,2121 2131 2141
+312230,Tobacco Manufacturing,2012 2017 2022,2141 2111 2121 2131
+313110,"Fiber, Yarn, and Thread Mills",2012 2017 2022,2281 2299 2282 2284
+313111,Yarn Spinning Mills,1997 2002 2007,2281 2299
+313112,"Yarn Texturizing, Throwing, and Twisting Mills",1997 2002 2007,2282
+313113,Thread Mills,1997 2002 2007,2284 2299
+313210,Broadwoven Fabric Mills,1997 2002 2007 2012 2017 2022,2211 2221 2231 2299
+313220,Narrow Fabric Mills and Schiffli Machine Embroidery,2012 2017 2022,2241 2299 2397
+313221,Narrow Fabric Mills,1997 2002 2007,2241 2299
+313222,Schiffli Machine Embroidery,1997 2002 2007,2397
+313230,Nonwoven Fabric Mills,1997 2002 2007 2012 2017 2022,2297 2299
+313240,Knit Fabric Mills,2012 2017 2022,2257 2259 2258
+313241,Weft Knit Fabric Mills,1997 2002 2007,2257 2259
+313249,Other Knit Fabric and Lace Mills,1997 2002 2007,2258 2259
+313310,Textile and Fabric Finishing Mills,2012 2017 2022,2231 2261 2262 5131 7389 2251 2252 2253 2254 2257 2258 2259 2269 2284 2299
+313311,Broadwoven Fabric Finishing Mills,1997 2002 2007,2231 2261 2262 5131 7389
+313312,Textile and Fabric Finishing (except Broadwoven Fabric) Mills,1997 2002 2007,2231 2251 2252 2253 2254 2257 2258 2259 2269 2284 2299 5131
+313320,Fabric Coating Mills,1997 2002 2007 2012 2017 2022,2295 3069
+314110,Carpet and Rug Mills,1997 2002 2007 2012 2017 2022,2273
+314120,Curtain and Linen Mills,2012 2017 2022,2391 5714 2392
+314121,Curtain and Drapery Mills,1997 2002 2007,2391 5714
+314129,Other Household Textile Product Mills,1997 2002 2007,2392 5714
+314910,Textile Bag and Canvas Mills,2012 2017 2022,2392 2393 2394
+314911,Textile Bag Mills,1997 2002 2007,2392 2393
+314912,Canvas and Related Product Mills,1997 2002 2007,2394
+314991,"Rope, Cordage, and Twine Mills",1997 2002 2007,2298
+314992,Tire Cord and Tire Fabric Mills,1997 2002 2007,2296
+314994,"Rope, Cordage, Twine, Tire Cord, and Tire Fabric Mills",2012 2017 2022,2298 2296
+314999,All Other Miscellaneous Textile Product Mills,1997 2002 2007 2012 2017 2022,2299 2392 2395 3569 7389 2396 2399 2311 2321 2322 2323 2325 2326 2329 2341 2353 2361 2369 2371 2381 2384 2385 2386 2387 2389 3151 2331 2335 2337 2339 2342
+315110,Hosiery and Sock Mills,2012 2017,2251 2252
+315111,Sheer Hosiery Mills,1997 2002 2007,2251 2252
+315119,Other Hosiery and Sock Mills,1997 2002 2007,2252
+315120,Apparel Knitting Mills,2022,2251 2252 2253 2259 2254
+315190,Other Apparel Knitting Mills,2012 2017,2253 2259 2254
+315191,Outerwear Knitting Mills,1997 2002 2007,2253 2259
+315192,Underwear and Nightwear Knitting Mills,1997 2002 2007,2254 2259 2253
+315210,Cut and Sew Apparel Contractors,2012 2017 2022,2311 2321 2322 2323 2325 2326 2329 2341 2353 2361 2369 2371 2381 2384 2385 2386 2387 2389 2395 3151 2331 2335 2337 2339 2342
+315211,Men's and Boys' Cut and Sew Apparel Contractors,1997 2002 2007,2311 2321 2322 2323 2325 2326 2329 2341 2353 2361 2369 2371 2381 2384 2385 2386 2387 2389 2395 3151
+315212,"Women's Girls', and Infants' Cut and Sew Apparel Contractors",1997 2002 2007,2331 2335 2337 2339 2341 2342 2353 2361 2369 2371 2381 2384 2385 2386 2387 2389 2395 3151
+315220,Men's and Boys' Cut and Sew Apparel Manufacturing,2012 2017,2322 2341 2369 2384 2311 2385 5699 2321 2361 2325 2326 2329
+315221,Men's and Boys' Cut and Sew Underwear and Nightwear Manufacturing,1997 2002 2007,2322 2341 2369 2384
+315222,"Men's and Boys' Cut and Sew Suit, Coat, and Overcoat Manufacturing",1997 2002 2007,2311 2369 2385 5699
+315223,Men's and Boys' Cut and Sew Shirt (except Work Shirt) Manufacturing,1997 2002 2007,2321 2361 5699
+315224,"Men's and Boys' Cut and Sew Trouser, Slack, and Jean Manufacturing",1997 2002 2007,2325 2369
+315225,Men's and Boys' Cut and Sew Work Clothing Manufacturing,1997 2002 2007,2326
+315228,Men's and Boys' Cut and Sew Other Outerwear Manufacturing,1997 2002 2007,2329 2369 2385
+315231,"Women's and Girls' Cut and Sew Lingerie, Loungewear, and Nightwear Manufacturing",1997 2002 2007,2341 2342 2369 2384 2389
+315232,Women's and Girls' Cut and Sew Blouse and Shirt Manufacturing,1997 2002 2007,2331 2361
+315233,Women's and Girls' Cut and Sew Dress Manufacturing,1997 2002 2007,2335 2361 5699
+315234,"Women's and Girls' Cut and Sew Suit, Coat, Tailored Jacket, and Skirt Manufacturing",1997 2002 2007,2337 2369 2385
+315239,Women's and Girls' Cut and Sew Other Outerwear Manufacturing,1997 2002 2007,2339 2369 2385
+315240,"Women's, Girls', and Infants' Cut and Sew Apparel Manufacturing",2012 2017,2341 2342 2369 2384 2389 2331 2361 2335 5699 2337 2385 2339
+315250,Cut and Sew Apparel Manufacturing (except Contractors),2022,2322 2341 2369 2384 2311 2385 5699 2321 2361 2325 2326 2329 2342 2389 2331 2335 2337 2339 2371 2386 3069
+315280,Other Cut and Sew Apparel Manufacturing,2012 2017,2371 2386 2329 2339 2385 2389 3069
+315291,Infants' Cut and Sew Apparel Manufacturing,1997 2002 2007,2341 2361 2369 2385
+315292,Fur and Leather Apparel Manufacturing,1997 2002 2007,2371 2386
+315299,All Other Cut and Sew Apparel Manufacturing,1997 2002 2007,2329 2339 2385 2389 3069
+315990,Apparel Accessories and Other Apparel Manufacturing,2012 2017 2022,2353 2381 3151 2323 2339 2385 2387 2389 2396 2399 3069
+315991,"Hat, Cap, and Millinery Manufacturing",1997 2002 2007,2353
+315992,Glove and Mitten Manufacturing,1997 2002 2007,2381 3151
+315993,Men's and Boys' Neckwear Manufacturing,1997 2002 2007,2323
+315999,Other Apparel Accessories and Other Apparel Manufacturing,1997 2002 2007,2339 2385 2387 2389 2396 2399 3069
+316110,Leather and Hide Tanning and Finishing,1997 2002 2007 2012 2017 2022,3111 3999
+316210,Footwear Manufacturing,2012 2017 2022,3021 3142 3143 3144 3149
+316211,Rubber and Plastics Footwear Manufacturing,1997 2002 2007,3021
+316212,House Slipper Manufacturing,1997 2002 2007,3142
+316213,Men's Footwear (except Athletic) Manufacturing,1997 2002 2007,3143
+316214,Women's Footwear (except Athletic) Manufacturing,1997 2002 2007,3144
+316219,Other Footwear Manufacturing,1997 2002 2007,3149
+316990,Other Leather and Allied Product Manufacturing,2022,3171 3161 3172 3131 3199
+316991,Luggage Manufacturing,1997 2002 2007,3161
+316992,Women's Handbag and Purse Manufacturing,1997 2002 2007 2012 2017,3171
+316993,Personal Leather Good (except Women's Handbag and Purse) Manufacturing,1997 2002 2007,3172
+316998,All Other Leather Good and Allied Product Manufacturing,2012 2017,3161 3172 3131 3199
+316999,All Other Leather Good and Allied Product Manufacturing,1997 2002 2007,3131 3199
+321113,Sawmills,1997 2002 2007 2012 2017 2022,2421 2426 2429
+321114,Wood Preservation,1997 2002 2007 2012 2017 2022,2491
+321211,Hardwood Veneer and Plywood Manufacturing,1997 2002 2007 2012 2017 2022,2435
+321212,Softwood Veneer and Plywood Manufacturing,1997 2002 2007 2012 2017 2022,2436
+321213,Engineered Wood Member (except Truss) Manufacturing,1997 2002 2007 2012 2017,2439
+321214,Truss Manufacturing,1997 2002 2007 2012 2017,2439
+321215,Engineered Wood Member Manufacturing,2022,2439
+321219,Reconstituted Wood Product Manufacturing,1997 2002 2007 2012 2017 2022,2493
+321911,Wood Window and Door Manufacturing,1997 2002 2007 2012 2017 2022,2431
+321912,"Cut Stock, Resawing Lumber, and Planing",1997 2002 2007 2012 2017 2022,2421 2426 2429
+321918,Other Millwork (including Flooring),1997 2002 2007 2012 2017 2022,2426 2421 2431
+321920,Wood Container and Pallet Manufacturing,1997 2002 2007 2012 2017 2022,2429 2441 2448 2449 2499
+321991,Manufactured Home (Mobile Home) Manufacturing,1997 2002 2007 2012 2017 2022,2451
+321992,Prefabricated Wood Building Manufacturing,1997 2002 2007 2012 2017 2022,2452
+321999,All Other Miscellaneous Wood Product Manufacturing,1997 2002 2007 2012 2017 2022,2421 2429 2499 3131 2517
+322110,Pulp Mills,1997 2002 2007 2012 2017 2022,2611
+322120,Paper Mills,2022,2611 2621
+322121,Paper (except Newsprint) Mills,1997 2002 2007 2012 2017,2611 2621
+322122,Newsprint Mills,1997 2002 2007 2012 2017,2621 2611
+322130,Paperboard Mills,1997 2002 2007 2012 2017 2022,2611 2631
+322211,Corrugated and Solid Fiber Box Manufacturing,1997 2002 2007 2012 2017 2022,2653 2679
+322212,Folding Paperboard Box Manufacturing,1997 2002 2007 2012 2017 2022,2657
+322213,Setup Paperboard Box Manufacturing,1997 2002 2007,2652
+322214,"Fiber Can, Tube, Drum, and Similar Products Manufacturing",1997 2002 2007,2655
+322215,Nonfolding Sanitary Food Container Manufacturing,1997 2002 2007,2656
+322219,Other Paperboard Container Manufacturing,2012 2017 2022,2652 2655 2656
+322220,Paper Bag and Coated and Treated Paper Manufacturing,2012 2017 2022,2671 2672 2679 2673 2674 3497 2675
+322221,Coated and Laminated Packaging Paper Manufacturing,1997 2002 2007,2671
+322222,Coated and Laminated Paper Manufacturing,1997 2002 2007,2672 2679
+322223,Coated Paper Bag and Pouch Manufacturing,1997 2002 2007,2673
+322224,Uncoated Paper and Multiwall Bag Manufacturing,1997 2002 2007,2674
+322225,Laminated Aluminum Foil Manufacturing for Flexible Packaging Uses,1997 2002 2007,3497
+322226,Surface-Coated Paperboard Manufacturing,1997 2002 2007,2675
+322230,Stationery Product Manufacturing,2012 2017 2022,2675 2679 2677 2678
+322231,Die-Cut Paper and Paperboard Office Supplies Manufacturing,1997 2002 2007,2675 2679
+322232,Envelope Manufacturing,1997 2002 2007,2677
+322233,"Stationery, Tablet, and Related Product Manufacturing",1997 2002 2007,2678
+322291,Sanitary Paper Product Manufacturing,1997 2002 2007 2012 2017 2022,2676 3842
+322299,All Other Converted Paper Product Manufacturing,1997 2002 2007 2012 2017 2022,2675 2679
+323110,Commercial Lithographic Printing,1997 2002 2007,2752 2771
+323111,Commercial Printing (except Screen and Books),1997 2002 2007 2012 2017 2022,2754 2771 2752 2759 7334 2761 2782
+323112,Commercial Flexographic Printing,1997 2002 2007,2759 2771
+323113,Commercial Screen Printing,1997 2002 2007 2012 2017 2022,2396 2759 2771
+323114,Quick Printing,1997 2002 2007,2752 2759 7334
+323115,Digital Printing,1997 2002 2007,2759
+323116,Manifold Business Forms Printing,1997 2002 2007,2761 2782
+323117,Books Printing,1997 2002 2007 2012 2017 2022,2732
+323118,"Blankbook, Looseleaf Binders, and Devices Manufacturing",1997 2002 2007,2782
+323119,Other Commercial Printing,1997 2002 2007,2759 2771
+323120,Support Activites for Printing,2012 2017 2022,2789 2791 2796
+323121,Tradebinding and Related Work,1997 2002 2007,2789
+323122,Prepress Services,1997 2002 2007,2791 2796
+324110,Petroleum Refineries,1997 2002 2007 2012 2017 2022,2911
+324121,Asphalt Paving Mixture and Block Manufacturing,1997 2002 2007 2012 2017 2022,2951
+324122,Asphalt Shingle and Coating Materials Manufacturing,1997 2002 2007 2012 2017 2022,2952
+324191,Petroleum Lubricating Oil and Grease Manufacturing,1997 2002 2007 2012 2017 2022,2992
+324199,All Other Petroleum and Coal Products Manufacturing,1997 2002 2007 2012 2017 2022,2999 3312
+325110,Petrochemical Manufacturing,1997 2002 2007 2012 2017 2022,2865 2869
+325120,Industrial Gas Manufacturing,1997 2002 2007 2012 2017 2022,2813 2869
+325130,Synthetic Dye and Pigment Manufacturing,2012 2017 2022,2816 2819 2865
+325131,Inorganic Dye and Pigment Manufacturing,1997 2002 2007,2816 2819
+325132,Synthetic Organic Dye and Pigment Manufacturing,1997 2002 2007,2865
+325180,Other Basic Inorganic Chemical Manufacturing,2012 2017 2022,2812 2816 2895 2819 2869
+325181,Alkalies and Chlorine Manufacturing,1997 2002 2007,2812
+325182,Carbon Black Manufacturing,1997 2002 2007,2816 2895
+325188,All Other Basic Inorganic Chemical Manufacturing,1997 2002 2007,2819 2869
+325191,Gum and Wood Chemical Manufacturing,1997 2002 2007,2861
+325192,Cyclic Crude and Intermediate Manufacturing,1997 2002 2007,2865
+325193,Ethyl Alcohol Manufacturing,1997 2002 2007 2012 2017 2022,2869
+325194,"Cyclic Crude, Intermediate, and Gum and Wood Chemical Manufacturing",2012 2017 2022,2861 2865
+325199,All Other Basic Organic Chemical Manufacturing,1997 2002 2007 2012 2017 2022,2869 2899
+325211,Plastics Material and Resin Manufacturing,1997 2002 2007 2012 2017 2022,2821
+325212,Synthetic Rubber Manufacturing,1997 2002 2007 2012 2017 2022,2822
+325220,Artificial and Synthetic Fibers and Filaments Manufacturing,2012 2017 2022,2823 2824
+325221,Cellulosic Organic Fiber Manufacturing,1997 2002 2007,2823
+325222,Noncellulosic Organic Fiber Manufacturing,1997 2002 2007,2824
+325311,Nitrogenous Fertilizer Manufacturing,1997 2002 2007 2012 2017 2022,2873
+325312,Phosphatic Fertilizer Manufacturing,1997 2002 2007 2012 2017 2022,2874
+325314,Fertilizer (Mixing Only) Manufacturing,1997 2002 2007 2012 2017 2022,2875
+325315,Compost Manufacturing,2022,2875
+325320,Pesticide and Other Agricultural Chemical Manufacturing,1997 2002 2007 2012 2017 2022,2879
+325411,Medicinal and Botanical Manufacturing,1997 2002 2007 2012 2017 2022,2833
+325412,Pharmaceutical Preparation Manufacturing,1997 2002 2007 2012 2017 2022,2834 2835
+325413,In-Vitro Diagnostic Substance Manufacturing,1997 2002 2007 2012 2017 2022,2835
+325414,Biological Product (except Diagnostic) Manufacturing,1997 2002 2007 2012 2017 2022,2836
+325510,Paint and Coating Manufacturing,1997 2002 2007 2012 2017 2022,2851 2899
+325520,Adhesive Manufacturing,1997 2002 2007 2012 2017 2022,2891
+325611,Soap and Other Detergent Manufacturing,1997 2002 2007 2012 2017 2022,2841 2844
+325612,Polish and Other Sanitation Good Manufacturing,1997 2002 2007 2012 2017 2022,2842
+325613,Surface Active Agent Manufacturing,1997 2002 2007 2012 2017 2022,2843
+325620,Toilet Preparation Manufacturing,1997 2002 2007 2012 2017 2022,2844
+325910,Printing Ink Manufacturing,1997 2002 2007 2012 2017 2022,2893
+325920,Explosives Manufacturing,1997 2002 2007 2012 2017 2022,2892
+325991,Custom Compounding of Purchased Resins,1997 2002 2007 2012 2017 2022,3087
+325992,"Photographic Film, Paper, Plate, Chemical, and Copy Toner Manufacturing",1997 2002 2007 2012 2017 2022,3861
+325998,All Other Miscellaneous Chemical Product and Preparation Manufacturing,1997 2002 2007 2012 2017 2022,2819 2899 3952 3999 7389
+326111,Plastics Bag and Pouch Manufacturing,1997 2002 2007 2012 2017 2022,2673
+326112,Plastics Packaging Film and Sheet (including Laminated) Manufacturing,1997 2002 2007 2012 2017 2022,2671
+326113,Unlaminated Plastics Film and Sheet (except Packaging) Manufacturing,1997 2002 2007 2012 2017 2022,3081
+326121,Unlaminated Plastics Profile Shape Manufacturing,1997 2002 2007 2012 2017 2022,3082 3089
+326122,Plastics Pipe and Pipe Fitting Manufacturing,1997 2002 2007 2012 2017 2022,3084 3089
+326130,"Laminated Plastics Plate, Sheet (except Packaging), and Shape Manufacturing",1997 2002 2007 2012 2017 2022,3083
+326140,Polystyrene Foam Product Manufacturing,1997 2002 2007 2012 2017 2022,3086
+326150,Urethane and Other Foam Product (except Polystyrene) Manufacturing,1997 2002 2007 2012 2017 2022,3086
+326160,Plastics Bottle Manufacturing,1997 2002 2007 2012 2017 2022,3085
+326191,Plastics Plumbing Fixture Manufacturing,1997 2002 2007 2012 2017 2022,3088
+326192,Resilient Floor Covering Manufacturing,1997 2002 2007,3069 3996
+326199,All Other Plastics Product Manufacturing,1997 2002 2007 2012 2017 2022,3089 3999 3069 3996
+326211,Tire Manufacturing (except Retreading),1997 2002 2007 2012 2017 2022,3011
+326212,Tire Retreading,1997 2002 2007 2012 2017 2022,7534
+326220,Rubber and Plastics Hoses and Belting Manufacturing,1997 2002 2007 2012 2017 2022,3052
+326291,Rubber Product Manufacturing for Mechanical Use,1997 2002 2007 2012 2017 2022,3061
+326299,All Other Rubber Product Manufacturing,1997 2002 2007 2012 2017 2022,3069 3061
+327110,"Pottery, Ceramics, and Plumbing Fixture Manufacturing",2012 2017 2022,3261 3262 3263 3269 3299 3264
+327111,Vitreous China Plumbing Fixture and China and Earthenware Bathroom Accessories Manufacturing,1997 2002 2007,3261
+327112,"Vitreous China, Fine Earthenware, and Other Pottery Product Manufacturing",1997 2002 2007,3262 3263 3269 3299
+327113,Porcelain Electrical Supply Manufacturing,1997 2002 2007,3264
+327120,Clay Building Material and Refractories Manufacturing,2012 2017 2022,3251 3253 3259 3255 3297
+327121,Brick and Structural Clay Tile Manufacturing,1997 2002 2007,3251
+327122,Ceramic Wall and Floor Tile Manufacturing,1997 2002 2007,3253
+327123,Other Structural Clay Product Manufacturing,1997 2002 2007,3259
+327124,Clay Refractory Manufacturing,1997 2002 2007,3255
+327125,Nonclay Refractory Manufacturing,1997 2002 2007,3297
+327211,Flat Glass Manufacturing,1997 2002 2007 2012 2017 2022,3211
+327212,Other Pressed and Blown Glass and Glassware Manufacturing,1997 2002 2007 2012 2017 2022,3229
+327213,Glass Container Manufacturing,1997 2002 2007 2012 2017 2022,3221
+327215,Glass Product Manufacturing Made of Purchased Glass,1997 2002 2007 2012 2017 2022,3231
+327310,Cement Manufacturing,1997 2002 2007 2012 2017 2022,3241
+327320,Ready-Mix Concrete Manufacturing,1997 2002 2007 2012 2017 2022,3273
+327331,Concrete Block and Brick Manufacturing,1997 2002 2007 2012 2017 2022,3251 3271
+327332,Concrete Pipe Manufacturing,1997 2002 2007 2012 2017 2022,3272
+327390,Other Concrete Product Manufacturing,1997 2002 2007 2012 2017 2022,3272
+327410,Lime Manufacturing,1997 2002 2007 2012 2017 2022,3274
+327420,Gypsum Product Manufacturing,1997 2002 2007 2012 2017 2022,3275 3299
+327910,Abrasive Product Manufacturing,1997 2002 2007 2012 2017 2022,3291
+327991,Cut Stone and Stone Product Manufacturing,1997 2002 2007 2012 2017 2022,3281
+327992,Ground or Treated Mineral and Earth Manufacturing,1997 2002 2007 2012 2017 2022,3295
+327993,Mineral Wool Manufacturing,1997 2002 2007 2012 2017 2022,3296
+327999,All Other Miscellaneous Nonmetallic Mineral Product Manufacturing,1997 2002 2007 2012 2017 2022,3272 3292 3299
+331110,Iron and Steel Mills and Ferroalloy Manufacturing,2012 2017 2022,3312 3313
+331111,Iron and Steel Mills,1997 2002 2007,3312
+331112,Electrometallurgical Ferroalloy Product Manufacturing,1997 2002 2007,3313
+331210,Iron and Steel Pipe and Tube Manufacturing from Purchased Steel,1997 2002 2007 2012 2017 2022,3317
+331221,Rolled Steel Shape Manufacturing,1997 2002 2007 2012 2017 2022,3312 3316 3399
+331222,Steel Wire Drawing,1997 2002 2007 2012 2017 2022,3315
+331311,Alumina Refining,1997 2002 2007,2819
+331312,Primary Aluminum Production,1997 2002 2007,3334
+331313,Alumina Refining and Primary Aluminum Production,2012 2017 2022,2819 3334
+331314,Secondary Smelting and Alloying of Aluminum,1997 2002 2007 2012 2017 2022,3341 3399
+331315,"Aluminum Sheet, Plate, and Foil Manufacturing",1997 2002 2007 2012 2017 2022,3353
+331316,Aluminum Extruded Product Manufacturing,1997 2002 2007,3354
+331318,"Other Aluminum Rolling, Drawing, and Extruding",2012 2017 2022,3354 3355 3357
+331319,Other Aluminum Rolling and Drawing,1997 2002 2007,3355 3357
+331410,Nonferrous Metal (except Aluminum) Smelting and Refining,2012 2017 2022,3331 3339
+331411,Primary Smelting and Refining of Copper,1997 2002 2007,3331
+331419,Primary Smelting and Refining of Nonferrous Metal (except Copper and Aluminum),1997 2002 2007,3339
+331420,"Copper Rolling, Drawing, Extruding, and Alloying",2012 2017 2022,3351 3357 3341 3399
+331421,"Copper Rolling, Drawing, and Extruding",1997 2002 2007,3351
+331422,Copper Wire (except Mechanical) Drawing,1997 2002 2007,3357
+331423,"Secondary Smelting, Refining, and Alloying of Copper",1997 2002 2007,3341 3399
+331491,"Nonferrous Metal (except Copper and Aluminum) Rolling, Drawing, and Extruding",1997 2002 2007 2012 2017 2022,3356 3357
+331492,"Secondary Smelting, Refining, and Alloying of Nonferrous Metal (except Copper and Aluminum)",1997 2002 2007 2012 2017 2022,3341 3399
+331511,Iron Foundries,1997 2002 2007 2012 2017 2022,3321 3322
+331512,Steel Investment Foundries,1997 2002 2007 2012 2017 2022,3324
+331513,Steel Foundries (except Investment),1997 2002 2007 2012 2017 2022,3325
+331521,Aluminum Die-Casting Foundries,1997 2002 2007,3363
+331522,Nonferrous (except Aluminum) Die-Casting Foundries,1997 2002 2007,3364
+331523,Nonferrous Metal Die-Casting Foundries,2012 2017 2022,3363 3364
+331524,Aluminum Foundries (except Die-Casting),1997 2002 2007 2012 2017 2022,3365
+331525,Copper Foundries (except Die-Casting),1997 2002 2007,3366
+331528,Other Nonferrous Foundries (except Die-Casting),1997 2002 2007,3369
+331529,Other Nonferrous Metal Foundries (except Die-Casting),2012 2017 2022,3366 3369
+332111,Iron and Steel Forging,1997 2002 2007 2012 2017 2022,3462
+332112,Nonferrous Forging,1997 2002 2007 2012 2017 2022,3463
+332114,Custom Roll Forming,1997 2002 2007 2012 2017 2022,3449
+332115,Crown and Closure Manufacturing,1997 2002 2007,3466
+332116,Metal Stamping,1997 2002 2007,3469
+332117,Powder Metallurgy Part Manufacturing,1997 2002 2007 2012 2017 2022,3499
+332119,"Metal Crown, Closure, and Other Metal Stamping (except Automotive)",2012 2017 2022,3466 3469
+332211,Cutlery and Flatware (except Precious) Manufacturing,1997 2002 2007,3421 3914 3999
+332212,Hand and Edge Tool Manufacturing,1997 2002 2007,3421 3423 3523 3524 3545 3644 3999
+332213,Saw Blade and Handsaw Manufacturing,1997 2002 2007,3425
+332214,"Kitchen Utensil, Pot, and Pan Manufacturing",1997 2002 2007,3469
+332215,"Metal Kitchen Cookware, Utensil, Cutlery, and Flatware (except Precious) Manufacturing",2012 2017 2022,3421 3914 3999 3469
+332216,Saw Blade and Handtool Manufacturing,2012 2017 2022,3421 3423 3523 3524 3545 3644 3999 3425
+332311,Prefabricated Metal Building and Component Manufacturing,1997 2002 2007 2012 2017 2022,3448
+332312,Fabricated Structural Metal Manufacturing,1997 2002 2007 2012 2017 2022,3441 3449
+332313,Plate Work Manufacturing,1997 2002 2007 2012 2017 2022,3443
+332321,Metal Window and Door Manufacturing,1997 2002 2007 2012 2017 2022,3442 3449
+332322,Sheet Metal Work Manufacturing,1997 2002 2007 2012 2017 2022,3444
+332323,Ornamental and Architectural Metal Work Manufacturing,1997 2002 2007 2012 2017 2022,3446 3449 3523
+332410,Power Boiler and Heat Exchanger Manufacturing,1997 2002 2007 2012 2017 2022,3443 3559
+332420,Metal Tank (Heavy Gauge) Manufacturing,1997 2002 2007 2012 2017 2022,3443
+332431,Metal Can Manufacturing,1997 2002 2007 2012 2017 2022,3411
+332439,Other Metal Container Manufacturing,1997 2002 2007 2012 2017 2022,3412 3429 3444 3499 3537
+332510,Hardware Manufacturing,1997 2002 2007 2012 2017 2022,3429 3499
+332611,Spring (Heavy Gauge) Manufacturing,1997 2002 2007,3493
+332612,Spring (Light Gauge) Manufacturing,1997 2002 2007,3495
+332613,Spring Manufacturing,2012 2017 2022,3493 3495
+332618,Other Fabricated Wire Product Manufacturing,1997 2002 2007 2012 2017 2022,3315 3399 3496
+332710,Machine Shops,1997 2002 2007 2012 2017 2022,3599
+332721,Precision Turned Product Manufacturing,1997 2002 2007 2012 2017 2022,3451
+332722,"Bolt, Nut, Screw, Rivet, and Washer Manufacturing",1997 2002 2007 2012 2017 2022,3452 3429
+332811,Metal Heat Treating,1997 2002 2007 2012 2017 2022,3398
+332812,"Metal Coating, Engraving (except Jewelry and Silverware), and Allied Services to Manufacturers",1997 2002 2007 2012 2017 2022,3479
+332813,"Electroplating, Plating, Polishing, Anodizing, and Coloring",1997 2002 2007 2012 2017 2022,3399 3471
+332911,Industrial Valve Manufacturing,1997 2002 2007 2012 2017 2022,3491
+332912,Fluid Power Valve and Hose Fitting Manufacturing,1997 2002 2007 2012 2017 2022,3492 3728
+332913,Plumbing Fixture Fitting and Trim Manufacturing,1997 2002 2007 2012 2017 2022,3432
+332919,Other Metal Valve and Pipe Fitting Manufacturing,1997 2002 2007 2012 2017 2022,3429 3494 3499 3432
+332991,Ball and Roller Bearing Manufacturing,1997 2002 2007 2012 2017 2022,3562
+332992,Small Arms Ammunition Manufacturing,1997 2002 2007 2012 2017 2022,3482
+332993,Ammunition (except Small Arms) Manufacturing,1997 2002 2007 2012 2017 2022,3483
+332994,"Small Arms, Ordnance, and Ordnance Accessories Manufacturing",1997 2002 2007 2012 2017 2022,3484 3841 3489
+332995,Other Ordnance and Accessories Manufacturing,1997 2002 2007,3489
+332996,Fabricated Pipe and Pipe Fitting Manufacturing,1997 2002 2007 2012 2017 2022,3498
+332997,Industrial Pattern Manufacturing,1997 2002 2007,3543
+332998,Enameled Iron and Metal Sanitary Ware Manufacturing,1997 2002 2007,3431
+332999,All Other Miscellaneous Fabricated Metal Product Manufacturing,1997 2002 2007 2012 2017 2022,3291 3429 3432 3494 3497 3499 3537 3599 3914 3999 3543 3431
+333111,Farm Machinery and Equipment Manufacturing,1997 2002 2007 2012 2017 2022,3523 3559
+333112,Lawn and Garden Tractor and Home Lawn and Garden Equipment Manufacturing,1997 2002 2007 2012 2017 2022,3524
+333120,Construction Machinery Manufacturing,1997 2002 2007 2012 2017 2022,3531
+333131,Mining Machinery and Equipment Manufacturing,1997 2002 2007 2012 2017 2022,3532
+333132,Oil and Gas Field Machinery and Equipment Manufacturing,1997 2002 2007 2012 2017 2022,3533
+333210,Sawmill and Woodworking Machinery Manufacturing,1997 2002 2007,3553
+333220,Plastics and Rubber Industry Machinery Manufacturing,1997 2002 2007,3559
+333241,Food Product Machinery Manufacturing,2012 2017 2022,3556
+333242,Semiconductor Machinery Manufacturing,2012 2017 2022,3559
+333243,"Sawmill, Woodworking, and Paper Machinery Manufacturing",2012 2017 2022,3553 3554
+333244,Printing Machinery and Equipment Manufacturing,2012 2017,3555
+333248,All Other Industrial Machinery Manufacturing,2022,3555 3559 3552 3639 2599 3821 3841
+333249,Other Industrial Machinery Manufacturing,2012 2017,3559 3552 3639 2599 3821 3841
+333291,Paper Industry Machinery Manufacturing,1997 2002 2007,3554
+333292,Textile Machinery Manufacturing,1997 2002 2007,3552
+333293,Printing Machinery and Equipment Manufacturing,1997 2002 2007,3555
+333294,Food Product Machinery Manufacturing,1997 2002 2007,3556
+333295,Semiconductor Machinery Manufacturing,1997 2002 2007,3559
+333298,All Other Industrial Machinery Manufacturing,1997 2002 2007,3559 3639 2599 3821 3841
+333310,Commercial and Service Industry Machinery Manufacturing,2022,3827 3861 3577 3578 3581 3582 3579 3559 3589 3599 3699 3999
+333311,Automatic Vending Machine Manufacturing,1997 2002 2007,3581 3578
+333312,"Commercial Laundry, Drycleaning, and Pressing Machine Manufacturing",1997 2002 2007,3582
+333313,Office Machinery Manufacturing,1997 2002 2007,3578 3579
+333314,Optical Instrument and Lens Manufacturing,1997 2002 2007 2012 2017,3827
+333315,Photographic and Photocopying Equipment Manufacturing,1997 2002 2007,3861
+333316,Photographic and Photocopying Equipment Manufacturing,2012 2017,3861 3577 3578
+333318,Other Commercial and Service Industry Machinery Manufacturing,2012 2017,3581 3578 3582 3579 3559 3589 3599 3699 3999
+333319,Other Commercial and Service Industry Machinery Manufacturing,1997 2002 2007,3559 3589 3599 3699 3999
+333411,Air Purification Equipment Manufacturing,1997 2002 2007,3564
+333412,Industrial and Commercial Fan and Blower Manufacturing,1997 2002 2007,3564
+333413,Industrial and Commercial Fan and Blower and Air Purification Equipment Manufacturing,2012 2017 2022,3564
+333414,Heating Equipment (except Warm Air Furnaces) Manufacturing,1997 2002 2007 2012 2017 2022,3433 3569 3634 2499 3443 3444
+333415,Air-Conditioning and Warm Air Heating Equipment and Commercial and Industrial Refrigeration Equipment Manufacturing,1997 2002 2007 2012 2017 2022,3585 2599 3821 3841
+333511,Industrial Mold Manufacturing,1997 2002 2007 2012 2017 2022,3544
+333512,Machine Tool (Metal Cutting Types) Manufacturing,1997 2002 2007,3541
+333513,Machine Tool (Metal Forming Types) Manufacturing,1997 2002 2007,3542
+333514,"Special Die and Tool, Die Set, Jig, and Fixture Manufacturing",1997 2002 2007 2012 2017 2022,3544
+333515,Cutting Tool and Machine Tool Accessory Manufacturing,1997 2002 2007 2012 2017 2022,3545
+333516,Rolling Mill Machinery and Equipment Manufacturing,1997 2002 2007,3547
+333517,Machine Tool Manufacturing,2012 2017 2022,3541 3542
+333518,Other Metalworking Machinery Manufacturing,1997 2002 2007,3549
+333519,Rolling Mill and Other Metalworking Machinery Manufacturing,2012 2017 2022,3547 3549
+333611,Turbine and Turbine Generator Set Units Manufacturing,1997 2002 2007 2012 2017 2022,3511
+333612,"Speed Changer, Industrial High-Speed Drive, and Gear Manufacturing",1997 2002 2007 2012 2017 2022,3566
+333613,Mechanical Power Transmission Equipment Manufacturing,1997 2002 2007 2012 2017 2022,3568
+333618,Other Engine Equipment Manufacturing,1997 2002 2007 2012 2017 2022,3519 3699
+333911,Pump and Pumping Equipment Manufacturing,1997 2002 2007 2012,3561 3743
+333912,Air and Gas Compressor Manufacturing,1997 2002 2007 2012 2017 2022,3563
+333913,Measuring and Dispensing Pump Manufacturing,1997 2002 2007 2012,3586
+333914,"Measuring, Dispensing, and Other Pumping Equipment Manufacturing",2017 2022,3561 3743 3586
+333921,Elevator and Moving Stairway Manufacturing,1997 2002 2007 2012 2017 2022,3534
+333922,Conveyor and Conveying Equipment Manufacturing,1997 2002 2007 2012 2017 2022,3523 3535
+333923,"Overhead Traveling Crane, Hoist, and Monorail System Manufacturing",1997 2002 2007 2012 2017 2022,3536 3531
+333924,"Industrial Truck, Tractor, Trailer, and Stacker Machinery Manufacturing",1997 2002 2007 2012 2017 2022,3496 3537 3799
+333991,Power-Driven Handtool Manufacturing,1997 2002 2007 2012 2017 2022,3546
+333992,Welding and Soldering Equipment Manufacturing,1997 2002 2007 2012 2017 2022,3548 3699
+333993,Packaging Machinery Manufacturing,1997 2002 2007 2012 2017 2022,3565
+333994,Industrial Process Furnace and Oven Manufacturing,1997 2002 2007 2012 2017 2022,3567 2599 3821 3841
+333995,Fluid Power Cylinder and Actuator Manufacturing,1997 2002 2007 2012 2017 2022,3593
+333996,Fluid Power Pump and Motor Manufacturing,1997 2002 2007 2012 2017 2022,3594
+333997,Scale and Balance Manufacturing,1997 2002 2007 2012 2017,3596 2599 3821 3841
+333998,All Other Miscellaneous General Purpose Machinery Manufacturing,2022,3596 2599 3821 3841 3599 3569
+333999,All Other Miscellaneous General Purpose Machinery Manufacturing,1997 2002 2007 2012 2017,3599 3569 2599 3821 3841
+334111,Electronic Computer Manufacturing,1997 2002 2007 2012 2017 2022,3571
+334112,Computer Storage Device Manufacturing,1997 2002 2007 2012 2017 2022,3572
+334113,Computer Terminal Manufacturing,1997 2002 2007,3575
+334118,Computer Terminal and Other Computer Peripheral Equipment Manufacturing,2012 2017 2022,3575 3577 3578
+334119,Other Computer Peripheral Equipment Manufacturing,1997 2002 2007,3577 3578
+334210,Telephone Apparatus Manufacturing,1997 2002 2007 2012 2017 2022,3661
+334220,Radio and Television Broadcasting and Wireless Communications Equipment Manufacturing,1997 2002 2007 2012 2017 2022,3663 3679
+334290,Other Communications Equipment Manufacturing,1997 2002 2007 2012 2017 2022,3669
+334310,Audio and Video Equipment Manufacturing,1997 2002 2007 2012 2017 2022,3651 3679
+334411,Electron Tube Manufacturing,1997 2002 2007,3671
+334412,Bare Printed Circuit Board Manufacturing,1997 2002 2007 2012 2017 2022,3672
+334413,Semiconductor and Related Device Manufacturing,1997 2002 2007 2012 2017 2022,3674
+334414,Electronic Capacitor Manufacturing,1997 2002 2007,3675
+334415,Electronic Resistor Manufacturing,1997 2002 2007,3676
+334416,"Capacitor, Resistor, Coil, Transformer, and Other Inductor Manufacturing",1997 2002 2007 2012 2017 2022,3677 3675 3676
+334417,Electronic Connector Manufacturing,1997 2002 2007 2012 2017 2022,3678
+334418,Printed Circuit Assembly (Electronic Assembly) Manufacturing,1997 2002 2007 2012 2017 2022,3577 3679 3661
+334419,Other Electronic Component Manufacturing,1997 2002 2007 2012 2017 2022,3679 3671
+334510,Electromedical and Electrotherapeutic Apparatus Manufacturing,1997 2002 2007 2012 2017 2022,3842 3845
+334511,"Search, Detection, Navigation, Guidance, Aeronautical, and Nautical System and Instrument Manufacturing",1997 2002 2007 2012 2017 2022,3812
+334512,"Automatic Environmental Control Manufacturing for Residential, Commercial, and Appliance Use",1997 2002 2007 2012 2017 2022,3822
+334513,"Instruments and Related Products Manufacturing for Measuring, Displaying, and Controlling Industrial Process Variables",1997 2002 2007 2012 2017 2022,3823
+334514,Totalizing Fluid Meter and Counting Device Manufacturing,1997 2002 2007 2012 2017 2022,3824 3825 3829
+334515,Instrument Manufacturing for Measuring and Testing Electricity and Electrical Signals,1997 2002 2007 2012 2017 2022,3825 3663 3679
+334516,Analytical Laboratory Instrument Manufacturing,1997 2002 2007 2012 2017 2022,3826
+334517,Irradiation Apparatus Manufacturing,1997 2002 2007 2012 2017 2022,3844 3845
+334518,"Watch, Clock, and Part Manufacturing",1997 2002 2007,3495 3579 3829 3915 3873
+334519,Other Measuring and Controlling Device Manufacturing,1997 2002 2007 2012 2017 2022,3829 3495 3579 3915 3873
+334610,Manufacturing and Reproducing Magnetic and Optical Media,2022,3695 3577 7372 3652 7819
+334611,Software Reproducing,1997 2002 2007,7372
+334612,"Prerecorded Compact Disc (except Software), Tape, and Record Reproducing",1997 2002 2007,3652 7819
+334613,Blank Magnetic and Optical Recording Media Manufacturing,1997 2002 2007 2012 2017,3695 3577
+334614,"Software and Other Prerecorded Compact Disc, Tape, and Record Reproducing",2012 2017,7372 3652 7819
+335110,Electric Lamp Bulb and Part Manufacturing,1997 2002 2007 2012 2017,3641
+335121,Residential Electric Lighting Fixture Manufacturing,1997 2002 2007 2012 2017,3645 3999
+335122,"Commercial, Industrial, and Institutional Electric Lighting Fixture Manufacturing",1997 2002 2007 2012 2017,3646
+335129,Other Lighting Equipment Manufacturing,1997 2002 2007 2012 2017,3648 3699
+335131,Residential Electric Lighting Fixture Manufacturing,2022,3645 3999
+335132,"Commercial, Industrial, and Institutional Electric Lighting Fixture Manufacturing",2022,3646
+335139,Electric Lamp Bulb and Other Lighting Equipment Manufacturing,2022,3641 3648 3699
+335210,Small Electrical Appliance Manufacturing,2012 2017 2022,3634 3999 3635 3639
+335211,Electric Housewares and Household Fan Manufacturing,1997 2002 2007,3634 3999
+335212,Household Vacuum Cleaner Manufacturing,1997 2002 2007,3635 3639
+335220,Major Household Appliance Manufacturing,2017 2022,3631 3632 3633 3639
+335221,Household Cooking Appliance Manufacturing,1997 2002 2007 2012,3631
+335222,Household Refrigerator and Home Freezer Manufacturing,1997 2002 2007 2012,3632
+335224,Household Laundry Equipment Manufacturing,1997 2002 2007 2012,3633
+335228,Other Major Household Appliance Manufacturing,1997 2002 2007 2012,3639
+335311,"Power, Distribution, and Specialty Transformer Manufacturing",1997 2002 2007 2012 2017 2022,3548 3612
+335312,Motor and Generator Manufacturing,1997 2002 2007 2012 2017 2022,3621 7694
+335313,Switchgear and Switchboard Apparatus Manufacturing,1997 2002 2007 2012 2017 2022,3613
+335314,Relay and Industrial Control Manufacturing,1997 2002 2007 2012 2017 2022,3625
+335910,Battery Manufacturing,2022,3691 3692
+335911,Storage Battery Manufacturing,1997 2002 2007 2012 2017,3691
+335912,Primary Battery Manufacturing,1997 2002 2007 2012 2017,3692
+335921,Fiber Optic Cable Manufacturing,1997 2002 2007 2012 2017 2022,3357
+335929,Other Communication and Energy Wire Manufacturing,1997 2002 2007 2012 2017 2022,3357
+335931,Current-Carrying Wiring Device Manufacturing,1997 2002 2007 2012 2017 2022,3643
+335932,Noncurrent-Carrying Wiring Device Manufacturing,1997 2002 2007 2012 2017 2022,3644
+335991,Carbon and Graphite Product Manufacturing,1997 2002 2007 2012 2017 2022,3624
+335999,All Other Miscellaneous Electrical Equipment and Component Manufacturing,1997 2002 2007 2012 2017 2022,3629 3699
+336110,Automobile and Light Duty Motor Vehicle Manufacturing,2022,3711
+336111,Automobile Manufacturing,1997 2002 2007 2012 2017,3711
+336112,Light Truck and Utility Vehicle Manufacturing,1997 2002 2007 2012 2017,3711
+336120,Heavy Duty Truck Manufacturing,1997 2002 2007 2012 2017 2022,3711
+336211,Motor Vehicle Body Manufacturing,1997 2002 2007 2012 2017 2022,3711 3713 3714
+336212,Truck Trailer Manufacturing,1997 2002 2007 2012 2017 2022,3715
+336213,Motor Home Manufacturing,1997 2002 2007 2012 2017 2022,3716
+336214,Travel Trailer and Camper Manufacturing,1997 2002 2007 2012 2017 2022,3792 3799
+336310,Motor Vehicle Gasoline Engine and Engine Parts Manufacturing,2012 2017 2022,3592 3714
+336311,"Carburetor, Piston, Piston Ring, and Valve Manufacturing",1997 2002 2007,3592
+336312,Gasoline Engine and Engine Parts Manufacturing,1997 2002 2007,3714
+336320,Motor Vehicle Electrical and Electronic Equipment Manufacturing,2012 2017 2022,3647 3694 3714
+336321,Vehicular Lighting Equipment Manufacturing,1997 2002 2007,3647
+336322,Other Motor Vehicle Electrical and Electronic Equipment Manufacturing,1997 2002 2007,3694 3714
+336330,Motor Vehicle Steering and Suspension Components (except Spring) Manufacturing,1997 2002 2007 2012 2017 2022,3714
+336340,Motor Vehicle Brake System Manufacturing,1997 2002 2007 2012 2017 2022,3292 3714
+336350,Motor Vehicle Transmission and Power Train Parts Manufacturing,1997 2002 2007 2012 2017 2022,3714
+336360,Motor Vehicle Seating and Interior Trim Manufacturing,1997 2002 2007 2012 2017 2022,2396 2399 2531 3499
+336370,Motor Vehicle Metal Stamping,1997 2002 2007 2012 2017 2022,3465
+336390,Other Motor Vehicle Parts Manufacturing,2012 2017 2022,3585 3429 3519 3599 3714 3799
+336391,Motor Vehicle Air-Conditioning Manufacturing,1997 2002 2007,3585
+336399,All Other Motor Vehicle Parts Manufacturing,1997 2002 2007,3429 3519 3599 3714 3799
+336411,Aircraft Manufacturing,1997 2002 2007 2012 2017 2022,3721 3728
+336412,Aircraft Engine and Engine Parts Manufacturing,1997 2002 2007 2012 2017 2022,3724
+336413,Other Aircraft Parts and Auxiliary Equipment Manufacturing,1997 2002 2007 2012 2017 2022,3728
+336414,Guided Missile and Space Vehicle Manufacturing,1997 2002 2007 2012 2017 2022,3761
+336415,Guided Missile and Space Vehicle Propulsion Unit and Propulsion Unit Parts Manufacturing,1997 2002 2007 2012 2017 2022,3764
+336419,Other Guided Missile and Space Vehicle Parts and Auxiliary Equipment Manufacturing,1997 2002 2007 2012 2017 2022,3769
+336510,Railroad Rolling Stock Manufacturing,1997 2002 2007 2012 2017 2022,3531 3743
+336611,Ship Building and Repairing,1997 2002 2007 2012 2017 2022,3731
+336612,Boat Building,1997 2002 2007 2012 2017 2022,3732 3089 3999 3069
+336991,"Motorcycle, Bicycle, and Parts Manufacturing",1997 2002 2007 2012 2017 2022,3944 3751
+336992,"Military Armored Vehicle, Tank, and Tank Component Manufacturing",1997 2002 2007 2012 2017 2022,3711 3795
+336999,All Other Transportation Equipment Manufacturing,1997 2002 2007 2012 2017 2022,3799
+337110,Wood Kitchen Cabinet and Countertop Manufacturing,1997 2002 2007 2012 2017 2022,2434 5712
+337121,Upholstered Household Furniture Manufacturing,1997 2002 2007 2012 2017 2022,2512 2514 2515 5712
+337122,Nonupholstered Wood Household Furniture Manufacturing,1997 2002 2007 2012 2017 2022,2511 5712
+337124,Metal Household Furniture Manufacturing,1997 2002 2007 2012 2017,2514
+337125,Household Furniture (except Wood and Metal) Manufacturing,1997 2002 2007 2012 2017,2519
+337126,Household Furniture (except Wood and Upholstered) Manufacturing,2022,2514 2519
+337127,Institutional Furniture Manufacturing,1997 2002 2007 2012 2017 2022,2531 2541 2542 2599 3952 3999 3821 3841
+337129,"Wood Television, Radio, and Sewing Machine Cabinet Manufacturing",1997 2002 2007,2517
+337211,Wood Office Furniture Manufacturing,1997 2002 2007 2012 2017 2022,2521
+337212,Custom Architectural Woodwork and Millwork Manufacturing,1997 2002 2007 2012 2017 2022,2541
+337214,Office Furniture (except Wood) Manufacturing,1997 2002 2007 2012 2017 2022,2522
+337215,"Showcase, Partition, Shelving, and Locker Manufacturing",1997 2002 2007 2012 2017 2022,2511 2514 2542 2541 2426 3089 3429 3499
+337910,Mattress Manufacturing,1997 2002 2007 2012 2017 2022,2515
+337920,Blind and Shade Manufacturing,1997 2002 2007 2012 2017 2022,2591
+339111,Laboratory Apparatus and Furniture Manufacturing,1997 2002,2599 3821 3841
+339112,Surgical and Medical Instrument Manufacturing,1997 2002 2007 2012 2017 2022,3841 3829
+339113,Surgical Appliance and Supplies Manufacturing,1997 2002 2007 2012 2017 2022,3069 3842 3851 2599 3821 3841
+339114,Dental Equipment and Supplies Manufacturing,1997 2002 2007 2012 2017 2022,3843
+339115,Ophthalmic Goods Manufacturing,1997 2002 2007 2012 2017 2022,3851 5995
+339116,Dental Laboratories,1997 2002 2007 2012 2017 2022,8072
+339910,Jewelry and Silverware Manufacturing,2012 2017 2022,3479 3911 3914 3915 3961
+339911,Jewelry (except Costume) Manufacturing,1997 2002 2007,3479 3911
+339912,Silverware and Hollowware Manufacturing,1997 2002 2007,3479 3914
+339913,Jewelers' Material and Lapidary Work Manufacturing,1997 2002 2007,3915
+339914,Costume Jewelry and Novelty Manufacturing,1997 2002 2007,3479 3961
+339920,Sporting and Athletic Goods Manufacturing,1997 2002 2007 2012 2017 2022,3949 3069
+339930,"Doll, Toy, and Game Manufacturing",2012 2017 2022,3942 3069 3944 3999
+339931,Doll and Stuffed Toy Manufacturing,1997 2002 2007,3942
+339932,"Game, Toy, and Children's Vehicle Manufacturing",1997 2002 2007,3069 3944 3999
+339940,Office Supplies (except Paper) Manufacturing,2012 2017 2022,3951 2531 3579 3952 3953 3955
+339941,Pen and Mechanical Pencil Manufacturing,1997 2002 2007,3951
+339942,Lead Pencil and Art Good Manufacturing,1997 2002 2007,2531 3579 3952
+339943,Marking Device Manufacturing,1997 2002 2007,3953
+339944,Carbon Paper and Inked Ribbon Manufacturing,1997 2002 2007,3955
+339950,Sign Manufacturing,1997 2002 2007 2012 2017 2022,3993
+339991,"Gasket, Packing, and Sealing Device Manufacturing",1997 2002 2007 2012 2017 2022,3053
+339992,Musical Instrument Manufacturing,1997 2002 2007 2012 2017 2022,3931
+339993,"Fastener, Button, Needle, and Pin Manufacturing",1997 2002 2007 2012 2017 2022,3965 3131
+339994,"Broom, Brush, and Mop Manufacturing",1997 2002 2007 2012 2017 2022,3991 2392
+339995,Burial Casket Manufacturing,1997 2002 2007 2012 2017 2022,3995
+339999,All Other Miscellaneous Manufacturing,1997 2002 2007 2012 2017 2022,2499 3634 3999
+421110,Automobile and Other Motor Vehicle Wholesalers,1997,5012
+421120,Motor Vehicle Supplies and New Parts Wholesalers,1997,5013
+421130,Tire and Tube Wholesalers,1997,5014
+421140,Motor Vehicle Parts (Used) Wholesalers,1997,5015
+421210,Furniture Wholesalers,1997,5021
+421220,Home Furnishing Wholesalers,1997,5023
+421310,"Lumber, Plywood, Millwork, and Wood Panel Wholesalers",1997,5031
+421320,"Brick, Stone, and Related Construction Material Wholesalers",1997,5032
+421330,"Roofing, Siding, and Insulation Material Wholesalers",1997,5033
+421390,Other Construction Material Wholesalers,1997,5039
+421410,Photographic Equipment and Supplies Wholesalers,1997,5043
+421420,Office Equipment Wholesalers,1997,5044
+421430,Computer and Computer Peripheral Equipment and Software Wholesalers,1997,5045
+421440,Other Commercial Equipment Wholesalers,1997,5046
+421450,"Medical, Dental, and Hospital Equipment and Supplies Wholesalers",1997,5047
+421460,Ophthalmic Goods Wholesalers,1997,5048
+421490,Other Professional Equipment and Supplies Wholesalers,1997,5049
+421510,Metal Service Centers and Offices,1997,5051
+421520,Coal and Other Mineral and Ore Wholesalers,1997,5052
+421610,"Electrical Apparatus and Equipment, Wiring Supplies, and Construction Material Wholesalers",1997,5063
+421620,"Electrical Appliance, Television, and Radio Set Wholesalers",1997,5064
+421690,Other Electronic Parts and Equipment Wholesalers,1997,5065
+421710,Hardware Wholesalers,1997,5072
+421720,Plumbing and Heating Equipment and Supplies (Hydronics) Wholesalers,1997,5074
+421730,Warm Air Heating and Air-Conditioning Equipment and Supplies Wholesalers,1997,5075
+421740,Refrigeration Equipment and Supplies Wholesalers,1997,5078
+421810,Construction and Mining (except Oil Well) Machinery and Equipment Wholesalers,1997,5082
+421820,Farm and Garden Machinery and Equipment Wholesalers,1997,5083
+421830,Industrial Machinery and Equipment Wholesalers,1997,5084 5085
+421840,Industrial Supplies Wholesalers,1997,5085
+421850,Service Establishment Equipment and Supplies Wholesalers,1997,5087
+421860,Transportation Equipment and Supplies (except Motor Vehicle) Wholesalers,1997,5088 7389
+421910,Sporting and Recreational Goods and Supplies Wholesalers,1997,5091
+421920,Toy and Hobby Goods and Supplies Wholesalers,1997,5092
+421930,Recyclable Material Wholesalers,1997,5093
+421940,"Jewelry, Watch, Precious Stone, and Precious Metal Wholesalers",1997,5094
+421990,Other Miscellaneous Durable Goods Wholesalers,1997,5099 7822
+422110,Printing and Writing Paper Wholesalers,1997,5111
+422120,Stationery and Office Supplies Wholesalers,1997,5112
+422130,Industrial and Personal Service Paper Wholesalers,1997,5113
+422210,Drugs and Druggists' Sundries Wholesalers,1997,5122
+422310,"Piece Goods, Notions, and Other Dry Goods Wholesalers",1997,5131
+422320,Men's and Boys' Clothing and Furnishings Wholesalers,1997,5136
+422330,"Women's, Children's, and Infants' Clothing and Accessories Wholesalers",1997,5137
+422340,Footwear Wholesalers,1997,5139
+422410,General Line Grocery Wholesalers,1997,5141
+422420,Packaged Frozen Food Wholesalers,1997,5142
+422430,Dairy Product (except Dried or Canned) Wholesalers,1997,5143
+422440,Poultry and Poultry Product Wholesalers,1997,5144
+422450,Confectionery Wholesalers,1997,5145
+422460,Fish and Seafood Wholesalers,1997,5146
+422470,Meat and Meat Product Wholesalers,1997,5147
+422480,Fresh Fruit and Vegetable Wholesalers,1997,5148
+422490,Other Grocery and Related Products Wholesalers,1997,5149
+422510,Grain and Field Bean Wholesalers,1997,5153
+422520,Livestock Wholesalers,1997,5154
+422590,Other Farm Product Raw Material Wholesalers,1997,5159
+422610,Plastics Materials and Basic Forms and Shapes Wholesalers,1997,5162
+422690,Other Chemical and Allied Products Wholesalers,1997,5169
+422710,Petroleum Bulk Stations and Terminals,1997,5171
+422720,Petroleum and Petroleum Products Wholesalers (except Bulk Stations and Terminals),1997,5172
+422810,Beer and Ale Wholesalers,1997,5181
+422820,Wine and Distilled Alcoholic Beverage Wholesalers,1997,5182
+422910,Farm Supplies Wholesalers,1997,5191
+422920,"Book, Periodical, and Newspaper Wholesalers",1997,5192
+422930,"Flower, Nursery Stock, and Florists' Supplies Wholesalers",1997,5193
+422940,Tobacco and Tobacco Product Wholesalers,1997,5194
+422950,"Paint, Varnish, and Supplies Wholesalers",1997,5198
+422990,Other Miscellaneous Nondurable Goods Wholesalers,1997,5199
+423110,Automobile and Other Motor Vehicle Merchant Wholesalers,2002 2007 2012 2017 2022,5012
+423120,Motor Vehicle Supplies and New Parts Merchant Wholesalers,2002 2007 2012 2017 2022,5013
+423130,Tire and Tube Merchant Wholesalers,2002 2007 2012 2017 2022,5014
+423140,Motor Vehicle Parts (Used) Merchant Wholesalers,2002 2007 2012 2017 2022,5015
+423210,Furniture Merchant Wholesalers,2002 2007 2012 2017 2022,5021
+423220,Home Furnishing Merchant Wholesalers,2002 2007 2012 2017 2022,5023
+423310,"Lumber, Plywood, Millwork, and Wood Panel Merchant Wholesalers",2002 2007 2012 2017 2022,5031
+423320,"Brick, Stone, and Related Construction Material Merchant Wholesalers",2002 2007 2012 2017 2022,5032
+423330,"Roofing, Siding, and Insulation Material Merchant Wholesalers",2002 2007 2012 2017 2022,5033
+423390,Other Construction Material Merchant Wholesalers,2002 2007 2012 2017 2022,5039
+423410,Photographic Equipment and Supplies Merchant Wholesalers,2002 2007 2012 2017 2022,5043
+423420,Office Equipment Merchant Wholesalers,2002 2007 2012 2017 2022,5044
+423430,Computer and Computer Peripheral Equipment and Software Merchant Wholesalers,2002 2007 2012 2017 2022,5045
+423440,Other Commercial Equipment Merchant Wholesalers,2002 2007 2012 2017 2022,5046
+423450,"Medical, Dental, and Hospital Equipment and Supplies Merchant Wholesalers",2002 2007 2012 2017 2022,5047
+423460,Ophthalmic Goods Merchant Wholesalers,2002 2007 2012 2017 2022,5048
+423490,Other Professional Equipment and Supplies Merchant Wholesalers,2002 2007 2012 2017 2022,5049
+423510,Metal Service Centers and Other Metal Merchant Wholesalers,2002 2007 2012 2017 2022,5051
+423520,Coal and Other Mineral and Ore Merchant Wholesalers,2002 2007 2012 2017 2022,5052
+423610,"Electrical Apparatus and Equipment, Wiring Supplies, and Related Equipment Merchant Wholesalers",2002 2007 2012 2017 2022,5063
+423620,"Household Appliances, Electric Housewares, and Consumer Electronics Merchant Wholesalers",2002 2007 2012 2017 2022,5064 5074
+423690,Other Electronic Parts and Equipment Merchant Wholesalers,2002 2007 2012 2017 2022,5065
+423710,Hardware Merchant Wholesalers,2002 2007 2012 2017 2022,5072
+423720,Plumbing and Heating Equipment and Supplies (Hydronics) Merchant Wholesalers,2002 2007 2012 2017 2022,5074 5064
+423730,Warm Air Heating and Air-Conditioning Equipment and Supplies Merchant Wholesalers,2002 2007 2012 2017 2022,5075
+423740,Refrigeration Equipment and Supplies Merchant Wholesalers,2002 2007 2012 2017 2022,5078
+423810,Construction and Mining (except Oil Well) Machinery and Equipment Merchant Wholesalers,2002 2007 2012 2017 2022,5082
+423820,Farm and Garden Machinery and Equipment Merchant Wholesalers,2002 2007 2012 2017 2022,5083
+423830,Industrial Machinery and Equipment Merchant Wholesalers,2002 2007 2012 2017 2022,5084 5085
+423840,Industrial Supplies Merchant Wholesalers,2002 2007 2012 2017 2022,5085
+423850,Service Establishment Equipment and Supplies Merchant Wholesalers,2002 2007 2012 2017 2022,5087
+423860,Transportation Equipment and Supplies (except Motor Vehicle) Merchant Wholesalers,2002 2007 2012 2017 2022,5088 7389
+423910,Sporting and Recreational Goods and Supplies Merchant Wholesalers,2002 2007 2012 2017 2022,5091
+423920,Toy and Hobby Goods and Supplies Merchant Wholesalers,2002 2007 2012 2017 2022,5092
+423930,Recyclable Material Merchant Wholesalers,2002 2007 2012 2017 2022,5093
+423940,"Jewelry, Watch, Precious Stone, and Precious Metal Merchant Wholesalers",2002 2007 2012 2017 2022,5094
+423990,Other Miscellaneous Durable Goods Merchant Wholesalers,2002 2007 2012 2017 2022,5099 7822
+424110,Printing and Writing Paper Merchant Wholesalers,2002 2007 2012 2017 2022,5111
+424120,Stationery and Office Supplies Merchant Wholesalers,2002 2007 2012 2017 2022,5112
+424130,Industrial and Personal Service Paper Merchant Wholesalers,2002 2007 2012 2017 2022,5113
+424210,Drugs and Druggists' Sundries Merchant Wholesalers,2002 2007 2012 2017 2022,5122
+424310,"Piece Goods, Notions, and Other Dry Goods Merchant Wholesalers",2002 2007 2012 2017 2022,5131
+424320,Men's and Boys' Clothing and Furnishings Merchant Wholesalers,2002 2007 2012 2017,5136
+424330,"Women's, Children's, and Infants' Clothing and Accessories Merchant Wholesalers",2002 2007 2012 2017,5137
+424340,Footwear Merchant Wholesalers,2002 2007 2012 2017 2022,5139
+424350,Clothing and Clothing Accessories Merchant Wholesalers,2022,5136 5137
+424410,General Line Grocery Merchant Wholesalers,2002 2007 2012 2017 2022,5141
+424420,Packaged Frozen Food Merchant Wholesalers,2002 2007 2012 2017 2022,5142
+424430,Dairy Product (except Dried or Canned) Merchant Wholesalers,2002 2007 2012 2017 2022,5143
+424440,Poultry and Poultry Product Merchant Wholesalers,2002 2007 2012 2017 2022,5144
+424450,Confectionery Merchant Wholesalers,2002 2007 2012 2017 2022,5145
+424460,Fish and Seafood Merchant Wholesalers,2002 2007 2012 2017 2022,5146
+424470,Meat and Meat Product Merchant Wholesalers,2002 2007 2012 2017 2022,5147
+424480,Fresh Fruit and Vegetable Merchant Wholesalers,2002 2007 2012 2017 2022,5148
+424490,Other Grocery and Related Products Merchant Wholesalers,2002 2007 2012 2017 2022,5149
+424510,Grain and Field Bean Merchant Wholesalers,2002 2007 2012 2017 2022,5153
+424520,Livestock Merchant Wholesalers,2002 2007 2012 2017 2022,5154
+424590,Other Farm Product Raw Material Merchant Wholesalers,2002 2007 2012 2017 2022,5159
+424610,Plastics Materials and Basic Forms and Shapes Merchant Wholesalers,2002 2007 2012 2017 2022,5162
+424690,Other Chemical and Allied Products Merchant Wholesalers,2002 2007 2012 2017 2022,5169
+424710,Petroleum Bulk Stations and Terminals,2002 2007 2012 2017 2022,5171
+424720,Petroleum and Petroleum Products Merchant Wholesalers (except Bulk Stations and Terminals),2002 2007 2012 2017 2022,5172
+424810,Beer and Ale Merchant Wholesalers,2002 2007 2012 2017 2022,5181
+424820,Wine and Distilled Alcoholic Beverage Merchant Wholesalers,2002 2007 2012 2017 2022,5182
+424910,Farm Supplies Merchant Wholesalers,2002 2007 2012 2017 2022,5191
+424920,"Book, Periodical, and Newspaper Merchant Wholesalers",2002 2007 2012 2017 2022,5192
+424930,"Flower, Nursery Stock, and Florists' Supplies Merchant Wholesalers",2002 2007 2012 2017 2022,5193
+424940,Tobacco Product and Electronic Cigarette Merchant Wholesalers,2002 2007 2012 2017 2022,5194
+424950,"Paint, Varnish, and Supplies Merchant Wholesalers",2002 2007 2012 2017 2022,5198
+424990,Other Miscellaneous Nondurable Goods Merchant Wholesalers,2002 2007 2012 2017 2022,5199
+425110,Business to Business Electronic Markets,2002 2007 2012 2017,5012 5013 5014 5015 5021 5023 5031 5032 5033 5039 5043 5044 5045 5046 5047 5048 5049 5051 5052 5063 5064 5065 5072 5074 5075 5078 5082 5083 5084 5085 5087 5088 7389 5091 5092 5093 5094 5099 7822 5111 5112 5113 5122 5131 5136 5137 5139 5141 5142 5143 5144 5145 5146 5147 5148 5149 5153 5154 5159 5162 5169 5172 5181 5182 5191 5192 5193 5194 5198 5199
+425120,Wholesale Trade Agents and Brokers,2002 2007 2012 2017 2022,5012 5013 5014 5015 5021 5023 5031 5032 5033 5039 5043 5044 5045 5046 5047 5048 5049 5051 5052 5063 5064 5065 5072 5074 5075 5078 5082 5083 5084 5085 5087 5088 7389 5091 5092 5093 5094 5099 7822 5111 5112 5113 5122 5131 5136 5137 5139 5141 5142 5143 5144 5145 5146 5147 5148 5149 5153 5154 5159 5162 5169 5172 5181 5182 5191 5192 5193 5194 5198 5199
+441110,New Car Dealers,1997 2002 2007 2012 2017 2022,5511
+441120,Used Car Dealers,1997 2002 2007 2012 2017 2022,5521
+441210,Recreational Vehicle Dealers,1997 2002 2007 2012 2017 2022,5561
+441221,"Motorcycle, ATV, and Personal Watercraft Dealers",1997 2002 2007,5571
+441222,Boat Dealers,1997 2002 2007 2012 2017 2022,5551
+441227,"Motorcycle, ATV, and All Other Motor Vehicle Dealers",2022,5571 5599 5961
+441228,"Motorcycle, ATV, and All Other Motor Vehicle Dealers",2012 2017,5571 5599
+441229,All Other Motor Vehicle Dealers,1997 2002 2007,5599
+441310,Automotive Parts and Accessories Stores,1997 2002 2007 2012 2017,5013 5731 5015 5531
+441320,Tire Dealers,1997 2002 2007 2012 2017,5014 5531
+441330,Automotive Parts and Accessories Retailers,2022,5013 5731 5015 5531 5961 5421 5963
+441340,Tire Dealers,2022,5014 5531 5961 5421 5963
+442110,Furniture Stores,1997 2002 2007 2012 2017,5021 5712
+442210,Floor Covering Stores,1997 2002 2007 2012 2017,5023 5713
+442291,Window Treatment Stores,1997 2002 2007 2012 2017,5714 5719
+442299,All Other Home Furnishings Stores,1997 2002 2007 2012 2017,5719 7699
+443111,Household Appliance Stores,1997 2002 2007,5722 7623 7629
+443112,"Radio, Television, and Other Electronics Stores",1997 2002 2007,5731 5999 7622
+443120,Computer and Software Stores,1997 2002 2007,5045 5734 7378
+443130,Camera and Photographic Supplies Stores,1997 2002 2007,5946
+443141,Household Appliance Stores,2012 2017,5722 7623 7629
+443142,Electronics Stores,2012 2017,5731 5999 7622 5045 5734 7378 5946 5735
+444110,Home Centers,1997 2002 2007 2012 2017 2022,5211
+444120,Paint and Wallpaper Retailers,1997 2002 2007 2012 2017 2022,5231
+444130,Hardware Stores,1997 2002 2007 2012 2017,5072 5251
+444140,Hardware Retailers,2022,5072 5251 5961 5421 5963
+444180,Other Building Material Dealers,2022,5032 5039 5063 5074 5211 5231 5961 5421 5963
+444190,Other Building Material Dealers,1997 2002 2007 2012 2017,5032 5039 5063 5074 5211 5231
+444210,Outdoor Power Equipment Stores,1997 2002 2007 2012 2017,5083 5261
+444220,"Nursery, Garden Center, and Farm Supply Stores",1997 2002 2007 2012 2017,5191 5193 5261
+444230,Outdoor Power Equipment Retailers,2022,5083 5261 5961 5421 5963
+444240,"Nursery, Garden Center, and Farm Supply Retailers",2022,5191 5193 5261 5961 5421 5963
+445110,Supermarkets and Other Grocery Retailers (except Convenience Retailers),1997 2002 2007 2012 2017 2022,5411
+445120,Convenience Stores,1997 2002 2007 2012 2017,5411
+445131,Convenience Retailers,2022,5411 5961 5421 5963
+445132,Vending Machine Operators,2022,5962
+445210,Meat Markets,1997 2002 2007 2012 2017,5421 5499
+445220,Fish and Seafood Markets,1997 2002 2007 2012 2017,5421
+445230,Fruit and Vegetable Retailers,1997 2002 2007 2012 2017 2022,5431
+445240,Meat Retailers,2022,5421 5499 5961 5963
+445250,Fish and Seafood Retailers,2022,5421 5961 5963
+445291,Baked Goods Retailers,1997 2002 2007 2012 2017 2022,5461
+445292,Confectionery and Nut Retailers,1997 2002 2007 2012 2017 2022,5441
+445298,All Other Specialty Food Retailers,2022,5499 5451 5961 5421 5963
+445299,All Other Specialty Food Stores,1997 2002 2007 2012 2017,5499 5451
+445310,"Beer, Wine, and Liquor Stores",1997 2002 2007 2012 2017,5921
+445320,"Beer, Wine, and Liquor Retailers",2022,5921 5961 5421 5963
+446110,Pharmacies and Drug Stores,1997 2002 2007 2012 2017,5912
+446120,"Cosmetics, Beauty Supplies, and Perfume Stores",1997 2002 2007 2012 2017,5087 5999
+446130,Optical Goods Stores,1997 2002 2007 2012 2017,5995
+446191,Food (Health) Supplement Stores,1997 2002 2007 2012 2017,5499
+446199,All Other Health and Personal Care Stores,1997 2002 2007 2012 2017,5047 5999
+447110,Gasoline Stations with Convenience Stores,1997 2002 2007 2012 2017,5541 5411
+447190,Other Gasoline Stations,1997 2002 2007 2012 2017,5541
+448110,Men's Clothing Stores,1997 2002 2007 2012 2017,5611
+448120,Women's Clothing Stores,1997 2002 2007 2012 2017,5621
+448130,Children's and Infants' Clothing Stores,1997 2002 2007 2012 2017,5641
+448140,Family Clothing Stores,1997 2002 2007 2012 2017,5651
+448150,Clothing Accessories Stores,1997 2002 2007 2012 2017,5611 5632 5699
+448190,Other Clothing Stores,1997 2002 2007 2012 2017,5699 5632
+448210,Shoe Stores,1997 2002 2007 2012 2017,5661
+448310,Jewelry Stores,1997 2002 2007 2012 2017,5944
+448320,Luggage and Leather Goods Stores,1997 2002 2007 2012 2017,5948
+449110,Furniture Retailers,2022,5021 5712 5961 5421 5963
+449121,Floor Covering Retailers,2022,5023 5713 5961 5421 5963
+449122,Window Treatment Retailers,2022,5714 5719 5961 5421 5963
+449129,All Other Home Furnishings Retailers,2022,5719 7699 5961 5421 5963
+449210,Electronics and Appliance Retailers,2022,5722 7623 7629 5731 5999 7622 5045 5734 7378 5946 5735 5961 5421 5963
+451110,Sporting Goods Stores,1997 2002 2007 2012 2017,5941 7699
+451120,"Hobby, Toy, and Game Stores",1997 2002 2007 2012 2017,5945
+451130,"Sewing, Needlework, and Piece Goods Stores",1997 2002 2007 2012 2017,5714 5949
+451140,Musical Instrument and Supplies Stores,1997 2002 2007 2012 2017,5736
+451211,Book Stores,1997 2002 2007 2012 2017,5942
+451212,News Dealers and Newsstands,1997 2002 2007 2012 2017,5994
+451220,"Prerecorded Tape, Compact Disc, and Record Stores",1997 2002 2007,5735
+452110,Department Stores,1997,5311
+452111,Department Stores (except Discount Department Stores),2002 2007 2012,5311
+452112,Discount Department Stores,2002 2007 2012,5311
+452210,Department Stores,2017,5311
+452311,Warehouse Clubs and Supercenters,2017,5311 5399 5411
+452319,All Other General Merchandise Stores,2017,5399 5331 5531
+452910,Warehouse Clubs and Supercenters,1997 2002 2007 2012,5399 5411
+452990,All Other General Merchandise Stores,1997 2002 2007 2012,5399 5331 5531
+453110,Florists,1997 2002 2007 2012 2017,5992
+453210,Office Supplies and Stationery Stores,1997 2002 2007 2012 2017,5044 5049 5112 5943
+453220,"Gift, Novelty, and Souvenir Stores",1997 2002 2007 2012 2017,5947
+453310,Used Merchandise Stores,1997 2002 2007 2012 2017,5932
+453910,Pet and Pet Supplies Stores,1997 2002 2007 2012 2017,5999
+453920,Art Dealers,1997 2002 2007 2012 2017,5999
+453930,Manufactured (Mobile) Home Dealers,1997 2002 2007 2012 2017,5271
+453991,Tobacco Stores,1997 2002 2007 2012 2017,5993
+453998,All Other Miscellaneous Store Retailers (except Tobacco Stores),1997 2002 2007 2012 2017,5999
+454110,Electronic Shopping and Mail-Order Houses,1997 2017,5961
+454111,Electronic Shopping,2002 2007 2012,5961
+454112,Electronic Auctions,2002 2007 2012,5961
+454113,Mail-Order Houses,2002 2007 2012,5961
+454210,Vending Machine Operators,1997 2002 2007 2012 2017,5962
+454310,Fuel Dealers,2012 2017,5171 5983 5984 5989
+454311,Heating Oil Dealers,1997 2002 2007,5171 5983
+454312,Liquefied Petroleum Gas (Bottled Gas) Dealers,1997 2002 2007,5171 5984
+454319,Other Fuel Dealers,1997 2002 2007,5989
+454390,Other Direct Selling Establishments,1997 2002 2007 2012 2017,5421 5963
+455110,Department Stores,2022,5311 5961
+455211,Warehouse Clubs and Supercenters,2022,5311 5399 5411 5961
+455219,All Other General Merchandise Retailers,2022,5399 5331 5531 5999 5961 5421 5963
+456110,Pharmacies and Drug Retailers,2022,5912 5961 5421 5963
+456120,"Cosmetics, Beauty Supplies, and Perfume Retailers",2022,5087 5999 5961 5421 5963
+456130,Optical Goods Retailers,2022,5995 5961 5421 5963
+456191,Food (Health) Supplement Retailers,2022,5499 5961 5421 5963
+456199,All Other Health and Personal Care Retailers,2022,5047 5999 5961 5421 5963
+457110,Gasoline Stations with Convenience Stores,2022,5541 5411
+457120,Other Gasoline Stations,2022,5541
+457210,Fuel Dealers,2022,5171 5983 5984 5989
+458110,Clothing and Clothing Accessories Retailers,2022,5611 5621 5641 5651 5632 5699 5961 5421 5963
+458210,Shoe Retailers,2022,5661 5961 5421 5963
+458310,Jewelry Retailers,2022,5944 5961 5421 5963
+458320,Luggage and Leather Goods Retailers,2022,5948 5961 5421 5963
+459110,Sporting Goods Retailers,2022,5941 7699 5961 5421 5963
+459120,"Hobby, Toy, and Game Retailers",2022,5945 5961 5421 5963
+459130,"Sewing, Needlework, and Piece Goods Retailers",2022,5714 5949 5961 5421 5963
+459140,Musical Instrument and Supplies Retailers,2022,5736 5961 5421 5963
+459210,Book Retailers and News Dealers,2022,5942 5994 5961 5421 5963
+459310,Florists,2022,5992 5961 5421 5963
+459410,Office Supplies and Stationery Retailers,2022,5044 5049 5112 5943 5961 5421 5963
+459420,"Gift, Novelty, and Souvenir Retailers",2022,5947 5961 5421 5963
+459510,Used Merchandise Retailers,2022,5932 5961 5421 5963
+459910,Pet and Pet Supplies Retailers,2022,5999 5961 5421 5963
+459920,Art Dealers,2022,5999 5961 5421 5963
+459930,Manufactured (Mobile) Home Dealers,2022,5271
+459991,"Tobacco, Electronic Cigarette, and Other Smoking Supplies Retailers",2022,5993 5999 5961 5421 5963
+459999,All Other Miscellaneous Retailers,2022,5999 5961 5421 5963
+481111,Scheduled Passenger Air Transportation,1997 2002 2007 2012 2017 2022,4512
+481112,Scheduled Freight Air Transportation,1997 2002 2007 2012 2017 2022,4512
+481211,Nonscheduled Chartered Passenger Air Transportation,1997 2002 2007 2012 2017 2022,4522
+481212,Nonscheduled Chartered Freight Air Transportation,1997 2002 2007 2012 2017 2022,4522
+482111,Line-Haul Railroads,1997 2002 2007 2012 2017 2022,4011
+482112,Short Line Railroads,1997 2002 2007 2012 2017 2022,4013
+483111,Deep Sea Freight Transportation,1997 2002 2007 2012 2017 2022,4412
+483112,Deep Sea Passenger Transportation,1997 2002 2007 2012 2017 2022,4481
+483113,Coastal and Great Lakes Freight Transportation,1997 2002 2007 2012 2017 2022,4424 4432
+483114,Coastal and Great Lakes Passenger Transportation,1997 2002 2007 2012 2017 2022,4481 4482
+483211,Inland Water Freight Transportation,1997 2002 2007 2012 2017 2022,4449
+483212,Inland Water Passenger Transportation,1997 2002 2007 2012 2017 2022,4482 4489
+484110,"General Freight Trucking, Local",1997 2002 2007 2012 2017 2022,4212 4214
+484121,"General Freight Trucking, Long-Distance, Truckload",1997 2002 2007 2012 2017 2022,4213
+484122,"General Freight Trucking, Long-Distance, Less Than Truckload",1997 2002 2007 2012 2017 2022,4213
+484210,Used Household and Office Goods Moving,1997 2002 2007 2012 2017 2022,4212 4213 4214
+484220,"Specialized Freight (except Used Goods) Trucking, Local",1997 2002 2007 2012 2017 2022,4212 4214
+484230,"Specialized Freight (except Used Goods) Trucking, Long-Distance",1997 2002 2007 2012 2017 2022,4213
+485111,Mixed Mode Transit Systems,1997 2002 2007 2012 2017 2022,4111
+485112,Commuter Rail Systems,1997 2002 2007 2012 2017 2022,4111
+485113,Bus and Other Motor Vehicle Transit Systems,1997 2002 2007 2012 2017 2022,4111
+485119,Other Urban Transit Systems,1997 2002 2007 2012 2017 2022,4111
+485210,Interurban and Rural Bus Transportation,1997 2002 2007 2012 2017 2022,4131
+485310,Taxi and Ridesharing Services,1997 2002 2007 2012 2017 2022,4121 4899
+485320,Limousine Service,1997 2002 2007 2012 2017 2022,4119
+485410,School and Employee Bus Transportation,1997 2002 2007 2012 2017 2022,4151 4119
+485510,Charter Bus Industry,1997 2002 2007 2012 2017 2022,4141 4142
+485991,Special Needs Transportation,1997 2002 2007 2012 2017 2022,4119
+485999,All Other Transit and Ground Passenger Transportation,1997 2002 2007 2012 2017 2022,4111 4119
+486110,Pipeline Transportation of Crude Oil,1997 2002 2007 2012 2017 2022,4612
+486210,Pipeline Transportation of Natural Gas,1997 2002 2007 2012 2017 2022,4922 4923
+486910,Pipeline Transportation of Refined Petroleum Products,1997 2002 2007 2012 2017 2022,4613
+486990,All Other Pipeline Transportation,1997 2002 2007 2012 2017 2022,4619
+487110,"Scenic and Sightseeing Transportation, Land",1997 2002 2007 2012 2017 2022,4119 4789 7999
+487210,"Scenic and Sightseeing Transportation, Water",1997 2002 2007 2012 2017 2022,4489 7999
+487990,"Scenic and Sightseeing Transportation, Other",1997 2002 2007 2012 2017 2022,4522 7999
+488111,Air Traffic Control,1997 2002 2007 2012 2017 2022,4581 9621
+488119,Other Airport Operations,1997 2002 2007 2012 2017 2022,4581 4959
+488190,Other Support Activities for Air Transportation,1997 2002 2007 2012 2017 2022,4581
+488210,Support Activities for Rail Transportation,1997 2002 2007 2012 2017 2022,4013 4741 4789
+488310,Port and Harbor Operations,1997 2002 2007 2012 2017 2022,4491 4499
+488320,Marine Cargo Handling,1997 2002 2007 2012 2017 2022,4491
+488330,Navigational Services to Shipping,1997 2002 2007 2012 2017 2022,4492 4499
+488390,Other Support Activities for Water Transportation,1997 2002 2007 2012 2017 2022,3731 4499 4785 7699
+488410,Motor Vehicle Towing,1997 2002 2007 2012 2017 2022,7549
+488490,Other Support Activities for Road Transportation,1997 2002 2007 2012 2017 2022,4173 4231 4785
+488510,Freight Transportation Arrangement,1997 2002 2007 2012 2017 2022,4731
+488991,Packing and Crating,1997 2002 2007 2012 2017 2022,4783
+488999,All Other Support Activities for Transportation,1997 2002 2007 2012 2017 2022,4729 4789
+491110,Postal Service,1997 2002 2007 2012 2017 2022,4311 7389
+492110,Couriers and Express Delivery Services,1997 2002 2007 2012 2017 2022,4215 4513
+492210,Local Messengers and Local Delivery,1997 2002 2007 2012 2017 2022,4215
+493110,General Warehousing and Storage,1997 2002 2007 2012 2017 2022,4225 4226
+493120,Refrigerated Warehousing and Storage,1997 2002 2007 2012 2017 2022,4222 4226
+493130,Farm Product Warehousing and Storage,1997 2002 2007 2012 2017 2022,4221
+493190,Other Warehousing and Storage,1997 2002 2007 2012 2017 2022,4226
+511110,Newspaper Publishers,1997 2002 2007 2012 2017,2711
+511120,Periodical Publishers,1997 2002 2007 2012 2017,2721 2741
+511130,Book Publishers,1997 2002 2007 2012 2017,2731 2741
+511140,Directory and Mailing List Publishers,1997 2002 2007 2012 2017,2741 7331
+511191,Greeting Card Publishers,1997 2002 2007 2012 2017,2771
+511199,All Other Publishers,1997 2002 2007 2012 2017,2741
+511210,Software Publishers,1997 2002 2007 2012 2017,7372
+512110,Motion Picture and Video Production,1997 2002 2007 2012 2017 2022,7812
+512120,Motion Picture and Video Distribution,1997 2002 2007 2012 2017 2022,7822 7829
+512131,Motion Picture Theaters (except Drive-Ins),1997 2002 2007 2012 2017 2022,7832
+512132,Drive-In Motion Picture Theaters,1997 2002 2007 2012 2017 2022,7833
+512191,Teleproduction and Other Postproduction Services,1997 2002 2007 2012 2017 2022,7819
+512199,Other Motion Picture and Video Industries,1997 2002 2007 2012 2017 2022,7819 7829
+512210,Record Production,1997 2002 2007 2012,8999
+512220,Integrated Record Production/Distribution,1997 2002 2007 2012,3652
+512230,Music Publishers,1997 2002 2007 2012 2017 2022,2731 2741 8999
+512240,Sound Recording Studios,1997 2002 2007 2012 2017 2022,7389
+512250,Record Production and Distribution,2017 2022,8999 3652
+512290,Other Sound Recording Industries,1997 2002 2007 2012 2017 2022,7389 7922
+513110,Newspaper Publishers,2022,2711 2721 2741 2731 7331 2771 8999 7389
+513111,Radio Networks,1997,4832
+513112,Radio Stations,1997,4832
+513120,Periodical Publishers,1997 2022,4833 2721 2741 2711 2731 7331 2771 8999 7389
+513130,Book Publishers,2022,2731 2741 2711 2721 7331 2771 8999 7389
+513140,Directory and Mailing List Publishers,2022,2741 7331 2711 2721 2731 2771 8999 7389
+513191,Greeting Card Publishers,2022,2771 2711 2721 2741 2731 7331 8999 7389
+513199,All Other Publishers,2022,2741 2711 2721 2731 7331 2771 8999 7389
+513210,Software Publishers,1997 2022,4841 7372
+513220,Cable and Other Program Distribution,1997,4841
+513310,Wired Telecommunications Carriers,1997,4813 4822
+513321,Paging,1997,4812
+513322,Cellular and Other Wireless Telecommunications,1997,4812 4899
+513330,Telecommunications Resellers,1997,4812 4813
+513340,Satellite Telecommunications,1997,4899 4813
+513390,Other Telecommunications,1997,4899
+514110,News Syndicates,1997,7383
+514120,Libraries and Archives,1997,8231 7829
+514191,On-Line Information Services,1997,7375
+514199,All Other Information Services,1997,8999 7389
+514210,Data Processing Services,1997,7374 7379 7389
+515111,Radio Networks,2002 2007 2012 2017,4832
+515112,Radio Stations,2002 2007 2012 2017,4832
+515120,Television Broadcasting,2002 2007 2012 2017,4833
+515210,Cable and Other Subscription Programming,2002 2007 2012 2017,4841
+516110,Radio Broadcasting Stations,2002 2022,2711 2721 2741 2731 7331 2771 8999 7389 4832
+516120,Television Broadcasting Stations,2022,4833
+516210,"Media Streaming Distribution Services, Social Networks, and Other Media Networks and Content Providers",2022,4832 4833 4841 7383 2711 2721 2741 2731 7331 2771 8999 7389
+517110,Wired Telecommunications Carriers,2002 2007 2012,4813 4822 4841 7375
+517111,Wired Telecommunications Carriers,2022,4813 4822 4841 7375
+517112,Wireless Telecommunications Carriers (except Satellite),2022,4812 4899
+517121,Telecommunications Resellers,2022,4812 4813
+517122,Agents for Wireless Telecommunications Services,2022,4812 4899 4813
+517210,Wireless Telecommunications Carriers (except Satellite),2007 2012,4812 4899
+517211,Paging,2002,4812
+517212,Cellular and Other Wireless Telecommunications,2002,4812 4899
+517310,Telecommunications Resellers,2002,4812 4813
+517311,Wired Telecommunications Carriers,2017,4813 4822 4841 7375
+517312,Wireless Telecommunications Carriers (except Satellite),2017,4812 4899
+517410,Satellite Telecommunications,2002 2007 2012 2017 2022,4899 4813
+517510,Cable and Other Program Distribution,2002,4841
+517810,All Other Telecommunications,2022,4899 7375
+517910,Other Telecommunications,2002,4899
+517911,Telecommunications Resellers,2007 2012 2017,4812 4813
+517919,All Other Telecommunications,2007 2012 2017,4899 7375
+518111,Internet Service Providers,2002,7375
+518112,Web Search Portals,2002,8999 7389
+518210,"Computing Infrastructure Providers, Data Processing, Web Hosting, and Related Services",2002 2007 2012 2017 2022,7374 7379 7389
+519110,News Syndicates,2002 2007 2012 2017,7383
+519120,Libraries and Archives,2002 2007 2012 2017,8231 7829
+519130,Internet Publishing and Broadcasting and Web Search Portals,2007 2012 2017,2711 2721 2741 2731 7331 2771 8999 7389
+519190,All Other Information Services,2002 2007 2012 2017,8999 7389
+519210,Libraries and Archives,2022,8231 7829
+519290,Web Search Portals and All Other Information Services,2022,2711 2721 2741 2731 7331 2771 8999 7389
+521110,Monetary Authorities-Central Bank,1997 2002 2007 2012 2017 2022,6011
+522110,Commercial Banking,1997 2002 2007 2012 2017 2022,6021 6022 6029 6081
+522120,Savings Institutions,1997 2002 2007 2012 2017,6035 6036
+522130,Credit Unions,1997 2002 2007 2012 2017 2022,6061 6062
+522180,Savings Institutions and Other Depository Credit Intermediation,2022,6035 6036 6022
+522190,Other Depository Credit Intermediation,1997 2002 2007 2012 2017,6022
+522210,Credit Card Issuing,1997 2002 2007 2012 2017 2022,6021 6022 6141 6153
+522220,Sales Financing,1997 2002 2007 2012 2017 2022,6141 6153 6159
+522291,Consumer Lending,1997 2002 2007 2012 2017 2022,6141
+522292,Real Estate Credit,1997 2002 2007 2012 2017 2022,6111 6162 6159
+522293,International Trade Financing,1997 2002 2007 2012 2017,6081 6082 6111 6159
+522294,Secondary Market Financing,1997 2002 2007 2012 2017,6111 6159
+522298,All Other Nondepository Credit Intermediation,1997 2002 2007 2012 2017,5932 6019 6081 6082 6111 6141 6159
+522299,"International, Secondary Market, and All Other Nondepository Credit Intermediation",2022,6081 6082 6111 6159 5932 6019 6141
+522310,Mortgage and Nonmortgage Loan Brokers,1997 2002 2007 2012 2017 2022,6163
+522320,"Financial Transactions Processing, Reserve, and Clearinghouse Activities",1997 2002 2007 2012 2017 2022,6099 6153 7389
+522390,Other Activities Related to Credit Intermediation,1997 2002 2007 2012 2017 2022,6099 6162
+523110,Investment Banking and Securities Dealing,1997 2002 2007 2012 2017,6211
+523120,Securities Brokerage,1997 2002 2007 2012 2017,6211
+523130,Commodity Contracts Dealing,1997 2002 2007 2012 2017,6099 6799 6221
+523140,Commodity Contracts Brokerage,1997 2002 2007 2012 2017,6221
+523150,Investment Banking and Securities Intermediation,2022,6211
+523160,Commodity Contracts Intermediation,2022,6099 6799 6221
+523210,Securities and Commodity Exchanges,1997 2002 2007 2012 2017 2022,6231
+523910,Miscellaneous Intermediation,1997 2002 2007 2012 2017 2022,6211 6153 6792 6799
+523920,Portfolio Management,1997 2002 2007 2012 2017,6282 6371 6733 6799
+523930,Investment Advice,1997 2002 2007 2012 2017,6282
+523940,Portfolio Management and Investment Advice,2022,6282 6371 6733 6799
+523991,"Trust, Fiduciary, and Custody Activities",1997 2002 2007 2012 2017 2022,6091 6099 6289 6733
+523999,Miscellaneous Financial Investment Activities,1997 2002 2007 2012 2017 2022,6211 6289
+524113,Direct Life Insurance Carriers,1997 2002 2007 2012 2017 2022,6311 6321
+524114,Direct Health and Medical Insurance Carriers,1997 2002 2007 2012 2017 2022,6324 6321
+524126,Direct Property and Casualty Insurance Carriers,1997 2002 2007 2012 2017 2022,6331 6351
+524127,Direct Title Insurance Carriers,1997 2002 2007 2012 2017 2022,6361
+524128,"Other Direct Insurance (except Life, Health, and Medical) Carriers",1997 2002 2007 2012 2017 2022,6331 6399
+524130,Reinsurance Carriers,1997 2002 2007 2012 2017 2022,6311 6321 6324 6331 6351 6361
+524210,Insurance Agencies and Brokerages,1997 2002 2007 2012 2017 2022,6411
+524291,Claims Adjusting,1997 2002 2007 2012 2017 2022,6411
+524292,Pharmacy Benefit Management and Other Third Party Administration of Insurance and Pension Funds,1997 2002 2007 2012 2017 2022,6371 6411
+524298,All Other Insurance Related Activities,1997 2002 2007 2012 2017 2022,6411
+525110,Pension Funds,1997 2002 2007 2012 2017 2022,6371
+525120,Health and Welfare Funds,1997 2002 2007 2012 2017 2022,6371
+525190,Other Insurance Funds,1997 2002 2007 2012 2017 2022,6321 6324 6331 6733
+525910,Open-End Investment Funds,1997 2002 2007 2012 2017 2022,6722
+525920,"Trusts, Estates, and Agency Accounts",1997 2002 2007 2012 2017 2022,6733
+525930,Real Estate Investment Trusts,1997 2002,6798
+525990,Other Financial Vehicles,1997 2002 2007 2012 2017 2022,6371 6726 6798
+531110,Lessors of Residential Buildings and Dwellings,1997 2002 2007 2012 2017 2022,6513 6514 6798
+531120,Lessors of Nonresidential Buildings (except Miniwarehouses),1997 2002 2007 2012 2017 2022,6512 6798
+531130,Lessors of Miniwarehouses and Self-Storage Units,1997 2002 2007 2012 2017 2022,4225 6798
+531190,Lessors of Other Real Estate Property,1997 2002 2007 2012 2017 2022,6515 6517 6519 6798
+531210,Offices of Real Estate Agents and Brokers,1997 2002 2007 2012 2017 2022,6531
+531311,Residential Property Managers,1997 2002 2007 2012 2017 2022,6531
+531312,Nonresidential Property Managers,1997 2002 2007 2012 2017 2022,6531
+531320,Offices of Real Estate Appraisers,1997 2002 2007 2012 2017 2022,6531
+531390,Other Activities Related to Real Estate,1997 2002 2007 2012 2017 2022,6531
+532111,Passenger Car Rental,1997 2002 2007 2012 2017 2022,7514
+532112,Passenger Car Leasing,1997 2002 2007 2012 2017 2022,7515
+532120,"Truck, Utility Trailer, and RV (Recreational Vehicle) Rental and Leasing",1997 2002 2007 2012 2017 2022,7513 7519
+532210,Consumer Electronics and Appliances Rental,1997 2002 2007 2012 2017 2022,7359
+532220,Formal Wear and Costume Rental,1997 2002 2007 2012,7299 7819
+532230,Video Tape and Disc Rental,1997 2002 2007 2012,7841
+532281,Formal Wear and Costume Rental,2017 2022,7299 7819
+532282,Video Tape and Disc Rental,2017 2022,7841
+532283,Home Health Equipment Rental,2017 2022,7352
+532284,Recreational Goods Rental,2017 2022,7999
+532289,All Other Consumer Goods Rental,2017 2022,7359
+532291,Home Health Equipment Rental,1997 2002 2007 2012,7352
+532292,Recreational Goods Rental,1997 2002 2007 2012,7999
+532299,All Other Consumer Goods Rental,1997 2002 2007 2012,7359
+532310,General Rental Centers,1997 2002 2007 2012 2017 2022,7359
+532411,"Commercial Air, Rail, and Water Transportation Equipment Rental and Leasing",1997 2002 2007 2012 2017 2022,4499 4741 7359
+532412,"Construction, Mining, and Forestry Machinery and Equipment Rental and Leasing",1997 2002 2007 2012 2017 2022,7353 7359
+532420,Office Machinery and Equipment Rental and Leasing,1997 2002 2007 2012 2017 2022,7359 7377
+532490,Other Commercial and Industrial Machinery and Equipment Rental and Leasing,1997 2002 2007 2012 2017 2022,7352 7359 7819 7922
+533110,Lessors of Nonfinancial Intangible Assets (except Copyrighted Works),1997 2002 2007 2012 2017 2022,6792 6794
+541110,Offices of Lawyers,1997 2002 2007 2012 2017 2022,8111
+541191,Title Abstract and Settlement Offices,1997 2002 2007 2012 2017 2022,6541
+541199,All Other Legal Services,1997 2002 2007 2012 2017 2022,7389
+541211,Offices of Certified Public Accountants,1997 2002 2007 2012 2017 2022,8721
+541213,Tax Preparation Services,1997 2002 2007 2012 2017 2022,7291
+541214,Payroll Services,1997 2002 2007 2012 2017 2022,7819 8721
+541219,Other Accounting Services,1997 2002 2007 2012 2017 2022,8721
+541310,Architectural Services,1997 2002 2007 2012 2017 2022,8712
+541320,Landscape Architectural Services,1997 2002 2007 2012 2017 2022,0781 8748
+541330,Engineering Services,1997 2002 2007 2012 2017 2022,8711 8748
+541340,Drafting Services,1997 2002 2007 2012 2017 2022,7389
+541350,Building Inspection Services,1997 2002 2007 2012 2017 2022,7389
+541360,Geophysical Surveying and Mapping Services,1997 2002 2007 2012 2017 2022,8713 1081 1382 1481
+541370,Surveying and Mapping (except Geophysical) Services,1997 2002 2007 2012 2017 2022,7389 8713
+541380,Testing Laboratories and Services,1997 2002 2007 2012 2017 2022,8734
+541410,Interior Design Services,1997 2002 2007 2012 2017 2022,7389
+541420,Industrial Design Services,1997 2002 2007 2012 2017 2022,7389
+541430,Graphic Design Services,1997 2002 2007 2012 2017 2022,7336 8099
+541490,Other Specialized Design Services,1997 2002 2007 2012 2017 2022,7389
+541511,Custom Computer Programming Services,1997 2002 2007 2012 2017 2022,7371
+541512,Computer Systems Design Services,1997 2002 2007 2012 2017 2022,7373 7379
+541513,Computer Facilities Management Services,1997 2002 2007 2012 2017 2022,7376
+541519,Other Computer Related Services,1997 2002 2007 2012 2017 2022,7379
+541611,Administrative Management and General Management Consulting Services,1997 2002 2007 2012 2017 2022,8742
+541612,Human Resources Consulting Services,1997 2002 2007 2012 2017 2022,8742 7361 8999
+541613,Marketing Consulting Services,1997 2002 2007 2012 2017 2022,8742
+541614,"Process, Physical Distribution, and Logistics Consulting Services",1997 2002 2007 2012 2017 2022,8742 4731
+541618,Other Management Consulting Services,1997 2002 2007 2012 2017 2022,8748
+541620,Environmental Consulting Services,1997 2002 2007 2012 2017 2022,8999
+541690,Other Scientific and Technical Consulting Services,1997 2002 2007 2012 2017 2022,0781 8748 8999
+541710,"Research and Development in the Physical, Engineering, and Life Sciences",1997 2002,3721 3724 3728 3761 3764 3769 8731 8733
+541711,Research and Development in Biotechnology,2007 2012,3721 3724 3728 3761 3764 3769 8731 8733
+541712,"Research and Development in the Physical, Engineering, and Life Sciences (except Biotechnology)",2007 2012,3721 3724 3728 3761 3764 3769 8731 8733
+541713,Research and Development in Nanotechnology,2017 2022,3721 3724 3728 3761 3764 3769 8731 8733
+541714,Research and Development in Biotechnology (except Nanobiotechnology),2017 2022,3721 3724 3728 3761 3764 3769 8731 8733
+541715,"Research and Development in the Physical, Engineering, and Life Sciences (except Nanotechnology and Biotechnology)",2017 2022,3721 3724 3728 3761 3764 3769 8731 8733
+541720,Research and Development in the Social Sciences and Humanities,1997 2002 2007 2012 2017 2022,8732 8733
+541810,Advertising Agencies,1997 2002 2007 2012 2017 2022,7311
+541820,Public Relations Agencies,1997 2002 2007 2012 2017 2022,8743
+541830,Media Buying Agencies,1997 2002 2007 2012 2017 2022,7319
+541840,Media Representatives,1997 2002 2007 2012 2017 2022,7313
+541850,Indoor and Outdoor Display Advertising,1997 2002 2007 2012 2017 2022,7312 7319
+541860,Direct Mail Advertising,1997 2002 2007 2012 2017 2022,7331
+541870,Advertising Material Distribution Services,1997 2002 2007 2012 2017 2022,7319 7389
+541890,Other Services Related to Advertising,1997 2002 2007 2012 2017 2022,7319 5199 7389
+541910,Marketing Research and Public Opinion Polling,1997 2002 2007 2012 2017 2022,8732
+541921,"Photography Studios, Portrait",1997 2002 2007 2012 2017 2022,7221
+541922,Commercial Photography,1997 2002 2007 2012 2017 2022,7335 8099
+541930,Translation and Interpretation Services,1997 2002 2007 2012 2017 2022,7389
+541940,Veterinary Services,1997 2002 2007 2012 2017 2022,0741 0742 8734
+541990,"All Other Professional, Scientific, and Technical Services",1997 2002 2007 2012 2017 2022,7389
+551111,Offices of Bank Holding Companies,1997 2002 2007 2012 2017 2022,6712
+551112,Offices of Other Holding Companies,1997 2002 2007 2012 2017 2022,6719
+561110,Office Administrative Services,1997 2002 2007 2012 2017 2022,8741
+561210,Facilities Support Services,1997 2002 2007 2012 2017 2022,8744
+561310,Employment Placement Agencies,1997 2002,7299 7361 7819 7922
+561311,Employment Placement Agencies,2007 2012 2017 2022,7299 7361 7819 7922
+561312,Executive Search Services,2007 2012 2017 2022,8742 7361 8999
+561320,Temporary Help Services,1997 2002 2007 2012 2017 2022,7363
+561330,Professional Employer Organizations,1997 2002 2007 2012 2017 2022,7363
+561410,Document Preparation Services,1997 2002 2007 2012 2017 2022,7338
+561421,Telephone Answering Services,1997 2002 2007 2012 2017 2022,7389
+561422,Telemarketing Bureaus and Other Contact Centers,1997 2002 2007 2012 2017 2022,7389
+561431,Private Mail Centers,1997 2002 2007 2012 2017 2022,7389
+561439,Other Business Service Centers (including Copy Shops),1997 2002 2007 2012 2017 2022,7334 7389
+561440,Collection Agencies,1997 2002 2007 2012 2017 2022,7322
+561450,Credit Bureaus,1997 2002 2007 2012 2017 2022,7323
+561491,Repossession Services,1997 2002 2007 2012 2017 2022,7389
+561492,Court Reporting and Stenotype Services,1997 2002 2007 2012 2017 2022,7338
+561499,All Other Business Support Services,1997 2002 2007 2012 2017 2022,7389
+561510,Travel Agencies,1997 2002 2007 2012 2017 2022,4724
+561520,Tour Operators,1997 2002 2007 2012 2017 2022,4725
+561591,Convention and Visitors Bureaus,1997 2002 2007 2012 2017 2022,7389
+561599,All Other Travel Arrangement and Reservation Services,1997 2002 2007 2012 2017 2022,4729 7389 7999 8699 7922
+561611,Investigation and Personal Background Check Services,1997 2002 2007 2012 2017 2022,7381
+561612,Security Guards and Patrol Services,1997 2002 2007 2012 2017 2022,7381
+561613,Armored Car Services,1997 2002 2007 2012 2017 2022,7381
+561621,Security Systems Services (except Locksmiths),1997 2002 2007 2012 2017 2022,7382
+561622,Locksmiths,1997 2002 2007 2012 2017 2022,7699
+561710,Exterminating and Pest Control Services,1997 2002 2007 2012 2017 2022,4959 7342
+561720,Janitorial Services,1997 2002 2007 2012 2017 2022,7342 7349 4581
+561730,Landscaping Services,1997 2002 2007 2012 2017 2022,0782 0783
+561740,Carpet and Upholstery Cleaning Services,1997 2002 2007 2012 2017 2022,7217
+561790,Other Services to Buildings and Dwellings,1997 2002 2007 2012 2017 2022,7389 7349 7699
+561910,Packaging and Labeling Services,1997 2002 2007 2012 2017 2022,7389
+561920,Convention and Trade Show Organizers,1997 2002 2007 2012 2017 2022,7389
+561990,All Other Support Services,1997 2002 2007 2012 2017 2022,7389
+562111,Solid Waste Collection,1997 2002 2007 2012 2017 2022,4212
+562112,Hazardous Waste Collection,1997 2002 2007 2012 2017 2022,4212
+562119,Other Waste Collection,1997 2002 2007 2012 2017 2022,4212
+562211,Hazardous Waste Treatment and Disposal,1997 2002 2007 2012 2017 2022,4953
+562212,Solid Waste Landfill,1997 2002 2007 2012 2017 2022,4953
+562213,Solid Waste Combustors and Incinerators,1997 2002 2007 2012 2017 2022,4953
+562219,Other Nonhazardous Waste Treatment and Disposal,1997 2002 2007 2012 2017 2022,4953
+562910,Remediation Services,1997 2002 2007 2012 2017 2022,1799 4959
+562920,Materials Recovery Facilities,1997 2002 2007 2012 2017 2022,4953
+562991,Septic Tank and Related Services,1997 2002 2007 2012 2017 2022,7359 7699
+562998,All Other Miscellaneous Waste Management Services,1997 2002 2007 2012 2017 2022,4959 7699
+611110,Elementary and Secondary Schools,1997 2002 2007 2012 2017 2022,8211
+611210,Junior Colleges,1997 2002 2007 2012 2017 2022,8222
+611310,"Colleges, Universities, and Professional Schools",1997 2002 2007 2012 2017 2022,8221
+611410,Business and Secretarial Schools,1997 2002 2007 2012 2017 2022,8244
+611420,Computer Training,1997 2002 2007 2012 2017 2022,8243
+611430,Professional and Management Development Training,1997 2002 2007 2012 2017 2022,8299
+611511,Cosmetology and Barber Schools,1997 2002 2007 2012 2017 2022,7231 7241
+611512,Flight Training,1997 2002 2007 2012 2017 2022,8249 8299
+611513,Apprenticeship Training,1997 2002 2007 2012 2017 2022,8249
+611519,Other Technical and Trade Schools,1997 2002 2007 2012 2017 2022,8249 8243 8299
+611610,Fine Arts Schools,1997 2002 2007 2012 2017 2022,8299 7911
+611620,Sports and Recreation Instruction,1997 2002 2007 2012 2017 2022,7999
+611630,Language Schools,1997 2002 2007 2012 2017 2022,8299
+611691,Exam Preparation and Tutoring,1997 2002 2007 2012 2017 2022,8299
+611692,Automobile Driving Schools,1997 2002 2007 2012 2017 2022,8299
+611699,All Other Miscellaneous Schools and Instruction,1997 2002 2007 2012 2017 2022,7999 8299
+611710,Educational Support Services,1997 2002 2007 2012 2017 2022,8299 8748
+621111,Offices of Physicians (except Mental Health Specialists),1997 2002 2007 2012 2017 2022,8011 8031
+621112,"Offices of Physicians, Mental Health Specialists",1997 2002 2007 2012 2017 2022,8011 8031
+621210,Offices of Dentists,1997 2002 2007 2012 2017 2022,8021
+621310,Offices of Chiropractors,1997 2002 2007 2012 2017 2022,8041
+621320,Offices of Optometrists,1997 2002 2007 2012 2017 2022,8042
+621330,Offices of Mental Health Practitioners (except Physicians),1997 2002 2007 2012 2017 2022,8049
+621340,"Offices of Physical, Occupational and Speech Therapists, and Audiologists",1997 2002 2007 2012 2017 2022,8049
+621391,Offices of Podiatrists,1997 2002 2007 2012 2017 2022,8043
+621399,Offices of All Other Miscellaneous Health Practitioners,1997 2002 2007 2012 2017 2022,8049
+621410,Family Planning Centers,1997 2002 2007 2012 2017 2022,8093 8099
+621420,Outpatient Mental Health and Substance Abuse Centers,1997 2002 2007 2012 2017 2022,8093
+621491,HMO Medical Centers,1997 2002 2007 2012 2017 2022,8011
+621492,Kidney Dialysis Centers,1997 2002 2007 2012 2017 2022,8092
+621493,Freestanding Ambulatory Surgical and Emergency Centers,1997 2002 2007 2012 2017 2022,8011
+621498,All Other Outpatient Care Centers,1997 2002 2007 2012 2017 2022,8093
+621511,Medical Laboratories,1997 2002 2007 2012 2017 2022,8071
+621512,Diagnostic Imaging Centers,1997 2002 2007 2012 2017 2022,8071
+621610,Home Health Care Services,1997 2002 2007 2012 2017 2022,8082
+621910,Ambulance Services,1997 2002 2007 2012 2017 2022,4119 4522
+621991,Blood and Organ Banks,1997 2002 2007 2012 2017 2022,8099
+621999,All Other Miscellaneous Ambulatory Health Care Services,1997 2002 2007 2012 2017 2022,8099
+622110,General Medical and Surgical Hospitals,1997 2002 2007 2012 2017 2022,8062 8069
+622210,Psychiatric and Substance Abuse Hospitals,1997 2002 2007 2012 2017 2022,8063 8069
+622310,Specialty (except Psychiatric and Substance Abuse) Hospitals,1997 2002 2007 2012 2017 2022,8069
+623110,Nursing Care Facilities (Skilled Nursing Facilities),1997 2002 2007 2012 2017 2022,8051 8052 8059
+623210,Residential Intellectual and Developmental Disability Facilities,1997 2002 2007 2012 2017 2022,8052
+623220,Residential Mental Health and Substance Abuse Facilities,1997 2002 2007 2012 2017 2022,8361
+623311,Continuing Care Retirement Communities,1997 2002 2007 2012 2017 2022,8051 8052 8059
+623312,Assisted Living Facilities for the Elderly,1997 2002 2007 2012 2017 2022,8361
+623990,Other Residential Care Facilities,1997 2002 2007 2012 2017 2022,8361
+624110,Child and Youth Services,1997 2002 2007 2012 2017 2022,8322
+624120,Services for the Elderly and Persons with Disabilities,1997 2002 2007 2012 2017 2022,8322
+624190,Other Individual and Family Services,1997 2002 2007 2012 2017 2022,8322
+624210,Community Food Services,1997 2002 2007 2012 2017 2022,8322
+624221,Temporary Shelters,1997 2002 2007 2012 2017 2022,8322
+624229,Other Community Housing Services,1997 2002 2007 2012 2017 2022,8322
+624230,Emergency and Other Relief Services,1997 2002 2007 2012 2017 2022,8322
+624310,Vocational Rehabilitation Services,1997 2002 2007 2012 2017 2022,8331
+624410,Child Care Services,1997 2002 2007 2012 2017 2022,8351
+711110,Theater Companies and Dinner Theaters,1997 2002 2007 2012 2017 2022,5812 7922
+711120,Dance Companies,1997 2002 2007 2012 2017 2022,7922
+711130,Musical Groups and Artists,1997 2002 2007 2012 2017 2022,7929
+711190,Other Performing Arts Companies,1997 2002 2007 2012 2017 2022,7929 7999
+711211,Sports Teams and Clubs,1997 2002 2007 2012 2017 2022,7941
+711212,Racetracks,1997 2002 2007 2012 2017 2022,7948
+711219,Other Spectator Sports,1997 2002 2007 2012 2017 2022,7948 7999
+711310,"Promoters of Performing Arts, Sports, and Similar Events with Facilities",1997 2002 2007 2012 2017 2022,6512 7922 7941 7999
+711320,"Promoters of Performing Arts, Sports, and Similar Events without Facilities",1997 2002 2007 2012 2017 2022,7922 7941 7999
+711410,"Agents and Managers for Artists, Athletes, Entertainers, and Other Public Figures",1997 2002 2007 2012 2017 2022,7389 7922 7941
+711510,"Independent Artists, Writers, and Performers",1997 2002 2007 2012 2017 2022,7819 7699 7929 7383 7641 7922 8999
+712110,Museums,1997 2002 2007 2012 2017 2022,8412
+712120,Historical Sites,1997 2002 2007 2012 2017 2022,8412
+712130,Zoos and Botanical Gardens,1997 2002 2007 2012 2017 2022,8422
+712190,Nature Parks and Other Similar Institutions,1997 2002 2007 2012 2017 2022,7999 8422
+713110,Amusement and Theme Parks,1997 2002 2007 2012 2017 2022,7996
+713120,Amusement Arcades,1997 2002 2007 2012 2017 2022,7993
+713210,Casinos (except Casino Hotels),1997 2002 2007 2012 2017 2022,7999
+713290,Other Gambling Industries,1997 2002 2007 2012 2017 2022,7993 7999
+713910,Golf Courses and Country Clubs,1997 2002 2007 2012 2017 2022,7992 7997
+713920,Skiing Facilities,1997 2002 2007 2012 2017 2022,7999
+713930,Marinas,1997 2002 2007 2012 2017 2022,4493
+713940,Fitness and Recreational Sports Centers,1997 2002 2007 2012 2017 2022,7991 7997 7999
+713950,Bowling Centers,1997 2002 2007 2012 2017 2022,7933
+713990,All Other Amusement and Recreation Industries,1997 2002 2007 2012 2017 2022,7911 7993 7997 7999
+721110,Hotels (except Casino Hotels) and Motels,1997 2002 2007 2012 2017 2022,7011 7041
+721120,Casino Hotels,1997 2002 2007 2012 2017 2022,7011
+721191,Bed-and-Breakfast Inns,1997 2002 2007 2012 2017 2022,7011
+721199,All Other Traveler Accommodation,1997 2002 2007 2012 2017 2022,7011
+721211,RV (Recreational Vehicle) Parks and Campgrounds,1997 2002 2007 2012 2017 2022,7033
+721214,Recreational and Vacation Camps (except Campgrounds),1997 2002 2007 2012 2017 2022,7032
+721310,"Rooming and Boarding Houses, Dormitories, and Workers' Camps",1997 2002 2007 2012 2017 2022,7021 7041
+722110,Full-Service Restaurants,1997 2002 2007,5812
+722211,Limited-Service Restaurants,1997 2002 2007,5812
+722212,"Cafeterias, Grill Buffets, and Buffets",1997 2002 2007,5812
+722213,Snack and Nonalcoholic Beverage Bars,1997 2002 2007,5812 5461
+722310,Food Service Contractors,1997 2002 2007 2012 2017 2022,4789 5812
+722320,Caterers,1997 2002 2007 2012 2017 2022,5812
+722330,Mobile Food Services,1997 2002 2007 2012 2017 2022,5963
+722410,Drinking Places (Alcoholic Beverages),1997 2002 2007 2012 2017 2022,5813
+722511,Full-Service Restaurants,2012 2017 2022,5812
+722513,Limited-Service Restaurants,2012 2017 2022,5812
+722514,"Cafeterias, Grill Buffets, and Buffets",2012 2017 2022,5812
+722515,Snack and Nonalcoholic Beverage Bars,2012 2017 2022,5812 5461
+811111,General Automotive Repair,1997 2002 2007 2012 2017 2022,7538
+811112,Automotive Exhaust System Repair,1997 2002 2007 2012 2017,7533
+811113,Automotive Transmission Repair,1997 2002 2007 2012 2017,7537
+811114,Specialized Automotive Repair,2022,7533 7537 7539
+811118,Other Automotive Mechanical and Electrical Repair and Maintenance,1997 2002 2007 2012 2017,7539
+811121,"Automotive Body, Paint, and Interior Repair and Maintenance",1997 2002 2007 2012 2017 2022,7532
+811122,Automotive Glass Replacement Shops,1997 2002 2007 2012 2017 2022,7536 7549
+811191,Automotive Oil Change and Lubrication Shops,1997 2002 2007 2012 2017 2022,7549
+811192,Car Washes,1997 2002 2007 2012 2017 2022,7542
+811198,All Other Automotive Repair and Maintenance,1997 2002 2007 2012 2017 2022,7534 7549
+811210,Electronic and Precision Equipment Repair and Maintenance,2022,7622 7629 7699 7378
+811211,Consumer Electronics Repair and Maintenance,1997 2002 2007 2012 2017,7622 7629 7699
+811212,Computer and Office Machine Repair and Maintenance,1997 2002 2007 2012 2017,7378 7629 7699
+811213,Communication Equipment Repair and Maintenance,1997 2002 2007 2012 2017,7622 7629
+811219,Other Electronic and Precision Equipment Repair and Maintenance,1997 2002 2007 2012 2017,7629 7699
+811310,Commercial and Industrial Machinery and Equipment (except Automotive and Electronic) Repair and Maintenance,1997 2002 2007 2012 2017 2022,7699 7623 7692 7694
+811411,Home and Garden Equipment Repair and Maintenance,1997 2002 2007 2012 2017 2022,7699
+811412,Appliance Repair and Maintenance,1997 2002 2007 2012 2017 2022,7623 7629 7699
+811420,Reupholstery and Furniture Repair,1997 2002 2007 2012 2017 2022,7641
+811430,Footwear and Leather Goods Repair,1997 2002 2007 2012 2017 2022,7251 7699
+811490,Other Personal and Household Goods Repair and Maintenance,1997 2002 2007 2012 2017 2022,3732 7219 7631 7699
+812111,Barber Shops,1997 2002 2007 2012 2017 2022,7241
+812112,Beauty Salons,1997 2002 2007 2012 2017 2022,7231
+812113,Nail Salons,1997 2002 2007 2012 2017 2022,7231
+812191,Diet and Weight Reducing Centers,1997 2002 2007 2012 2017 2022,7299
+812199,Other Personal Care Services,1997 2002 2007 2012 2017 2022,7299
+812210,Funeral Homes and Funeral Services,1997 2002 2007 2012 2017 2022,7261
+812220,Cemeteries and Crematories,1997 2002 2007 2012 2017 2022,6531 6553 7261
+812310,Coin-Operated Laundries and Drycleaners,1997 2002 2007 2012 2017 2022,7215
+812320,Drycleaning and Laundry Services (except Coin-Operated),1997 2002 2007 2012 2017 2022,7211 7389 7216 7212 7219
+812331,Linen Supply,1997 2002 2007 2012 2017 2022,7213 7219
+812332,Industrial Launderers,1997 2002 2007 2012 2017 2022,7218
+812910,Pet Care (except Veterinary) Services,1997 2002 2007 2012 2017 2022,0752
+812921,Photofinishing Laboratories (except One-Hour),1997 2002 2007 2012 2017 2022,7384
+812922,One-Hour Photofinishing,1997 2002 2007 2012 2017 2022,7384
+812930,Parking Lots and Garages,1997 2002 2007 2012 2017 2022,7521 7299
+812990,All Other Personal Services,1997 2002 2007 2012 2017 2022,7299 7251 7389
+813110,Religious Organizations,1997 2002 2007 2012 2017 2022,8661
+813211,Grantmaking Foundations,1997 2002 2007 2012 2017 2022,6732
+813212,Voluntary Health Organizations,1997 2002 2007 2012 2017 2022,8399
+813219,Other Grantmaking and Giving Services,1997 2002 2007 2012 2017 2022,8399
+813311,Human Rights Organizations,1997 2002 2007 2012 2017 2022,8399
+813312,"Environment, Conservation and Wildlife Organizations",1997 2002 2007 2012 2017 2022,8399 8699
+813319,Other Social Advocacy Organizations,1997 2002 2007 2012 2017 2022,8399
+813410,Civic and Social Organizations,1997 2002 2007 2012 2017 2022,8641 8699
+813910,Business Associations,1997 2002 2007 2012 2017 2022,8611 8699
+813920,Professional Organizations,1997 2002 2007 2012 2017 2022,8621
+813930,Labor Unions and Similar Labor Organizations,1997 2002 2007 2012 2017 2022,8631
+813940,Political Organizations,1997 2002 2007 2012 2017 2022,8651
+813990,"Other Similar Organizations (except Business, Professional, Labor, and Political Organizations)",1997 2002 2007 2012 2017 2022,6531 8641 8699
+814110,Private Households,1997 2002 2007 2012 2017 2022,8811
+921110,Executive Offices,1997 2002 2007 2012 2017 2022,9111
+921120,Legislative Bodies,1997 2002 2007 2012 2017 2022,9121
+921130,Public Finance Activities,1997 2002 2007 2012 2017 2022,9311
+921140,"Executive and Legislative Offices, Combined",1997 2002 2007 2012 2017 2022,9131
+921150,American Indian and Alaska Native Tribal Governments,1997 2002 2007 2012 2017 2022,8641
+921190,Other General Government Support,1997 2002 2007 2012 2017 2022,9199
+922110,Courts,1997 2002 2007 2012 2017 2022,9211
+922120,Police Protection,1997 2002 2007 2012 2017 2022,9221
+922130,Legal Counsel and Prosecution,1997 2002 2007 2012 2017 2022,9222
+922140,Correctional Institutions,1997 2002 2007 2012 2017 2022,9223
+922150,Parole Offices and Probation Offices,1997 2002 2007 2012 2017 2022,8322
+922160,Fire Protection,1997 2002 2007 2012 2017 2022,9224
+922190,"Other Justice, Public Order, and Safety Activities",1997 2002 2007 2012 2017 2022,9229
+923110,Administration of Education Programs,1997 2002 2007 2012 2017 2022,9411
+923120,Administration of Public Health Programs,1997 2002 2007 2012 2017 2022,9431
+923130,"Administration of Human Resource Programs (except Education, Public Health, and Veterans' Affairs Programs)",1997 2002 2007 2012 2017 2022,9441
+923140,Administration of Veterans' Affairs,1997 2002 2007 2012 2017 2022,9451
+924110,Administration of Air and Water Resource and Solid Waste Management Programs,1997 2002 2007 2012 2017 2022,9511
+924120,Administration of Conservation Programs,1997 2002 2007 2012 2017 2022,9512
+925110,Administration of Housing Programs,1997 2002 2007 2012 2017 2022,9531
+925120,Administration of Urban Planning and Community and Rural Development,1997 2002 2007 2012 2017 2022,9532
+926110,Administration of General Economic Programs,1997 2002 2007 2012 2017 2022,9611
+926120,Regulation and Administration of Transportation Programs,1997 2002 2007 2012 2017 2022,9621
+926130,"Regulation and Administration of Communications, Electric, Gas, and Other Utilities",1997 2002 2007 2012 2017 2022,9631
+926140,Regulation of Agricultural Marketing and Commodities,1997 2002 2007 2012 2017 2022,9641
+926150,"Regulation, Licensing, and Inspection of Miscellaneous Commercial Sectors",1997 2002 2007 2012 2017 2022,9651
+927110,Space Research and Technology,1997 2002 2007 2012 2017 2022,9661
+928110,National Security,1997 2002 2007 2012 2017 2022,9711
+928120,International Affairs,1997 2002 2007 2012 2017 2022,9721

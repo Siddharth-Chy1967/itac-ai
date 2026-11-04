@@ -11,7 +11,7 @@ export default function AppHeader() {
     <header className="border-b border-slate-200 bg-white">
       <div className="mx-auto flex max-w-5xl items-center gap-3 px-4 py-3">
         <img src="/itac-logo.png" alt="ITAC logo" className="h-9 w-auto" />
-        <span className="text-lg font-semibold text-itac-blue">ITAC AI Assistant</span>
+        <span className="text-lg font-semibold text-itac-blue">ARchie</span>
         <nav className="ml-auto flex flex-wrap gap-1">
           {NAV.map((item) => (
             <NavLink

@@ -5,7 +5,7 @@ A specialized AI assistant for the ASU **ITAC** (Industrial Training and Assessm
 1. **Answers questions about past assessments.** RAG over ingested reports, plus deterministic lookup modes for the questions students ask most.
 2. **Turns utility bills into an analysis workbook.** Drop a year of PDFs on a page, review the proposed columns, download the spreadsheet.
 
-Both run locally. Report data and client bills never leave the machine.
+Both run locally by default. Report data never leaves the machine; client bills leave it only if you point `BILLS_LLM_PROVIDER` at a hosted model.
 
 Design principle throughout: **a model decides meaning, Python decides output.** The LLM classifies and summarizes; deterministic code renders every number, table and citation. Where a mode can be answered from retrieved data alone, it is, so a small local model cannot embellish it.
 
@@ -37,38 +37,45 @@ Upload utility PDFs, get an analysis workbook. One source PDF can hold a year of
 
 ```
 uploaded PDFs
-  -> group each source PDF into individual bills      (bill_extraction)
-  -> extract every bill's printed values              (bill_value_extraction, cached)
-  -> relabel readings from where OCR found them       (grid)
-  -> interpret the labels those bills printed         (semantics)
+  -> group each source PDF into individual bills      (bill_extraction; the model)
+  -> page text + boxes, chart axis labels removed     (page_text; deterministic)
+  -> the model reads each bill into typed JSON        (figures + llm_providers, cached)
+  -> keep only figures printed on the page            (verify; deterministic)
+  -> name columns from the model's types              (columns; deterministic)
   -> REVIEW GATE: proposed columns shown to the user
   -> pivot into per-meter monthly sheets              (shape)
   -> render the workbook                              (workbook)
 ```
 
+The model does the understanding. It says what each figure is (usage, billed or
+measured demand, a charge and its category, a tax, the total, the statement date),
+along with its unit and time-of-use period. Utility-specific guidance is prompt
+text in `figures_prompt.py`, not code.
+
+### The hard rule: every value is printed on the bill
+
+The code never adds a figure. `verify.py` looks up each number and date the model
+returned in the text of the page it came from, sign included; anything not found is
+dropped and flagged, and its cell stays blank. Chart axis tick labels (three or more
+bare numbers sharing an x-position in an even arithmetic sequence) are removed
+before the model sees the page. A PNM usage chart's "25000" tick once became a
+month's usage; `tests/bills/test_pnm_fabrication.py` keeps that from coming back.
+A charge printed twice gets two columns rather than a summed cell, and derived
+columns (summed Total kWh, MMBtu, cost per gallon) are off unless
+`BILLS_DERIVED_COLUMNS=true`. `scripts/check_bill_workbook.py` audits any workbook
+against its PDFs.
+
 ### Why the review gate exists
 
 Column layout is the one part a model genuinely influences. Showing the proposed columns before anything is written makes a mistake a two-second fix rather than a wrong spreadsheet someone forwards to a client. Nothing is written to disk until the layout is confirmed.
 
-### How labels become columns
+### Choosing the model
 
-`semantics.py` resolves each printed label in this order:
-
-1. A previously accepted mapping for that utility, reused verbatim
-2. `SEED_TERMS`: **99 labels resolved by rules, no model at all**
-3. Anything left over goes to the model
-
-So a familiar bill needs no model judgement. A new utility company's unfamiliar wording is what reaches step 3, which is exactly what the review gate is there to catch.
-
-The model sees **labels, never amounts.** Column merging is by meaning, not by per-company rules.
-
-### Why OCR, not just the vision model
-
-The vision model reads *what* the numbers are well, and guesses badly at *which label* owns which number once they sit in a table. On SRP bills it returned every reading labelled "Energy", with the row's real name filed elsewhere.
-
-`grid.py` fixes this with geometry instead of judgement. RapidOCR reports each text box and its position; a label and its value share a printed line, so pairing them is arithmetic on coordinates. No model is involved: the numbers come from OCR, the pairing from position, and the meaning of each label is still decided later by `semantics`.
-
-`grid.py` only ever rewrites `measurements` (meter readings). It never touches charge rows, so it cannot affect the charge columns.
+One setting in `.env`: `BILLS_LLM_PROVIDER` = `ollama` (local qwen2.5vl, default),
+`openai` (Responses API, `gpt-6-luna` by default, needs `BILLS_LLM_API_KEY`) or
+`openai_compatible` (any `/chat/completions` endpoint at `BILLS_LLM_BASE_URL`, e.g.
+OpenRouter). Answers are cached per provider and model, so switching never reuses
+another model's results. This is separate from `LLM_PROVIDER`, which drives chat.
 
 ### Validation
 
@@ -129,12 +136,6 @@ Use the download button rather than digging through the folders. Caches are per 
 - **Anthropic provider.** `backend/app/llm/anthropic.py` is empty; `LLM_PROVIDER=anthropic` raises a clear "not implemented" error.
 - **`backend/app/rag/pipeline.py`.** An empty placeholder; retrieval lives in `retrieve.py` and the orchestrator.
 
-### Bill model provider is Ollama-only
-
-The bill pipeline talks to Ollama directly (`/api/chat`, `/api/tags`, `/api/show`, images base64-encoded in Ollama's format). `BILLS_VLM_MODEL` switches the model **within Ollama**; it cannot point at a hosted API.
-
-The chat side does have a provider abstraction (`app/llm/`), but `LLMProvider.complete()` takes no images and no output schema, so the bill pipeline cannot use it as written. Making bills provider-agnostic means widening that interface. The seam is small: bills only calls six things on its client (`cache_label`, `describe`, `close`, `ensure_ready`, `parse_pdf`, `parse_text`), and `pipeline.py:_client_factory` is the single place the client is constructed.
-
 > Full implementation spec: [`docs/itac-ai-architecture.md`](docs/itac-ai-architecture.md).
 
 ---
@@ -168,7 +169,7 @@ Two consequences worth knowing:
 | Layer | Tech |
 | --- | --- |
 | Backend | Python 3.11, FastAPI, pydantic-settings, ChromaDB, sentence-transformers (`nomic-embed-text-v1.5`, fp16 on CUDA), python-docx, openpyxl |
-| Bills | pypdf + pymupdf (split and render), RapidOCR (CPU, box geometry), Qwen2.5-VL via Ollama, openpyxl |
+| Bills | pypdf + pymupdf (split and render), RapidOCR (CPU), Qwen2.5-VL via Ollama or a hosted model (OpenAI Responses / OpenAI-compatible), openpyxl |
 | LLM | Provider adapter: Gemini, Ollama (Anthropic not yet implemented) |
 | Frontend | Vite + React + Tailwind, served by nginx in Docker |
 | Packaging | docker-compose (backend + frontend; Ollama runs on the host) |
@@ -197,7 +198,7 @@ itac-ai/
 │       ├── rag/      # extract/chunk/embed/store, retrieve, waterfall
 │       │             # (checklist, SIC ranking, best practice),
 │       │             # fielddata (on-site data guide), ingest CLIs
-│       ├── bills/    # grouping, extraction, grid (OCR geometry), semantics,
+│       ├── bills/    # grouping, page text, providers, verify, columns, semantics,
 │       │             # shape, workbook, validation_checks, jobs, pipeline
 │       └── xlsx/     # TableSpec -> openpyxl renderer
 ├── skills/     # Markdown skill files (committed, contain no client data)
