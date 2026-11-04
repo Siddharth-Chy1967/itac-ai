@@ -1,4 +1,4 @@
-# ITAC AI Assistant
+# ARchie (ITAC AI Assistant)
 
 A specialized AI assistant for the ASU **ITAC** (Industrial Training and Assessment Center). It does two jobs:
 
