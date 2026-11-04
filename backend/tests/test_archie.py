@@ -86,6 +86,12 @@ def test_the_assistant_is_archie():
     assert "You are ARchie" in BASE_SYSTEM_PROMPT
 
 
+def test_archie_knows_it_already_introduced_itself():
+    prompt = " ".join(BASE_SYSTEM_PROMPT.split())
+    assert "Hey, my name is ARchie, how can I help?" in prompt
+    assert "Do not repeat your name" in prompt
+
+
 def test_field_mode_names_no_particular_recommendation():
     system = assemble_system_prompt([], field_mode=True).split("OUTPUT MODE: SITE-VISIT")[1]
     for example in ("compressed", "LED", "VFD", "lighting", "leak"):

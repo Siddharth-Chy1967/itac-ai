@@ -20,6 +20,7 @@ import asyncio
 import logging
 import re
 import secrets
+import threading
 from collections.abc import AsyncIterator
 from dataclasses import dataclass
 from functools import lru_cache
@@ -504,28 +505,46 @@ def _bp_writeup_topic(message: str) -> str | None:
 # tests can patch that one seam without pulling in torch/chromadb.
 
 
-@lru_cache(maxsize=1)
+# lru_cache does not stop two threads building the same singleton at once. Startup
+# warmup and an early chat request did exactly that, and two ChromaDB clients opening
+# one database together both failed ("Could not connect to tenant default_tenant").
+_BUILD_LOCK = threading.Lock()
+
+
+def _built_once(build):
+    """`lru_cache(maxsize=1)` whose first build is serialized across threads."""
+    cached = lru_cache(maxsize=1)(build)
+
+    def get():
+        with _BUILD_LOCK:
+            return cached()
+
+    get.cache_clear = cached.cache_clear
+    return get
+
+
+@_built_once
 def _get_embedder():
     from ..rag.embeddings import Embedder
 
     return Embedder()
 
 
-@lru_cache(maxsize=1)
+@_built_once
 def _get_store():
     from ..rag.store import ReportStore
 
     return ReportStore()
 
 
-@lru_cache(maxsize=1)
+@_built_once
 def _get_arc_store():
     from ..rag.store import ArcLookupStore
 
     return ArcLookupStore()
 
 
-@lru_cache(maxsize=1)
+@_built_once
 def _get_bp_store():
     from ..rag.store import BPStore
 

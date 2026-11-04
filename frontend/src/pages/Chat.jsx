@@ -3,7 +3,8 @@ import { streamChat } from "../api/client.js";
 import ChatInput from "../components/ChatInput.jsx";
 import ChatMessage from "../components/ChatMessage.jsx";
 
-// ARchie opens every chat with this line. It is shown, not sent to the model.
+// ARchie opens every chat with this line. It is sent as ARchie's first turn, so the
+// model knows it has already introduced itself and does not do it again.
 const GREETING = "Hey, my name is ARchie, how can I help?";
 
 export default function Chat() {
@@ -26,9 +27,12 @@ export default function Chat() {
   }
 
   async function handleSend(text) {
-    const history = messages
-      .filter((m) => !m.error && m.content)
-      .map((m) => ({ role: m.role, content: m.content }));
+    const history = [
+      { role: "assistant", content: GREETING },
+      ...messages
+        .filter((m) => !m.error && m.content)
+        .map((m) => ({ role: m.role, content: m.content })),
+    ];
 
     const userMsg = { role: "user", content: text };
     const assistantMsg = {
