@@ -3,8 +3,8 @@ import { streamChat } from "../api/client.js";
 import ChatInput from "../components/ChatInput.jsx";
 import ChatMessage from "../components/ChatMessage.jsx";
 
-// ARchie opens every chat with this line. It is sent as ARchie's first turn, so the
-// model knows it has already introduced itself and does not do it again.
+// ARchie opens every chat with this line on the landing page. It is also sent, never
+// shown, as ARchie's first turn, so the model knows it has already introduced itself.
 const GREETING = "Hey, my name is ARchie, how can I help?";
 
 export default function Chat() {
@@ -19,6 +19,7 @@ export default function Chat() {
 
   function patchLast(patch) {
     setMessages((prev) => {
+      if (!prev.length) return prev; // "New chat" cleared it while a reply was streaming
       const next = [...prev];
       const last = next[next.length - 1];
       next[next.length - 1] = typeof patch === "function" ? patch(last) : { ...last, ...patch };
@@ -76,6 +77,11 @@ export default function Chat() {
     abortRef.current?.abort();
   }
 
+  function handleNewChat() {
+    abortRef.current?.abort();
+    setMessages([]);
+  }
+
   const isEmpty = messages.length === 0;
 
   return (
@@ -87,7 +93,6 @@ export default function Chat() {
       ) : (
         <div className="flex-1 overflow-y-auto">
           <div className="mx-auto max-w-3xl space-y-4 px-4 py-6">
-            <ChatMessage message={{ role: "assistant", content: GREETING, sources: [], files: [] }} />
             {messages.map((m, i) => (
               <ChatMessage key={i} message={m} />
             ))}
@@ -99,11 +104,18 @@ export default function Chat() {
       <div className="border-t border-slate-200 bg-slate-50 py-3">
         <div className="mx-auto max-w-3xl px-4">
           <ChatInput onSend={handleSend} disabled={streaming} />
-          {streaming && (
-            <button onClick={handleStop} className="mt-2 text-xs text-slate-500 hover:text-itac-blue">
-              Stop generating
-            </button>
-          )}
+          <div className="mt-2 flex gap-4">
+            {streaming && (
+              <button onClick={handleStop} className="text-xs text-slate-500 hover:text-itac-blue">
+                Stop generating
+              </button>
+            )}
+            {!isEmpty && (
+              <button onClick={handleNewChat} className="text-xs text-slate-500 hover:text-itac-blue">
+                New chat
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </div>
