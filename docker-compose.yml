@@ -37,14 +37,18 @@ services:
       interval: 15s
       timeout: 5s
       retries: 5
-      start_period: 40s
+      # Loading torch, the embedding model and Chroma takes well over 40s on a small
+      # cloud CPU; the frontend waits for "healthy" and would never start.
+      start_period: 180s
     restart: unless-stopped
 
   frontend:
     build:
       context: ./frontend
     ports:
-      - "8080:80"                    # the app: http://localhost:8080
+      # Bound to 127.0.0.1: only this machine (or the host nginx in front of it on a
+      # server) can reach the app, so nobody gets around that nginx's password.
+      - "127.0.0.1:8080:80"          # the app: http://localhost:8080
     depends_on:
       backend:
         condition: service_healthy

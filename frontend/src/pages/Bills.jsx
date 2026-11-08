@@ -33,6 +33,19 @@ const STATE_TONE = {
   cancelled: "bg-slate-100 text-slate-500",
 };
 
+const JOB_KEY = "itac.bills.job";
+
+function remember(id) {
+  try {
+    if (id) sessionStorage.setItem(JOB_KEY, id);
+    else sessionStorage.removeItem(JOB_KEY);
+  } catch { /* storage blocked: tab switching still works, refresh just won't resume */ }
+}
+
+function recall() {
+  try { return sessionStorage.getItem(JOB_KEY); } catch { return null; }
+}
+
 export default function Bills() {
   const [job, setJob] = useState(null);
   const [columns, setColumns] = useState([]);
@@ -51,9 +64,11 @@ export default function Bills() {
   useEffect(() => stopPolling, [stopPolling]);
 
   const poll = useCallback(async (id) => {
+    stopPolling();
     try {
       const next = await getBillJob(id);
       setJob(next);
+      remember(id);
       if (SETTLED.includes(next.state)) {
         if (next.state === "awaiting_review" || next.state === "done") {
           const layout = await getBillColumns(id);
@@ -65,7 +80,17 @@ export default function Bills() {
     } catch (err) {
       setError(err.message);
     }
-  }, []);
+  }, [stopPolling]);
+
+  // A browser refresh picks the last job back up. If the backend restarted and no
+  // longer knows it, drop it quietly and show the dropzone.
+  useEffect(() => {
+    const saved = recall();
+    if (!saved) return;
+    getBillJob(saved)
+      .then(() => poll(saved))
+      .catch(() => remember(null));
+  }, [poll]);
 
   async function handleFiles(files) {
     setError("");
@@ -110,6 +135,7 @@ export default function Bills() {
 
   function reset() {
     stopPolling();
+    remember(null);
     setJob(null);
     setColumns([]);
     setOverrides({});
@@ -126,8 +152,7 @@ export default function Bills() {
         <h1 className="text-xl font-semibold text-itac-blue">Utility Bill Analysis</h1>
         <p className="mt-1 text-sm text-slate-600">
           Drop a year of utility bills. They are grouped, read and pivoted into an
-          analysis workbook — one sheet per meter, one row per month. Everything
-          runs on this machine; no bill leaves it.
+          analysis workbook — one sheet per meter, one row per month.
         </p>
       </header>
 
